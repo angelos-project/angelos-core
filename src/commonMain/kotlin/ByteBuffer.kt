@@ -25,11 +25,8 @@ abstract class ByteBuffer(capacity: Int, limit: Int, position: Int, mark: Int) :
         }
 
         @JvmStatic
-        fun wrap(array: ByteArray, offset: Int = 0, length: Int = 0): ByteBuffer {
-            return if (offset == 0)
-                ByteBufferImpl(array, 0, array.size, 0 + array.size, 0, -1, false)
-            else
-                ByteBufferImpl(array, 0, array.size, offset + length, offset, -1, false)
+        fun wrap(array: ByteArray, offset: Int = 0, length: Int = array.size): ByteBuffer {
+            return ByteBufferImpl(array, 0, array.size, offset + length, offset, -1, false)
         }
     }
 

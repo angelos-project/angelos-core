@@ -23,7 +23,7 @@ abstract class CharBuffer(capacity: Int, limit: Int, position: Int, mark: Int) :
 
         @JvmStatic
         fun wrap(array: CharArray, offset: Int = 0, length: Int = array.size): CharBuffer{
-            return CharBufferImpl(array, array.size, offset + length, offset, -1, false)
+            return CharBufferImpl(array, 0, array.size, offset + length, offset, -1, false)
         }
 
         @JvmStatic
