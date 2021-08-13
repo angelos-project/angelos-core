@@ -1,7 +1,7 @@
 package angelos.nio
 
 
-enum class ByteOrder (val order: ByteOrder){
+enum class ByteOrder(val order: Boolean){
     BIG_ENDIAN(false),
     LITTLE_ENDIAN(true);
     companion object{

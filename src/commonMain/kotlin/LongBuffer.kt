@@ -13,15 +13,15 @@ abstract class LongBuffer(capacity: Int, limit: Int, position: Int, mark: Int) :
     private var _backingBuffer: LongArray? = null
 
     companion object{
-        @JvmStatic
+        /*@JvmStatic
         fun allocate(capacity: Int): LongBuffer{
-            return LongBufferImpl(capacity)
+            //return LongBufferImpl(size=capacity)
         }
 
         @JvmStatic
         fun wrap(array: LongArray, offset: Int = 0, length: Int = array.size): LongBuffer{
-            return LongBufferImpl(array, array.size, offset + length, offset, -1, false)
-        }
+            //return LongBufferImpl(array, array.size, offset + length, offset, offset, -1, false)
+        }*/
     }
 
     fun get(dst: LongArray, offset: Int = 0, length: Int = dst.size){
@@ -86,14 +86,14 @@ abstract class LongBuffer(capacity: Int, limit: Int, position: Int, mark: Int) :
         return hashCode.toInt()
     }
 
-    fun equals (obj: Any): Boolean {
+    override fun equals (obj: Any?): Boolean {
         if (obj is LongBuffer)
             return compareTo(obj) == 0
 
         return false
     }
 
-    fun compareTo(other: IntBuffer): Int{
+    override fun compareTo(other: LongBuffer): Int{
         val num: Int = min(remaining(), other.remaining())
         var posThis: Int = position
         var posOther: Int = other.position
