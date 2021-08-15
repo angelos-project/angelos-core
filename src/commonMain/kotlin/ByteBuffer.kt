@@ -300,75 +300,167 @@ class ByteBuffer internal constructor(
         checkArraySize(_limit, _position, size)
         val b: Long = value as Long
         for (i in 0..size)
-            _array[_position + (size - i)] = ((b ushr 8 * i) and 0xFFFF).toByte()
+            _array[_position + (size - i)] = ((b ushr 8 * i) and 0xFFFFFFFF).toByte()
         _position += size
     }
 
     fun readChar(): Char {
-        checkArraySize(_limit, _position, Char.SIZE_BYTES)
-        val value: Char = ((_array[_position]).toInt() or (_array[_position + 1].toInt() shl 8)).toChar()
+        checkArraySize(_limit, _position, 2)
+        var value: Int = _array[_position + 1].toInt()
+        value += (_array[_position + 0].toInt() shl 8)
         _position += 2
-        return value
+        return value.toChar()
     }
 
     fun writeChar(value: Char) {
-        printBytes(2, value.code.toLong())
+        checkArraySize(_limit, _position, 2)
+        _array[_position + 1] = (value.toInt() and 0xFF).toByte()
+        _array[_position + 0] = ((value.toInt() ushr 8) and 0xFF).toByte()
+        _position += 2
     }
 
     fun readShort(): Short {
-        return scanBytes(2).toShort()
+        checkArraySize(_limit, _position, 2)
+        var value: Int = _array[_position + 1].toInt()
+        value += (_array[_position + 0].toInt() shl 8)
+        _position += 2
+        return value.toShort()
     }
 
     fun writeShort(value: Short) {
-        printBytes(2, value.toLong())
+        checkArraySize(_limit, _position, 2)
+        _array[_position + 1] = (value.toInt() and 0xFF).toByte()
+        _array[_position + 0] = ((value.toInt() ushr 8) and 0xFF).toByte()
+        _position += 2
     }
 
     fun readUShort(): UShort {
-        return scanBytes(2).toUShort()
+        checkArraySize(_limit, _position, 2)
+        var value: Int = _array[_position + 1].toInt()
+        value += (_array[_position + 0].toInt() shl 8)
+        _position += 2
+        return value.toUShort()
     }
 
     fun writeUShort(value: UShort) {
-        printBytes(2, value.toLong())
+        checkArraySize(_limit, _position, 2)
+        _array[_position + 1] = (value.toInt() and 0xFF).toByte()
+        _array[_position + 0] = ((value.toInt() ushr 8) and 0xFF).toByte()
+        _position += 2
     }
 
     fun readInt(): Int {
-        return scanBytes(4).toInt()
+        checkArraySize(_limit, _position, 4)
+        var value: Int = _array[_position + 3].toInt()
+        value += (_array[_position + 2].toInt() shl 8)
+        value += (_array[_position + 1].toInt() shl 16)
+        value += (_array[_position + 0].toInt() shl 24)
+        _position += 4
+        return value
     }
 
     fun writeInt(value: Int) {
-        printBytes(4, value.toLong())
+        checkArraySize(_limit, _position, 4)
+        _array[_position + 3] = (value and 0xFF).toByte()
+        _array[_position + 2] = ((value ushr 8) and 0xFF).toByte()
+        _array[_position + 1] = ((value ushr 16) and 0xFF).toByte()
+        _array[_position + 0] = ((value ushr 24) and 0xFF).toByte()
+        _position += 4
     }
 
     fun readUInt(): UInt {
-        return scanBytes(4).toUInt()
+        checkArraySize(_limit, _position, 4)
+        var value: UInt = _array[_position + 3].toUInt()
+        value += (_array[_position + 2].toUInt() shl 8)
+        value += (_array[_position + 1].toUInt() shl 16)
+        value += (_array[_position + 0].toUInt() shl 24)
+        _position += 4
+        return value
     }
 
     fun writeUInt(value: UInt) {
-        printBytes(4, value.toLong())
+        throw UnsupportedOperationException()
+        // checkArraySize(_limit, _position, 4)
+        // _array[_position + 3] = (value and 0xFF).toByte()
+        // _array[_position + 2] = ((value ushr 8) and 0xFF).toByte()
+        // _array[_position + 1] = ((value ushr 16) and 0xFF).toByte()
+        // _array[_position + 0] = ((value ushr 24) and 0xFF).toByte()
+        // _position += 4
     }
 
     fun readLong(): Long {
-        return scanBytes(8)
+        checkArraySize(_limit, _position, 8)
+        var value: Long = _array[_position + 7].toLong()
+        value += (_array[_position + 6].toLong() shl 8)
+        value += (_array[_position + 5].toLong() shl 16)
+        value += (_array[_position + 4].toLong() shl 24)
+        value += (_array[_position + 3].toLong() shl 32)
+        value += (_array[_position + 2].toLong() shl 40)
+        value += (_array[_position + 1].toLong() shl 48)
+        value += (_array[_position + 0].toLong() shl 56)
+        _position += 8
+        return value
     }
 
     fun writeLong(value: Long) {
-        printBytes(8, value)
+        checkArraySize(_limit, _position, 8)
+        _array[_position + 7] = (value and 0xFF).toByte()
+        _array[_position + 6] = ((value ushr 8) and 0xFF).toByte()
+        _array[_position + 5] = ((value ushr 16) and 0xFF).toByte()
+        _array[_position + 4] = ((value ushr 24) and 0xFF).toByte()
+        _array[_position + 3] = ((value ushr 32) and 0xFF).toByte()
+        _array[_position + 2] = ((value ushr 40) and 0xFF).toByte()
+        _array[_position + 1] = ((value ushr 48) and 0xFF).toByte()
+        _array[_position + 0] = ((value ushr 56) and 0xFF).toByte()
+        _position += 8
     }
 
     fun readULong(): ULong {
-        return scanBytes(8).toULong()
+        checkArraySize(_limit, _position, 8)
+        var value: ULong = _array[_position + 7].toULong()
+        value += (_array[_position + 6].toULong() shl 8)
+        value += (_array[_position + 5].toULong() shl 16)
+        value += (_array[_position + 4].toULong() shl 24)
+        value += (_array[_position + 3].toULong() shl 32)
+        value += (_array[_position + 2].toULong() shl 40)
+        value += (_array[_position + 1].toULong() shl 48)
+        value += (_array[_position + 0].toULong() shl 56)
+        _position += 8
+        return value
     }
 
     fun writeULong(value: ULong) {
-        printBytes(8, value.toLong())
+        throw UnsupportedOperationException()
+        // checkArraySize(_limit, _position, 8)
+        // _array[_position + 7] = (value and 0xFF).toByte()
+        // _array[_position + 6] = ((value ushr 8) and 0xFF).toByte()
+        // _array[_position + 5] = ((value ushr 16) and 0xFF).toByte()
+        // _array[_position + 4] = ((value ushr 24) and 0xFF).toByte()
+        // _array[_position + 3] = ((value ushr 32) and 0xFF).toByte()
+        // _array[_position + 2] = ((value ushr 40) and 0xFF).toByte()
+        // _array[_position + 1] = ((value ushr 48) and 0xFF).toByte()
+        // _array[_position + 0] = ((value ushr 56) and 0xFF).toByte()
+        // _position += 8
     }
 
     fun readFloat(): Float {
-        return Float.fromBits(scanBytes(4).toInt())
+        checkArraySize(_limit, _position, 4)
+        var value: Int = _array[_position + 3].toInt()
+        value += (_array[_position + 2].toInt() shl 8)
+        value += (_array[_position + 1].toInt() shl 16)
+        value += (_array[_position + 0].toInt() shl 24)
+        _position += 4
+        return Float.fromBits(value)
     }
 
     fun writeFloat(value: Float) {
-        printBytes(4, value.toRawBits().toLong())
+        var data: Int = value.toRawBits()
+        checkArraySize(_limit, _position, 4)
+        _array[_position + 3] = (data and 0xFF).toByte()
+        _array[_position + 2] = ((data ushr 8) and 0xFF).toByte()
+        _array[_position + 1] = ((data ushr 16) and 0xFF).toByte()
+        _array[_position + 0] = ((data ushr 24) and 0xFF).toByte()
+        _position += 4
     }
 
     fun readDouble(): Double {
