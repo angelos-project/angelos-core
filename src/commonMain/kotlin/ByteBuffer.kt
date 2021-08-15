@@ -1,10 +1,25 @@
+/**
+ * Copyright (c) 2021 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+ *
+ * This software is available under the terms of the MIT license. Parts are licensed
+ * under different terms if stated. The legal terms are attached to the LICENSE file
+ * and are made available on:
+ *
+ *      https://opensource.org/licenses/MIT
+ *
+ * SPDX-License-Identifier: MIT
+ *
+ * Contributors:
+ *      Kristoffer Paulsson - initial implementation
+ */
 package angelos.nio
 
 import kotlin.jvm.JvmStatic
 import kotlin.math.min
 
+@ExperimentalUnsignedTypes
 class ByteBuffer internal constructor(
-    array: ByteArray,
+    array: UByteArray,
     capacity: Int = 0,
     limit: Int = 0,
     position: Int = 0,
@@ -22,7 +37,7 @@ class ByteBuffer internal constructor(
 
     private var order: ByteOrder = ByteOrder.BIG_ENDIAN
 
-    private val _array: ByteArray = array
+    private val _array: UByteArray = array
 
     val capacity: Int
         get() = _capacity
@@ -70,7 +85,7 @@ class ByteBuffer internal constructor(
         }
     }
 
-    constructor(capacity: Int) : this(ByteArray(size = capacity), capacity, capacity, direct=true)
+    constructor(capacity: Int) : this(UByteArray(size = capacity), capacity, capacity, direct=true)
 
     companion object {
         @JvmStatic
@@ -86,11 +101,11 @@ class ByteBuffer internal constructor(
 
         @JvmStatic
         fun allocate(capacity: Int): ByteBuffer {
-            return wrap(ByteArray(size = capacity), 0, capacity)
+            return wrap(UByteArray(size = capacity), 0, capacity)
         }
 
         @JvmStatic
-        fun wrap(array: ByteArray, offset: Int = 0, length: Int = array.size): ByteBuffer {
+        fun wrap(array: UByteArray, offset: Int = 0, length: Int = array.size): ByteBuffer {
             return ByteBuffer(array, array.size, offset + length, offset, -1, direct = false)
         }
     }
@@ -157,7 +172,7 @@ class ByteBuffer internal constructor(
 
     private var _arrayOffset: Int = 0 // TODO(Remove or what?)
 
-    fun get(dst: ByteArray, offset: Int = 0, length: Int = dst.size) {
+    fun get(dst: UByteArray, offset: Int = 0, length: Int = dst.size) {
         checkArraySize(dst.size, offset, length)
         checkForUnderflow(length)
 
@@ -172,13 +187,13 @@ class ByteBuffer internal constructor(
         checkForOverflow(src.remaining())
 
         if (src.remaining() > 0) {
-            val toSet: ByteArray = ByteArray(src.remaining())
+            val toSet: UByteArray = UByteArray(src.remaining())
             src.get(toSet)
             set(toSet)
         }
     }
 
-    fun set(src: ByteArray, offset: Int = 0, length: Int = src.size) {
+    fun set(src: UByteArray, offset: Int = 0, length: Int = src.size) {
         checkArraySize(src.size, offset, length)
         checkForOverflow(length)
 
@@ -190,7 +205,7 @@ class ByteBuffer internal constructor(
         return (_array != null && !readOnly)
     }
 
-    fun array(): ByteArray {
+    fun array(): UByteArray {
         if (_array == null)
             throw UnsupportedOperationException()
 
@@ -232,8 +247,8 @@ class ByteBuffer internal constructor(
         var posOther: Int = other.position
 
         for (count: Int in 0..num) {
-            val a: Byte = get(posThis++)
-            val b: Byte = get(posOther++)
+            val a: UByte = get(posThis++)
+            val b: UByte = get(posOther++)
 
             if (a == b)
                 continue
@@ -247,25 +262,25 @@ class ByteBuffer internal constructor(
         return remaining() - other.remaining()
     }
 
-    fun get(): Byte {
+    fun get(): UByte {
         checkArraySize(_limit, _position, 1)
-        val b: Byte = _array[_position]
+        val b: UByte = _array[_position]
         _position++
         return b
     }
 
-    fun set(b: Byte) {
+    fun set(b: UByte) {
         checkArraySize(_limit, _position, 1)
         _array[_position] = b
         _position++
     }
 
-    fun get(index: Int): Byte {
+    fun get(index: Int): UByte {
         checkArraySize(_limit, index, 1)
         return _array[index]
     }
 
-    fun set(index: Int, b: Byte) {
+    fun set(index: Int, b: UByte) {
         checkArraySize(_limit, index, 1)
         _array[index] = b
     }
@@ -300,7 +315,7 @@ class ByteBuffer internal constructor(
         checkArraySize(_limit, _position, size)
         val b: Long = value as Long
         for (i in 0..size)
-            _array[_position + (size - i)] = ((b ushr 8 * i) and 0xFFFFFFFF).toByte()
+            _array[_position + (size - i)] = ((b ushr 8 * i) and 0xFFFFFFFF).toUByte()
         _position += size
     }
 
@@ -314,8 +329,8 @@ class ByteBuffer internal constructor(
 
     fun writeChar(value: Char) {
         checkArraySize(_limit, _position, 2)
-        _array[_position + 1] = (value.toInt() and 0xFF).toByte()
-        _array[_position + 0] = ((value.toInt() ushr 8) and 0xFF).toByte()
+        _array[_position + 1] = (value.toInt() and 0xFF).toUByte()
+        _array[_position + 0] = ((value.toInt() ushr 8) and 0xFF).toUByte()
         _position += 2
     }
 
@@ -329,8 +344,8 @@ class ByteBuffer internal constructor(
 
     fun writeShort(value: Short) {
         checkArraySize(_limit, _position, 2)
-        _array[_position + 1] = (value.toInt() and 0xFF).toByte()
-        _array[_position + 0] = ((value.toInt() ushr 8) and 0xFF).toByte()
+        _array[_position + 1] = (value.toInt() and 0xFF).toUByte()
+        _array[_position + 0] = ((value.toInt() ushr 8) and 0xFF).toUByte()
         _position += 2
     }
 
@@ -344,8 +359,8 @@ class ByteBuffer internal constructor(
 
     fun writeUShort(value: UShort) {
         checkArraySize(_limit, _position, 2)
-        _array[_position + 1] = (value.toInt() and 0xFF).toByte()
-        _array[_position + 0] = ((value.toInt() ushr 8) and 0xFF).toByte()
+        _array[_position + 1] = (value.toInt() and 0xFF).toUByte()
+        _array[_position + 0] = ((value.toInt() ushr 8) and 0xFF).toUByte()
         _position += 2
     }
 
@@ -361,10 +376,10 @@ class ByteBuffer internal constructor(
 
     fun writeInt(value: Int) {
         checkArraySize(_limit, _position, 4)
-        _array[_position + 3] = (value and 0xFF).toByte()
-        _array[_position + 2] = ((value ushr 8) and 0xFF).toByte()
-        _array[_position + 1] = ((value ushr 16) and 0xFF).toByte()
-        _array[_position + 0] = ((value ushr 24) and 0xFF).toByte()
+        _array[_position + 3] = (value and 0xFF).toUByte()
+        _array[_position + 2] = ((value ushr 8) and 0xFF).toUByte()
+        _array[_position + 1] = ((value ushr 16) and 0xFF).toUByte()
+        _array[_position + 0] = ((value ushr 24) and 0xFF).toUByte()
         _position += 4
     }
 
@@ -379,13 +394,13 @@ class ByteBuffer internal constructor(
     }
 
     fun writeUInt(value: UInt) {
-        throw UnsupportedOperationException()
-        // checkArraySize(_limit, _position, 4)
-        // _array[_position + 3] = (value and 0xFF).toByte()
-        // _array[_position + 2] = ((value ushr 8) and 0xFF).toByte()
-        // _array[_position + 1] = ((value ushr 16) and 0xFF).toByte()
-        // _array[_position + 0] = ((value ushr 24) and 0xFF).toByte()
-        // _position += 4
+        checkArraySize(_limit, _position, 4)
+        val data: Int = value.toInt()
+        _array[_position + 3] = (data and 0xFF).toUByte()
+        _array[_position + 2] = ((data ushr 8) and 0xFF).toUByte()
+        _array[_position + 1] = ((data ushr 16) and 0xFF).toUByte()
+        _array[_position + 0] = ((data ushr 24) and 0xFF).toUByte()
+        _position += 4
     }
 
     fun readLong(): Long {
@@ -404,14 +419,14 @@ class ByteBuffer internal constructor(
 
     fun writeLong(value: Long) {
         checkArraySize(_limit, _position, 8)
-        _array[_position + 7] = (value and 0xFF).toByte()
-        _array[_position + 6] = ((value ushr 8) and 0xFF).toByte()
-        _array[_position + 5] = ((value ushr 16) and 0xFF).toByte()
-        _array[_position + 4] = ((value ushr 24) and 0xFF).toByte()
-        _array[_position + 3] = ((value ushr 32) and 0xFF).toByte()
-        _array[_position + 2] = ((value ushr 40) and 0xFF).toByte()
-        _array[_position + 1] = ((value ushr 48) and 0xFF).toByte()
-        _array[_position + 0] = ((value ushr 56) and 0xFF).toByte()
+        _array[_position + 7] = (value and 0xFF).toUByte()
+        _array[_position + 6] = ((value ushr 8) and 0xFF).toUByte()
+        _array[_position + 5] = ((value ushr 16) and 0xFF).toUByte()
+        _array[_position + 4] = ((value ushr 24) and 0xFF).toUByte()
+        _array[_position + 3] = ((value ushr 32) and 0xFF).toUByte()
+        _array[_position + 2] = ((value ushr 40) and 0xFF).toUByte()
+        _array[_position + 1] = ((value ushr 48) and 0xFF).toUByte()
+        _array[_position + 0] = ((value ushr 56) and 0xFF).toUByte()
         _position += 8
     }
 
@@ -430,17 +445,17 @@ class ByteBuffer internal constructor(
     }
 
     fun writeULong(value: ULong) {
-        throw UnsupportedOperationException()
-        // checkArraySize(_limit, _position, 8)
-        // _array[_position + 7] = (value and 0xFF).toByte()
-        // _array[_position + 6] = ((value ushr 8) and 0xFF).toByte()
-        // _array[_position + 5] = ((value ushr 16) and 0xFF).toByte()
-        // _array[_position + 4] = ((value ushr 24) and 0xFF).toByte()
-        // _array[_position + 3] = ((value ushr 32) and 0xFF).toByte()
-        // _array[_position + 2] = ((value ushr 40) and 0xFF).toByte()
-        // _array[_position + 1] = ((value ushr 48) and 0xFF).toByte()
-        // _array[_position + 0] = ((value ushr 56) and 0xFF).toByte()
-        // _position += 8
+        checkArraySize(_limit, _position, 8)
+        val data: Long = value.toLong()
+        _array[_position + 7] = (data and 0xFF).toUByte()
+        _array[_position + 6] = ((data ushr 8) and 0xFF).toUByte()
+        _array[_position + 5] = ((data ushr 16) and 0xFF).toUByte()
+        _array[_position + 4] = ((data ushr 24) and 0xFF).toUByte()
+        _array[_position + 3] = ((data ushr 32) and 0xFF).toUByte()
+        _array[_position + 2] = ((data ushr 40) and 0xFF).toUByte()
+        _array[_position + 1] = ((data ushr 48) and 0xFF).toUByte()
+        _array[_position + 0] = ((data ushr 56) and 0xFF).toUByte()
+        _position += 8
     }
 
     fun readFloat(): Float {
@@ -454,21 +469,41 @@ class ByteBuffer internal constructor(
     }
 
     fun writeFloat(value: Float) {
-        var data: Int = value.toRawBits()
+        val data: Int = value.toRawBits()
         checkArraySize(_limit, _position, 4)
-        _array[_position + 3] = (data and 0xFF).toByte()
-        _array[_position + 2] = ((data ushr 8) and 0xFF).toByte()
-        _array[_position + 1] = ((data ushr 16) and 0xFF).toByte()
-        _array[_position + 0] = ((data ushr 24) and 0xFF).toByte()
+        _array[_position + 3] = (data and 0xFF).toUByte()
+        _array[_position + 2] = ((data ushr 8) and 0xFF).toUByte()
+        _array[_position + 1] = ((data ushr 16) and 0xFF).toUByte()
+        _array[_position + 0] = ((data ushr 24) and 0xFF).toUByte()
         _position += 4
     }
 
     fun readDouble(): Double {
-        return Double.fromBits(scanBytes(8))
+        checkArraySize(_limit, _position, 8)
+        var value: Long = _array[_position + 7].toLong()
+        value += (_array[_position + 6].toLong() shl 8)
+        value += (_array[_position + 5].toLong() shl 16)
+        value += (_array[_position + 4].toLong() shl 24)
+        value += (_array[_position + 3].toLong() shl 32)
+        value += (_array[_position + 2].toLong() shl 40)
+        value += (_array[_position + 1].toLong() shl 48)
+        value += (_array[_position + 0].toLong() shl 56)
+        _position += 8
+        return Double.fromBits(value)
     }
 
     fun writeDouble(value: Double) {
-        printBytes(8, value.toRawBits())
+        val data: Long = value.toRawBits()
+        checkArraySize(_limit, _position, 8)
+        _array[_position + 7] = (data and 0xFF).toUByte()
+        _array[_position + 6] = ((data ushr 8) and 0xFF).toUByte()
+        _array[_position + 5] = ((data ushr 16) and 0xFF).toUByte()
+        _array[_position + 4] = ((data ushr 24) and 0xFF).toUByte()
+        _array[_position + 3] = ((data ushr 32) and 0xFF).toUByte()
+        _array[_position + 2] = ((data ushr 40) and 0xFF).toUByte()
+        _array[_position + 1] = ((data ushr 48) and 0xFF).toUByte()
+        _array[_position + 0] = ((data ushr 56) and 0xFF).toUByte()
+        _position += 8
     }
 
     override fun toString(): String {

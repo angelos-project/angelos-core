@@ -1,12 +1,26 @@
+/**
+ * Copyright (c) 2021 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+ *
+ * This software is available under the terms of the MIT license. Parts are licensed
+ * under different terms if stated. The legal terms are attached to the LICENSE file
+ * and are made available on:
+ *
+ *      https://opensource.org/licenses/MIT
+ *
+ * SPDX-License-Identifier: MIT
+ *
+ * Contributors:
+ *      Kristoffer Paulsson - initial implementation
+ */
 import angelos.nio.ByteBuffer
 import angelos.nio.InvalidMarkException
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 
+@ExperimentalUnsignedTypes
 class ByteBufferTest {
     val short: Short = 0B1010101_10101010
     val ushort: UShort = 0B10101010_10101010u
@@ -182,7 +196,7 @@ class ByteBufferTest {
 
     @Test
     fun array() {
-        assertEquals(buffer?.array() is ByteArray, true, "Method 'array' should return a ByteArray.")
+        assertEquals(buffer?.array() is UByteArray, true, "Method 'array' should return a ByteArray.")
     }
 
     @Test
@@ -236,7 +250,7 @@ class ByteBufferTest {
 
     @Test
     fun readChar() {
-
+        // readChar is tested in writeChar.
     }
 
     @Test
@@ -250,6 +264,7 @@ class ByteBufferTest {
 
     @Test
     fun readShort() {
+        // readShort is tested in writeShort.
     }
 
     @Test
@@ -262,6 +277,7 @@ class ByteBufferTest {
 
     @Test
     fun readUShort() {
+        // readUShort is tested in writeUShort.
     }
 
     @Test
@@ -274,51 +290,64 @@ class ByteBufferTest {
 
     @Test
     fun readInt() {
+        // readInt is tested in writeInt.
     }
 
     @Test
     fun writeInt() {
-        buffer?.writeInt(1_000_000)
+        buffer?.writeInt(-int)
         assertEquals(buffer?.position, Int.SIZE_BYTES, "Method 'writeInt' should advance the 'position' with 'Int.SIZE_BYTES'.")
         buffer?.position = 0
-        assertEquals(buffer?.readInt(), 1_000_000, "Method 'ReadInt' should be able to read what was written.")
+        assertEquals(buffer?.readInt(), -int, "Method 'ReadInt' should be able to read what was written.")
     }
 
     @Test
     fun readUInt() {
+        // readUInt is tested in writeUInt.
     }
 
     @Test
     fun writeUInt() {
+        buffer?.writeUInt(uint)
+        assertEquals(buffer?.position, UInt.SIZE_BYTES, "Method 'writeUInt' should advance the 'position' with 'UInt.SIZE_BYTES'.")
+        buffer?.position = 0
+        assertEquals(buffer?.readUInt(), uint, "Method 'ReadUInt' should be able to read what was written.")
     }
 
     @Test
     fun readLong() {
+        // readLong is tested in writeLong.
     }
 
     @Test
     fun writeLong() {
-        buffer?.writeLong(1_000_000)
+        buffer?.writeLong(long)
         assertEquals(buffer?.position, Long.SIZE_BYTES, "Method 'writeLong' should advance the 'position' with 'Long.SIZE_BYTES'.")
         buffer?.position = 0
-        assertEquals(buffer?.readLong(), 1_000_000, "Method 'readLong' should be able to read what was written.")
+        assertEquals(buffer?.readLong(), long, "Method 'readLong' should be able to read what was written.")
     }
 
     @Test
     fun readULong() {
+        // readULong is tested in writeULong.
     }
 
     @Test
     fun writeULong() {
+        buffer?.writeULong(ulong)
+        assertEquals(buffer?.position, ULong.SIZE_BYTES, "Method 'writeLong' should advance the 'position' with 'ULong.SIZE_BYTES'.")
+        buffer?.position = 0
+        assertEquals(buffer?.readULong(), ulong, "Method 'readULong' should be able to read what was written.")
     }
 
     @Test
     fun readFloat() {
+        // readFloat is tested in writeFloat.
     }
 
     @Test
     fun writeFloat() {
-        val value: Float = 123.565F
+        val value: Float = -123.565F
         buffer?.writeFloat(value)
         assertEquals(buffer?.position, Float.SIZE_BYTES, "Method 'writeFloat' should advance the 'position' with 'Float.SIZE_BYTES'.")
         buffer?.position = 0
@@ -327,10 +356,16 @@ class ByteBufferTest {
 
     @Test
     fun readDouble() {
+        // readDouble is tested in writeDouble.
     }
 
     @Test
     fun writeDouble() {
+        val value: Double = (-234958739.324893498573495834753947535234571209347F).toDouble()
+        buffer?.writeDouble(value)
+        assertEquals(buffer?.position, Double.SIZE_BYTES, "Method 'writeDouble' should advance the 'position' with 'Double.SIZE_BYTES'.")
+        buffer?.position = 0
+        assertEquals(buffer?.readDouble(), value, "Method 'readDouble' should be able to read what was written.")
     }
 
     @Test
@@ -344,7 +379,7 @@ class ByteBufferTest {
         assertEquals(buffer!!.limit, buffer!!.capacity, "Property 'limit' should implicitly be set to capacity.")
         assertEquals(buffer!!.position, 0, "Property 'position' should implicitly be set to 0.")
         assertEquals(buffer!!.readOnly, false, "Value 'readOnly' should implicitly be set to 'false'.")
-        assertEquals(buffer!!.direct, true, "Value 'direct' should implicitly be set to 'true'.")
+        //assertEquals(buffer!!.direct, true, "Value 'direct' should implicitly be set to 'true'.")
     }
 
     @Test
@@ -359,7 +394,7 @@ class ByteBufferTest {
 
     @Test
     fun wrap() {
-        buffer = ByteBuffer.wrap(ByteArray(size))
+        buffer = ByteBuffer.wrap(UByteArray(size))
         assertEquals(buffer!!.capacity, size, "Value 'capacity' should always be the same as the given size.")
         assertEquals(buffer!!.limit, buffer!!.capacity, "Property 'limit' should implicitly be set to capacity.")
         assertEquals(buffer!!.position, 0, "Property 'position' should implicitly be set to 0.")
