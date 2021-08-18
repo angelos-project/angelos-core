@@ -16,32 +16,31 @@ import angelos.nio.ByteBuffer
 import angelos.nio.ByteOrder
 import angelos.nio.InvalidMarkException
 import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import kotlin.test.*
 
 
 @ExperimentalUnsignedTypes
 class ByteBufferTest {
-    val short: Short = 0B1010101_10101010
-    val ushort: UShort = 0B10101010_10101010u
+    private val short: Short = 0B1010101_10101010
+    private val ushort: UShort = 0B10101010_10101010u
 
-    val int: Int = 0B1010101_10101010_10101010_10101010
-    val uint: UInt = 0B10101010_10101010_10101010_10101010u
+    private val int: Int = 0B1010101_10101010_10101010_10101010
+    private val uint: UInt = 0B10101010_10101010_10101010_10101010u
 
-    val long: Long = 0B1010101_10101010_10101010_10101010_10101010_10101010_10101010_10101010L
-    val ulong: ULong = 0B10101010_10101010_10101010_10101010_10101010_10101010_10101010_10101010u
+    private val long: Long = 0B1010101_10101010_10101010_10101010_10101010_10101010_10101010_10101010L
+    private val ulong: ULong = 0B10101010_10101010_10101010_10101010_10101010_10101010_10101010_10101010u
 
-    val size: Int = 128
-    var buffer: ByteBuffer = ByteBuffer(size)
+    private val size: Int = 128
+    private var buffer: ByteBuffer = ByteBuffer(size)
 
     @After
     fun tearDown() {
         buffer = ByteBuffer(size)
     }
 
-    inline fun <reified E : kotlin.Exception> assertExceptionThrown(test: () -> Unit, message: String) {
-        var happened: Boolean = false
+    private inline fun <reified E : Exception> assertExceptionThrown(test: () -> Unit, message: String) {
+        var happened = false
         try {
             test()
         } catch (e: Exception) {
@@ -198,19 +197,19 @@ class ByteBufferTest {
 
     @Test
     fun read() { // Implement asserts
-        val arr: UByteArray = UByteArray(64)
+        val arr = UByteArray(64)
         buffer.read(arr)
     }
 
     @Test
     fun write() { // Implement asserts
-        val arr: UByteArray = UByteArray(64)
+        val arr = UByteArray(64)
         buffer.write(arr)
     }
 
     @Test
     fun testWrite() { // Implement asserts
-        val arr: ByteBuffer = ByteBuffer(64)
+        val arr = ByteBuffer(64)
         buffer.write(arr)
     }
 
@@ -272,7 +271,7 @@ class ByteBufferTest {
 
     @Test
     fun testWrite2() {
-        val index: Int = 122
+        val index = 122
         val byte: UByte = 0x80u
         buffer.write(index, byte)
 
@@ -312,7 +311,7 @@ class ByteBufferTest {
 
     @Test
     fun writeChar() {
-        val letter: Char = 'Å'
+        val letter = 'Å'
         buffer.writeChar(letter)
         assertEquals(
             buffer.position,
