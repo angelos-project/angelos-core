@@ -32,3 +32,15 @@ internal actual inline fun checkExecutable(path: String): Boolean {
     val file = File(path)
     return Files.isExecutable(file.toPath())
 }
+
+internal actual inline fun checkExists(path: String): Boolean {
+    TODO("Not yet implemented")
+}
+
+internal actual inline fun getFileType(path: String): Int {
+    TODO("Not yet implemented")
+}
+
+internal actual inline fun getLinkTarget(path: String): String {
+    TODO("Not yet implemented")
+}

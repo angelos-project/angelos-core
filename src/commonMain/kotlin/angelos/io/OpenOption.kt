@@ -14,6 +14,8 @@
  */
 package angelos.io
 
-class Link(path: RealPath) : FileObject(path) {
-    fun goToTarget(): FileObject = RealPath.wrap(getLinkTarget(path.toString()), path.separator).getItem()
+enum class OpenOptions {
+    READ,
+    WRITE,
+    APPEND;
 }

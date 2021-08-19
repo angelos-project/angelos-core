@@ -14,22 +14,35 @@
  */
 package angelos.io
 
-open class FileObject (path: Path){
+open class FileObject (path: RealPath){
     private val name: String = path.path.last()
     private val suffix: String = name.substringAfter('.')
-    private val path: Path = path
+    private val _path: RealPath = path
+
+    val path: RealPath
+        get() = _path
 
     val readable: Boolean
-        get() = checkReadable(path.toString())
+        get() = checkReadable(_path.toString())
 
     val writable: Boolean
-        get() = checkWritable(path.toString())
+        get() = checkWritable(_path.toString())
 
     val executable: Boolean
-        get() = checkExecutable(path.toString())
+        get() = checkExecutable(_path.toString())
 }
-
 
 internal expect inline fun checkReadable(path: String): Boolean
 internal expect inline fun checkWritable(path: String): Boolean
 internal expect inline fun checkExecutable(path: String): Boolean
+internal expect inline fun checkExists(path: String): Boolean
+internal expect inline fun getFileType(path: String): Int
+internal expect inline fun getLinkTarget(path: String): String
+
+/**
+ * FILESYSTEM LINKS
+ * Kotlin/Native - posix -> 05_posix.knm
+ * Kotlin/Native - posix -> 06_posix.knm
+ * Kotlin/Native - posix -> 23_posix.knm
+ * Kotlin/Native - posix -> 24_posix.knm
+ */

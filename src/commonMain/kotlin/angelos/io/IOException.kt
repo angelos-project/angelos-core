@@ -14,5 +14,5 @@
  */
 package angelos.io
 
-class IOException(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause) {
+open class IOException(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause) {
 }

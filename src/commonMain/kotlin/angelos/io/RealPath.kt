@@ -14,5 +14,40 @@
  */
 package angelos.io
 
-class RealPath(path: String, separator: PathSeparator = PathSeparator.POSIX) : Path(path, separator) {
+class RealPath internal constructor(root: String, path: List<String>, separator: PathSeparator) :
+    Path(root, path, separator) {
+
+    companion object{
+        internal fun wrap(path: String, separator: PathSeparator): RealPath{
+            val elements = getElements(path, separator)
+            return RealPath(elements.first, elements.second, elements.third)
+        }
+    }
+
+    fun getItem(): FileObject {
+        return when (getType()) {
+            FileType.DIR -> Dir(this)
+            FileType.LINK -> Link(this)
+            FileType.FILE -> File(this)
+            else -> throw UnsupportedOperationException()
+        }
+    }
+
+    fun exists(): Boolean {
+        return checkExists(this.toString())
+    }
+
+    fun isLink(): Boolean = getType() == FileType.LINK
+    fun isFile(): Boolean  = getType() == FileType.FILE
+    fun isDir(): Boolean  = getType() == FileType.DIR
+
+    fun getType(): FileType = when (getFileType(this.toString())) {
+        1 -> FileType.LINK
+        2 -> FileType.DIR
+        3 -> FileType.FILE
+        else -> FileType.UNKNOWN
+    }
+
+    override fun join(vararg elements: String): RealPath = RealPath(root, path + elements, separator)
+    override fun join(path: String): RealPath = RealPath(root, this.path + splitString(path, separator), separator)
 }

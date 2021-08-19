@@ -15,4 +15,10 @@
 package angelos.io
 
 class VirtualPath(path: String, separator: PathSeparator = PathSeparator.POSIX) : Path(path, separator) {
+
+    override fun join(vararg elements: String): VirtualPath =
+        VirtualPath(joinStrings(elements = elements.asList()), separator)
+
+    override fun join(path: String): VirtualPath =
+        VirtualPath(joinStrings(elements = splitString(path, separator)), separator)
 }
