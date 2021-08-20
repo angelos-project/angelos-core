@@ -17,8 +17,8 @@ package angelos.io
 class RealPath internal constructor(root: String, path: List<String>, separator: PathSeparator) :
     Path(root, path, separator) {
 
-    companion object{
-        internal fun wrap(path: String, separator: PathSeparator): RealPath{
+    companion object {
+        internal fun wrap(path: String, separator: PathSeparator): RealPath {
             val elements = getElements(path, separator)
             return RealPath(elements.first, elements.second, elements.third)
         }
@@ -38,8 +38,8 @@ class RealPath internal constructor(root: String, path: List<String>, separator:
     }
 
     fun isLink(): Boolean = getType() == FileType.LINK
-    fun isFile(): Boolean  = getType() == FileType.FILE
-    fun isDir(): Boolean  = getType() == FileType.DIR
+    fun isFile(): Boolean = getType() == FileType.FILE
+    fun isDir(): Boolean = getType() == FileType.DIR
 
     fun getType(): FileType = when (getFileType(this.toString())) {
         1 -> FileType.LINK
