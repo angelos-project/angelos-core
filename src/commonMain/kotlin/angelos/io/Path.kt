@@ -21,7 +21,7 @@ typealias PathElements = Triple<String, List<String>, PathSeparator>
 /**
  * Path abstract class.
  */
-abstract class Path internal constructor(val root: String, val path: List<String>, val separator: PathSeparator) {
+abstract class Path internal constructor(protected val root: String, val path: List<String>, val separator: PathSeparator) {
     val absolute: Boolean = root.isNotEmpty()
 
     constructor(elements: PathElements): this(elements.first, elements.second, elements.third)

@@ -22,31 +22,29 @@ class RealPath internal constructor(root: String, path: List<String>, separator:
             val elements = getElements(path, separator)
             return RealPath(elements.first, elements.second, elements.third)
         }
-    }
 
-    fun getItem(): FileObject {
-        return when (getType()) {
-            FileType.DIR -> Dir(this)
-            FileType.LINK -> Link(this)
-            FileType.FILE -> File(this)
+        internal inline fun getItem(path: RealPath, type: FileObject.Type): FileObject = when (type) {
+            FileObject.Type.DIR -> Dir(path)
+            FileObject.Type.LINK -> Link(path)
+            FileObject.Type.FILE -> File(path)
             else -> throw UnsupportedOperationException()
+        }
+
+        internal inline fun getType(type: Int): FileObject.Type = when (type) {
+            1 -> FileObject.Type.LINK
+            2 -> FileObject.Type.DIR
+            3 -> FileObject.Type.FILE
+            else -> FileObject.Type.UNKNOWN
         }
     }
 
-    fun exists(): Boolean {
-        return checkExists(this.toString())
-    }
+    private fun getType(): FileObject.Type = getType(getFileType(this.toString()))
 
-    fun isLink(): Boolean = getType() == FileType.LINK
-    fun isFile(): Boolean = getType() == FileType.FILE
-    fun isDir(): Boolean = getType() == FileType.DIR
-
-    fun getType(): FileType = when (getFileType(this.toString())) {
-        1 -> FileType.LINK
-        2 -> FileType.DIR
-        3 -> FileType.FILE
-        else -> FileType.UNKNOWN
-    }
+    fun getItem(): FileObject = getItem(this, getType())
+    fun exists(): Boolean = checkExists(this.toString())
+    fun isLink(): Boolean = getType() == FileObject.Type.LINK
+    fun isFile(): Boolean = getType() == FileObject.Type.FILE
+    fun isDir(): Boolean = getType() == FileObject.Type.DIR
 
     override fun join(vararg elements: String): RealPath = RealPath(root, path + elements, separator)
     override fun join(path: String): RealPath = RealPath(root, this.path + splitString(path, separator), separator)

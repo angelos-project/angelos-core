@@ -15,5 +15,14 @@
 package angelos.io
 
 class File(path: RealPath) : FileObject(path) {
+    val size: Long
+        get() = _info.size
 
+    fun open(option: OpenOption): FileDescriptor = FileDescriptor(this, option, openFile(this.path.toString(), option.ordinal))
+
+    enum class OpenOption(option: Int) {
+        READ_ONLY(0),
+        WRITE_ONLY(1),
+        READ_WRITE(2),
+    }
 }

@@ -14,25 +14,59 @@
  */
 package angelos.io
 
-class FileDescriptor(private val descriptor: ULong): Closable {
+import angelos.nio.BufferOverflowException
+import angelos.nio.BufferUnderflowException
+import angelos.nio.ByteBuffer
 
-    //fun read()
+class FileDescriptor internal constructor(
+    internal val file: File,
+    val option: File.OpenOption,
+    private var _number: Int,
+) : Closable {
+    private var _position: ULong = 0u
 
-    //fun write()
+    val position: ULong
+        get() = _position
 
-    //fun tell()
+    val number: Int
+        get() = _number
+
+    fun read(buffer: ByteBuffer, count: ULong) {
+        if (buffer.remaining().toULong() < count)
+            throw BufferUnderflowException()
+        if(readFile(_number, buffer.array(), buffer.position, count) != count)
+            throw IOException("Couldn't read $count bytes from file.")
+        _position += count
+    }
+
+    fun write(buffer: ByteBuffer, count: ULong) {
+        if (buffer.remaining().toULong() < count)
+            throw BufferOverflowException()
+        if(writeFile(_number, buffer.array(), buffer.position, count) != count)
+            throw IOException("Couldn't write $count bytes to file.")
+        _position += count
+    }
+
+    fun tell(): ULong{
+        val position = tellFile(_number)
+        if (position != _position)
+            throw SyncFailedException("File descriptor out of sync with physical cursor.")
+        return position
+    }
 
     //fun seek()
 
-    //fun close()
-    override fun close() {
-        TODO("Not yet implemented")
+    override fun close(){
+        closeFile(_number)
+        _number = 0
     }
 
 }
 
-//internal expect inline fun doRead(path: String): UInt
-//internal expect inline fun doWrite(path: String): UInt
-//internal expect inline fun doTell(path: String): UInt
-//internal expect inline fun doSeek(path: String): UInt
-//internal expect inline fun doClose(path: String): UInt
+
+@ExperimentalUnsignedTypes
+internal expect inline fun readFile(number: Int, array: UByteArray, index: Int, count: ULong): ULong
+internal expect inline fun writeFile(number: Int, array: UByteArray, index: Int, count: ULong): ULong
+internal expect inline fun tellFile(number: Int): ULong
+// internal expect inline fun seekFile(number: Int): UInt
+internal expect inline fun closeFile(number: Int): Boolean

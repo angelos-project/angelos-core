@@ -1,21 +1,37 @@
+/**
+ * Copyright (c) 2021 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+ *
+ * This software is available under the terms of the MIT license. Parts are licensed
+ * under different terms if stated. The legal terms are attached to the LICENSE file
+ * and are made available on:
+ *
+ *      https://opensource.org/licenses/MIT
+ *
+ * SPDX-License-Identifier: MIT
+ *
+ * Contributors:
+ *      Kristoffer Paulsson - initial implementation
+ */
 package angelos.io
 
 import org.junit.Test
 
 class FileTest {
 
+    fun createFile(): File = File(RealPath("/",listOf("tmp"), PathSeparator.POSIX))
+
     @Test
     fun getReadable() {
-        kotlin.test.assertTrue(File(RealPath("/tmp")).readable)
+        kotlin.test.assertTrue(createFile().readable)
     }
 
     @Test
     fun getWritable() {
-        kotlin.test.assertTrue(File(RealPath("/tmp")).writable)
+        kotlin.test.assertTrue(createFile().writable)
     }
 
     @Test
     fun getExecutable() {
-        kotlin.test.assertTrue(File(RealPath("/tmp")).executable)
+        kotlin.test.assertTrue(createFile().executable)
     }
 }

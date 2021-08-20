@@ -1,3 +1,3 @@
 
-rootProject.name = "angelos-nio"
+rootProject.name = "angelos-core"
 

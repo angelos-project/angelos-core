@@ -15,5 +15,10 @@
 package angelos.io
 
 class Link(path: RealPath) : FileObject(path) {
-    fun goToTarget(): FileObject = RealPath.wrap(getLinkTarget(path.toString()), path.separator).getItem()
+    private val _target: RealPath by lazy { RealPath.wrap(getLinkTarget(path.toString()), path.separator) }
+
+    val target: String
+        get() = _target.toString()
+
+    fun goToTarget(): FileObject = _target.getItem()
 }

@@ -37,3 +37,30 @@ internal actual inline fun getFileType(path: String): Int {
 internal actual inline fun getLinkTarget(path: String): String {
     TODO("Not yet implemented")
 }
+
+internal actual inline fun openDir(path: String): Any {
+    TODO("Not yet implemented")
+}
+
+internal actual inline fun readDir(dir: Any): FileEntry {
+    TODO("Not yet implemented")
+}
+
+/**
+ * FILESYSTEM LINKS
+ * Kotlin/Native - posix -> 05_posix.knm
+ * Kotlin/Native - posix -> 06_posix.knm
+ * Kotlin/Native - posix -> 23_posix.knm
+ * Kotlin/Native - posix -> 24_posix.knm
+ */
+internal actual inline fun closeDir(dir: Any): Boolean {
+    TODO("Not yet implemented")
+}
+
+internal actual inline fun getFileInfo(path: String): FileObject.Info {
+    TODO("Not yet implemented")
+}
+
+internal actual inline fun openFile(path: String, option: Int): Int {
+    TODO("Not yet implemented")
+}
