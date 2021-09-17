@@ -14,4 +14,6 @@
  */
 package angelos.nio
 
-class InvalidMarkException(message: String? = null, cause: Throwable? = null) : IllegalStateException(message, cause)
+import angelos.jni.Posix
+
+internal actual inline fun checkNativeOrder(): Boolean = Posix.isLittleEndian()

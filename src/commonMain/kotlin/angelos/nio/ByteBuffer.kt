@@ -20,19 +20,13 @@ import kotlin.jvm.JvmStatic
 class ByteBuffer internal constructor(
     array: UByteArray,
     capacity: Int = 0,
-    limit: Int = 0,
     position: Int = 0,
-    mark: Int = -1,
-    readOnly: Boolean = false,
     direct: Boolean = false,
 ) : Any(), Comparable<ByteBuffer> {
-    val readOnly: Boolean = readOnly
     val direct: Boolean = direct
 
     private var _capacity: Int
-    private var _limit: Int = 0
     private var _position: Int = 0
-    private var _mark: Int = -1
 
     private var _endian: ByteOrder = ByteOrder.BIG_ENDIAN
     private var _reverse: Boolean = ByteOrder.BIG_ENDIAN != nativeEndianness
@@ -42,29 +36,11 @@ class ByteBuffer internal constructor(
     val capacity: Int
         get() = _capacity
 
-    var limit: Int
-        get() = _limit
-        set(value) {
-            if ((value < 0) || (value > _capacity))
-                throw IllegalArgumentException()
-
-            if (value < _mark)
-                _mark = -1
-
-            if (_position > value)
-                _position = value
-
-            _limit = value
-        }
-
     var position: Int
         get() = _position
         set(value) {
-            if ((value < 0) || (value > _limit))
+            if ((value < 0) || (value > _capacity))
                 throw IllegalArgumentException()
-
-            if (value <= _mark)
-                _mark = -1
 
             _position = value
         }
@@ -81,23 +57,15 @@ class ByteBuffer internal constructor(
             throw IllegalArgumentException()
 
         _capacity = capacity
-        this.limit = limit
         this.position = position
-
-        if (mark >= 0) {
-            if (mark > _position)
-                throw IllegalArgumentException()
-
-            _mark = mark
-        }
     }
 
-    constructor(capacity: Int) : this(UByteArray(size = capacity), capacity, capacity, direct = true)
+    constructor(capacity: Int) : this(UByteArray(size = capacity), capacity, 0, direct = true)
 
     companion object {
         @JvmStatic
         private inline fun checkArraySize(limit: Int, offset: Int, size: Int) {
-            if ((offset < 0) || (size < 0) || (limit < size + offset))
+            if (limit < (size + offset))
                 throw IndexOutOfBoundsException()
         }
 
@@ -113,46 +81,22 @@ class ByteBuffer internal constructor(
 
         @JvmStatic
         fun wrap(array: UByteArray, offset: Int = 0, length: Int = array.size): ByteBuffer {
-            return ByteBuffer(array, array.size, offset + length, offset, -1)
+            return ByteBuffer(array, array.size, offset)
         }
 
         private val nativeEndianness: ByteOrder = ByteOrder.nativeOrder()
-    }
-
-    fun clear() {
-        _limit = _capacity
-        _position = 0
-        _mark = -1
-    }
-
-    fun flip() {
-        _limit = _position
-        _position = 0
-        _mark = -1
     }
 
     fun hasRemaining(): Boolean {
         return remaining() > 0
     }
 
-    fun mark() {
-        _mark = _position
-    }
-
     fun remaining(): Int {
-        return _limit - _position
-    }
-
-    fun reset() {
-        if (_mark == -1)
-            throw InvalidMarkException()
-
-        _position = _mark
+        return _capacity - _position
     }
 
     fun rewind() {
         _position = 0
-        _mark = -1
     }
 
     private inline fun checkForUnderflow(length: Int = 0) {
@@ -170,13 +114,8 @@ class ByteBuffer internal constructor(
     }
 
     private inline fun checkIndex(index: Int) {
-        if (index < 0 || index >= _limit)
+        if (index < 0 || index >= _capacity)
             throw IndexOutOfBoundsException()
-    }
-
-    private inline fun checkIfReadOnly() {
-        if (readOnly)
-            throw ReadOnlyBufferException()
     }
 
     fun read(dst: UByteArray, offset: Int = 0, length: Int = dst.size) {
@@ -187,7 +126,6 @@ class ByteBuffer internal constructor(
     }
 
     fun write(src: ByteBuffer) {
-        checkIfReadOnly()
         if (src == this)
             throw IllegalArgumentException()
 
@@ -199,76 +137,56 @@ class ByteBuffer internal constructor(
     }
 
     fun write(src: UByteArray, offset: Int = 0, length: Int = src.size) {
-        checkIfReadOnly()
         checkArraySize(src.size, offset, length)
         checkForOverflow(length)
 
         src.copyInto(_array, _position, offset, offset + length)
     }
 
-    fun hasArray(): Boolean {
-        return !readOnly
-    }
+    fun hasArray(): Boolean = true
 
-    fun array(): UByteArray {
-        checkIfReadOnly()
-        return _array
-    }
+    fun array(): UByteArray = _array
 
-    fun arrayOffset(): Int {
-        checkIfReadOnly()
-        return _position
-    }
+    fun arrayOffset(): Int = _position
 
-    override fun hashCode(): Int {
-        return _array.contentHashCode()
-    }
+    override fun hashCode(): Int = _array.contentHashCode()
 
-    override fun equals(other: Any?): Boolean =
-        other is ByteBuffer && compareTo(other) == 0 && readOnly == other.readOnly && order == other.order
+    override fun equals(other: Any?): Boolean = other is ByteBuffer && compareTo(other) == 0 && order == other.order
 
-    override fun compareTo(other: ByteBuffer): Int {
-        return hashCode() - other.hashCode()
-    }
+    override fun compareTo(other: ByteBuffer): Int = hashCode() - other.hashCode()
 
     fun read(): UByte {
-        checkArraySize(_limit, _position, 1)
+        checkArraySize(_capacity, _position, 1)
         val b: UByte = _array[_position]
         _position++
         return b
     }
 
     fun write(b: UByte) {
-        checkArraySize(_limit, _position, 1)
+        checkArraySize(_capacity, _position, 1)
         _array[_position] = b
         _position++
     }
 
     fun read(index: Int): UByte {
-        checkArraySize(_limit, index, 1)
+        checkArraySize(_capacity, index, 1)
         return _array[index]
     }
 
     fun write(index: Int, b: UByte) {
-        checkArraySize(_limit, index, 1)
+        checkArraySize(_capacity, index, 1)
         _array[index] = b
     }
 
-    fun slice(): ByteBuffer {
-        val array = _array.copyOfRange(_mark, _limit)
-        return ByteBuffer(array, array.size, array.size, direct = direct)
+    fun slice(range: IntRange): ByteBuffer {
+        val array = _array.copyOfRange(range.first, range.last)
+        return ByteBuffer(array, array.size, direct = direct)
     }
 
-    fun duplicate(): ByteBuffer {
-        return ByteBuffer(_array.copyOf())
-    }
-
-    fun asReadOnly(): ByteBuffer {
-        return ByteBuffer(_array, readOnly = true)
-    }
+    fun duplicate(): ByteBuffer = ByteBuffer(_array.copyOf())
 
     fun readChar(): Char {
-        checkArraySize(_limit, _position, 2)
+        checkArraySize(_capacity, _position, 2)
         var value: Int
         if (_reverse) {
             value = _array[_position + 0].toInt()
@@ -282,8 +200,7 @@ class ByteBuffer internal constructor(
     }
 
     fun writeChar(value: Char) {
-        checkIfReadOnly()
-        checkArraySize(_limit, _position, 2)
+        checkArraySize(_capacity, _position, 2)
         if (_reverse) {
             _array[_position + 0] = (value.code and 0xFF).toUByte()
             _array[_position + 1] = ((value.code ushr 8) and 0xFF).toUByte()
@@ -296,7 +213,7 @@ class ByteBuffer internal constructor(
     }
 
     fun readShort(): Short {
-        checkArraySize(_limit, _position, 2)
+        checkArraySize(_capacity, _position, 2)
         var value: Int
         if (_reverse) {
             value = _array[_position + 0].toInt()
@@ -310,8 +227,7 @@ class ByteBuffer internal constructor(
     }
 
     fun writeShort(value: Short) {
-        checkIfReadOnly()
-        checkArraySize(_limit, _position, 2)
+        checkArraySize(_capacity, _position, 2)
         if (_reverse) {
             _array[_position + 0] = (value.toInt() and 0xFF).toUByte()
             _array[_position + 1] = ((value.toInt() ushr 8) and 0xFF).toUByte()
@@ -323,7 +239,7 @@ class ByteBuffer internal constructor(
     }
 
     fun readUShort(): UShort {
-        checkArraySize(_limit, _position, 2)
+        checkArraySize(_capacity, _position, 2)
         var value: Int
         if (_reverse) {
             value = _array[_position + 0].toInt()
@@ -337,8 +253,7 @@ class ByteBuffer internal constructor(
     }
 
     fun writeUShort(value: UShort) {
-        checkIfReadOnly()
-        checkArraySize(_limit, _position, 2)
+        checkArraySize(_capacity, _position, 2)
         if (_reverse) {
             _array[_position + 0] = (value.toInt() and 0xFF).toUByte()
             _array[_position + 1] = ((value.toInt() ushr 8) and 0xFF).toUByte()
@@ -350,7 +265,7 @@ class ByteBuffer internal constructor(
     }
 
     fun readInt(): Int {
-        checkArraySize(_limit, _position, 4)
+        checkArraySize(_capacity, _position, 4)
         var value: Int
         if (_reverse) {
             value = _array[_position + 0].toInt()
@@ -368,8 +283,7 @@ class ByteBuffer internal constructor(
     }
 
     fun writeInt(value: Int) {
-        checkIfReadOnly()
-        checkArraySize(_limit, _position, 4)
+        checkArraySize(_capacity, _position, 4)
         if (_reverse) {
             _array[_position + 0] = (value and 0xFF).toUByte()
             _array[_position + 1] = ((value ushr 8) and 0xFF).toUByte()
@@ -385,7 +299,7 @@ class ByteBuffer internal constructor(
     }
 
     fun readUInt(): UInt {
-        checkArraySize(_limit, _position, 4)
+        checkArraySize(_capacity, _position, 4)
         var value: UInt
         if (_reverse) {
             value = _array[_position + 3].toUInt()
@@ -403,8 +317,7 @@ class ByteBuffer internal constructor(
     }
 
     fun writeUInt(value: UInt) {
-        checkIfReadOnly()
-        checkArraySize(_limit, _position, 4)
+        checkArraySize(_capacity, _position, 4)
         val data: Int = value.toInt()
         if (_reverse) {
             _array[_position + 0] = (data and 0xFF).toUByte()
@@ -421,7 +334,7 @@ class ByteBuffer internal constructor(
     }
 
     fun readLong(): Long {
-        checkArraySize(_limit, _position, 8)
+        checkArraySize(_capacity, _position, 8)
         var value: Long
         if (_reverse) {
             value = _array[_position + 0].toLong()
@@ -447,8 +360,7 @@ class ByteBuffer internal constructor(
     }
 
     fun writeLong(value: Long) {
-        checkIfReadOnly()
-        checkArraySize(_limit, _position, 8)
+        checkArraySize(_capacity, _position, 8)
         if (_reverse) {
             _array[_position + 0] = (value and 0xFF).toUByte()
             _array[_position + 1] = ((value ushr 8) and 0xFF).toUByte()
@@ -472,7 +384,7 @@ class ByteBuffer internal constructor(
     }
 
     fun readULong(): ULong {
-        checkArraySize(_limit, _position, 8)
+        checkArraySize(_capacity, _position, 8)
         var value: ULong
         if (_reverse) {
             value = _array[_position + 0].toULong()
@@ -498,8 +410,7 @@ class ByteBuffer internal constructor(
     }
 
     fun writeULong(value: ULong) {
-        checkIfReadOnly()
-        checkArraySize(_limit, _position, 8)
+        checkArraySize(_capacity, _position, 8)
         val data: Long = value.toLong()
         if (_reverse) {
             _array[_position + 0] = (data and 0xFF).toUByte()
@@ -524,7 +435,7 @@ class ByteBuffer internal constructor(
     }
 
     fun readFloat(): Float {
-        checkArraySize(_limit, _position, 4)
+        checkArraySize(_capacity, _position, 4)
         var value: Int
         if (_reverse) {
             value = _array[_position + 0].toInt()
@@ -542,8 +453,7 @@ class ByteBuffer internal constructor(
     }
 
     fun writeFloat(value: Float) {
-        checkIfReadOnly()
-        checkArraySize(_limit, _position, 4)
+        checkArraySize(_capacity, _position, 4)
         val data: Int = value.toRawBits()
         if (_reverse) {
             _array[_position + 0] = (data and 0xFF).toUByte()
@@ -560,7 +470,7 @@ class ByteBuffer internal constructor(
     }
 
     fun readDouble(): Double {
-        checkArraySize(_limit, _position, 8)
+        checkArraySize(_capacity, _position, 8)
         var value: Long
         if (_reverse) {
             value = _array[_position + 0].toLong()
@@ -586,8 +496,7 @@ class ByteBuffer internal constructor(
     }
 
     fun writeDouble(value: Double) {
-        checkIfReadOnly()
-        checkArraySize(_limit, _position, 8)
+        checkArraySize(_capacity, _position, 8)
         val data: Long = value.toRawBits()
         if (_reverse) {
             _array[_position + 0] = (data and 0xFF).toUByte()
@@ -612,6 +521,6 @@ class ByteBuffer internal constructor(
     }
 
     override fun toString(): String {
-        return "ByteBuffer" + "pos[=" + position + " lim=" + limit + "cap=" + capacity + "]"
+        return "ByteBuffer" + "pos[=" + position + "cap=" + capacity + "]"
     }
 }

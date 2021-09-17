@@ -54,11 +54,18 @@ class FileDescriptor internal constructor(
         return position
     }
 
-    //fun seek()
+    fun seek(position: Long, whence: Seek): ULong{
+        _position = seekFile(_number, position, whence)
+        return _position
+    }
 
     override fun close(){
         closeFile(_number)
         _number = 0
+    }
+
+    enum class Seek{
+        SET, CUR, END
     }
 
 }
@@ -66,7 +73,8 @@ class FileDescriptor internal constructor(
 
 @ExperimentalUnsignedTypes
 internal expect inline fun readFile(number: Int, array: UByteArray, index: Int, count: ULong): ULong
+@ExperimentalUnsignedTypes
 internal expect inline fun writeFile(number: Int, array: UByteArray, index: Int, count: ULong): ULong
 internal expect inline fun tellFile(number: Int): ULong
-// internal expect inline fun seekFile(number: Int): UInt
+internal expect inline fun seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): ULong
 internal expect inline fun closeFile(number: Int): Boolean

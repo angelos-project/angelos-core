@@ -97,12 +97,7 @@ abstract class Buffer(capacity: Int, limit: Int, position: Int, mark: Int) : Any
         return _limit - _position
     }
 
-    fun reset() {
-        if (_mark == -1)
-            throw InvalidMarkException()
 
-        _position = _mark
-    }
 
     fun rewind() {
         _position = 0

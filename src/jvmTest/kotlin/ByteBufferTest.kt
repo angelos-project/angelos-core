@@ -14,7 +14,6 @@
  */
 import angelos.nio.ByteBuffer
 import angelos.nio.ByteOrder
-import angelos.nio.InvalidMarkException
 import org.junit.After
 import org.junit.Test
 import kotlin.test.*
@@ -55,11 +54,6 @@ class ByteBufferTest {
     }
 
     @Test
-    fun getReadOnly() {
-        assertEquals(buffer.readOnly, false, "Value 'readOnly' should implicitly be 'true'.")
-    }
-
-    @Test
     fun getDirect() {
         assertEquals(buffer.direct, true, "Value 'direct' should implicitly be 'true'.")
     }
@@ -74,28 +68,6 @@ class ByteBufferTest {
     }
 
     @Test
-    fun getLimit() {
-        assertEquals(buffer.limit, size, "Property 'limit' should implicitly be set to 'capacity'.")
-    }
-
-    @Test
-    fun setLimit() {
-        assertExceptionThrown<IllegalArgumentException>(
-            { buffer.limit = -1 }, "Property 'limit' can not accept a negative value."
-        )
-        assertExceptionThrown<IllegalArgumentException>(
-            { buffer.limit = 1 + buffer.capacity },
-            "Property 'limit' can not be higher than property 'capacity'."
-        )
-
-        val limit: Int = (size * .67).toInt()
-        buffer.position = size
-        buffer.limit = limit
-        assertEquals(buffer.limit, limit, "Property 'limit' should accept value between 0 and 'capacity'.")
-        assertEquals(buffer.position, limit, "Property 'position' should be decreased to new 'limit'.")
-    }
-
-    @Test
     fun getPosition() {
         assertEquals(buffer.position, 0, "Property 'position' should implicitly be set to 0.")
     }
@@ -106,11 +78,11 @@ class ByteBufferTest {
             { buffer.position = -1 }, "Property 'position' can not accept a negative value."
         )
         assertExceptionThrown<IllegalArgumentException>(
-            { buffer.position = 1 + buffer.limit },
+            { buffer.position = 1 + buffer.capacity },
             "Property 'position' can not be higher than property 'limit'."
         )
 
-        val position: Int = (buffer.limit * .67).toInt()
+        val position: Int = (buffer.capacity * .67).toInt()
         buffer.position = position
         assertEquals(buffer.position, position, "Property 'position' should accept value between 0 and 'limit'.")
     }
@@ -124,27 +96,6 @@ class ByteBufferTest {
     fun setOrder() {
         buffer.order = ByteOrder.LITTLE_ENDIAN
         assertEquals(buffer.order, ByteOrder.LITTLE_ENDIAN, "Property 'order' should be settable.")
-    }
-
-    @Test
-    fun clear() {
-        buffer.limit = (size * .67).toInt()
-        buffer.position = (buffer.limit * .67).toInt()
-
-        buffer.clear()
-
-        assertEquals(buffer.limit, size, "Property 'limit' should be cleared to 'capacity'.")
-        assertEquals(buffer.position, 0, "Property 'position' should be cleared to 0.")
-    }
-
-    @Test
-    fun flip() {
-        val position: Int = (buffer.limit * .67).toInt()
-        buffer.position = position
-
-        buffer.flip()
-
-        assertEquals(buffer.limit, position, "Property 'limit' should be flipped to 'position'.")
     }
 
     @Test
@@ -163,33 +114,17 @@ class ByteBufferTest {
     }
 
     @Test
-    fun mark() {
-        val position: Int = (buffer.limit * .33).toInt()
-        buffer.position = position
-
-        buffer.mark()
-        buffer.reset()
-    }
-
-    @Test
     fun remaining() {
         assertEquals(
             buffer.remaining(),
-            buffer.limit - buffer.position,
+            buffer.capacity - buffer.position,
             "Method 'remaining' should return 'limit' minus 'position'."
         )
     }
 
     @Test
-    fun reset() {
-        assertExceptionThrown<InvalidMarkException>(
-            { buffer.reset() }, "Unmarked buffer shouldn't be resettable."
-        )
-    }
-
-    @Test
     fun rewind() {
-        val position: Int = (buffer.limit * .67).toInt()
+        val position: Int = (buffer.capacity * .67).toInt()
         buffer.position = position
         buffer.rewind()
         assertEquals(buffer.position, 0, "Method 'rewind' should rewind 'position' to 0.")
@@ -284,10 +219,7 @@ class ByteBufferTest {
 
     @Test
     fun slice() {
-        buffer.position = 10
-        buffer.mark()
-        buffer.limit = size - 10
-        val copy: ByteBuffer = buffer.slice()
+        val copy: ByteBuffer = buffer.slice(buffer.position + 10..buffer.capacity - 10)
         assertEquals(copy.capacity, size - 20, "The slice buffer should have value 'capacity' shorter.")
     }
 
@@ -296,12 +228,6 @@ class ByteBufferTest {
         val copy: ByteBuffer = buffer.duplicate()
         assertFalse(copy === buffer, "The duplicate should not be the same class instance")
         assertEquals(copy, buffer, "Both buffers data should equal.")
-    }
-
-    @Test
-    fun asReadOnly() {
-        val copy: ByteBuffer = buffer.asReadOnly()
-        assertTrue(copy.readOnly, "Value 'readOnly' should be set.")
     }
 
     @Test
@@ -576,9 +502,7 @@ class ByteBufferTest {
     fun allocateDirect() {
         buffer = ByteBuffer.allocateDirect(size)
         assertEquals(buffer.capacity, size, "Value 'capacity' should always be the same as the given size.")
-        assertEquals(buffer.limit, buffer.capacity, "Property 'limit' should implicitly be set to capacity.")
         assertEquals(buffer.position, 0, "Property 'position' should implicitly be set to 0.")
-        assertEquals(buffer.readOnly, false, "Value 'readOnly' should implicitly be set to 'false'.")
         assertEquals(buffer.direct, true, "Value 'direct' should implicitly be set to 'true'.")
     }
 
@@ -586,9 +510,7 @@ class ByteBufferTest {
     fun allocate() {
         buffer = ByteBuffer.allocate(size)
         assertEquals(buffer.capacity, size, "Value 'capacity' should always be the same as the given size.")
-        assertEquals(buffer.limit, buffer.capacity, "Property 'limit' should implicitly be set to capacity.")
         assertEquals(buffer.position, 0, "Property 'position' should implicitly be set to 0.")
-        assertEquals(buffer.readOnly, false, "Value 'readOnly' should implicitly be set to 'false'.")
         assertEquals(buffer.direct, false, "Value 'direct' should implicitly be set to 'false'.")
     }
 
@@ -596,9 +518,7 @@ class ByteBufferTest {
     fun wrap() {
         buffer = ByteBuffer.wrap(UByteArray(size))
         assertEquals(buffer.capacity, size, "Value 'capacity' should always be the same as the given size.")
-        assertEquals(buffer.limit, buffer.capacity, "Property 'limit' should implicitly be set to capacity.")
         assertEquals(buffer.position, 0, "Property 'position' should implicitly be set to 0.")
-        assertEquals(buffer.readOnly, false, "Value 'readOnly' should implicitly be set to 'false'.")
         assertEquals(buffer.direct, false, "Value 'direct' should implicitly be set to 'false'.")
     }
 }

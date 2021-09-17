@@ -46,6 +46,9 @@ class Dir(path: RealPath) : FileObject(path), Iterable<FileObject> {
     }
 
     override fun iterator(): DirIterator = DirIterator(this)
+
+    fun walk(recursive: Boolean = true) = FileTreeWalk(this, Int.MAX_VALUE)
+    fun walk(maxDepth: Int) = FileTreeWalk(this, maxDepth)
 }
 
 internal typealias FileEntry = Pair<String, Int>

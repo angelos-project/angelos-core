@@ -12,7 +12,14 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.io
 
-class FileNotFoundException(message: String? = null, cause: Throwable? = null) : IOException(message, cause) {
+import angelos.nio.ByteOrder
+import org.junit.Test
+
+class ByteOrderTest {
+
+    @Test
+    fun nativeByteOrder() {
+        ByteOrder.nativeOrder()
+    }
 }

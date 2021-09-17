@@ -15,17 +15,18 @@
 package angelos.nio
 
 
-enum class ByteOrder(val order: Boolean){
-    BIG_ENDIAN(false),
-    LITTLE_ENDIAN(true);
-    companion object{
-        fun nativeOrder(): ByteOrder {
-            val value: UShort = 1u
-            return if (value and 0x00FFu > 0u) LITTLE_ENDIAN else BIG_ENDIAN
-        }
+enum class ByteOrder(val order: Boolean) {
+    BIG_ENDIAN(true),
+    LITTLE_ENDIAN(false);
+
+    companion object {
+        fun nativeOrder(): ByteOrder = if (checkNativeOrder()) LITTLE_ENDIAN else BIG_ENDIAN
     }
 
     override fun toString(): String {
         return if (this == BIG_ENDIAN) "BIG_ENDIAN" else "LITTLE_ENDIAN"
     }
 }
+
+
+internal expect inline fun checkNativeOrder(): Boolean

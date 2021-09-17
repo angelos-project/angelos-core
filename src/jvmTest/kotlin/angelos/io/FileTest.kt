@@ -19,10 +19,16 @@ import org.junit.Test
 class FileTest {
 
     fun createFile(): File = File(RealPath("/",listOf("tmp"), PathSeparator.POSIX))
+    fun createDir(): Dir = Dir(RealPath("/",listOf(), PathSeparator.POSIX))
 
     @Test
     fun getReadable() {
         kotlin.test.assertTrue(createFile().readable)
+        createDir().walk().forEach{
+            when (it) {
+                is Dir -> println("${it.lastAccessed} - ${it.path}")
+            }
+        }
     }
 
     @Test

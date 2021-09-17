@@ -12,7 +12,6 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-
 package angelos.io
 
 import kotlinx.cinterop.*
