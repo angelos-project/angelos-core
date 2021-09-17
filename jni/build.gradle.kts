@@ -12,32 +12,9 @@ library {
 
 val javaHome = System.getenv("JAVA_HOME")
 
-/*val swigTask: Exec by tasks.creating(Exec::class) {
-    commandLine (
-        "swig",
-        "-c++",
-        "-java",
-        "-cppext",
-        "cpp",
-        "-addextern",
-        "-module",
-        "${project.name}",
-        "src\\main\\swig\\${project.name}.i"
-    )
-}*/
-
-
 
 tasks.withType(CppCompile::class.java).configureEach {
-    //dependsOn(swigTask)
-    doFirst {
-        copy {
-            from("${project.rootDir}/${project.name}/src/main/swig")
-            into("${project.rootDir}/${project.name}/src/main/cpp")
-            exclude("*.java")
-            exclude("*.i")
-        }
-    }
+
     compilerArgs.addAll(toolChain.map { toolChain ->
         when (toolChain) {
             is Gcc, is Clang -> listOf(
@@ -72,7 +49,8 @@ tasks.withType(LinkSharedLibrary::class.java).configureEach {
     doLast {
         copy {
             from("${project.rootDir}/${project.name}/build/lib/main/debug")
-            into("${project.rootDir}/build/classes/kotlin/jvm/main")
+            into("${project.rootDir}/build/libs")
+            //into("${project.rootDir}/build/classes/kotlin/jvm/main")
             exclude("*.java")
             exclude("*.i")
             exclude("*.obj")
