@@ -24,11 +24,11 @@ class FileTest {
     @Test
     fun getReadable() {
         kotlin.test.assertTrue(createFile().readable)
-        createDir().walk().forEach{
+        /*createDir().walk().forEach{
             when (it) {
                 is Dir -> println("${it.lastAccessed} - ${it.path}")
             }
-        }
+        }*/
     }
 
     @Test

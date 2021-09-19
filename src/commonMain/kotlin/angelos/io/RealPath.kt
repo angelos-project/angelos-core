@@ -14,6 +14,8 @@
  */
 package angelos.io
 
+import angelos.interop.FileSystem
+
 class RealPath internal constructor(root: String, path: List<String>, separator: PathSeparator) :
     Path(root, path, separator) {
 
@@ -38,10 +40,10 @@ class RealPath internal constructor(root: String, path: List<String>, separator:
         }
     }
 
-    private fun getType(): FileObject.Type = getType(getFileType(this.toString()))
+    private fun getType(): FileObject.Type = getType(FileSystem.getFileType(this.toString()))
 
     fun getItem(): FileObject = getItem(this, getType())
-    fun exists(): Boolean = checkExists(this.toString())
+    fun exists(): Boolean = FileSystem.checkExists(this.toString())
     fun isLink(): Boolean = getType() == FileObject.Type.LINK
     fun isFile(): Boolean = getType() == FileObject.Type.FILE
     fun isDir(): Boolean = getType() == FileObject.Type.DIR

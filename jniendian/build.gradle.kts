@@ -19,7 +19,6 @@ library {
             osFamily.isWindows -> compileTask.includes.from("$javaHome/include/win32")
         }
 
-        compileTask.includes.setFrom(fileTree("src/main/public"))
         compileTask.source.setFrom(fileTree("src/main/cpp"))
 
         when(toolChain) {
@@ -28,8 +27,3 @@ library {
         }
     }
 }
-
-// Generate C++ native header file.
-// javac -h ./jni/src/main/public/ src/jvmMain/java/angelos/jni/Posix.java
-
-// https://programmerclick.com/article/73771902404/

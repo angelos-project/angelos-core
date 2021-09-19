@@ -12,15 +12,12 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.io
+package angelos.interop
 
-import angelos.interop.FileSystem
+import kotlin.native.Platform
 
-class Link(path: RealPath) : FileObject(path) {
-    private val _target: RealPath by lazy { RealPath.wrap(FileSystem.getLinkTarget(path.toString()), path.separator) }
-
-    val target: String
-        get() = _target.toString()
-
-    fun goToTarget(): FileObject = _target.getItem()
+internal actual class Endian {
+    actual companion object {
+        actual inline fun checkNativeOrder(): Boolean = Platform.isLittleEndian
+    }
 }

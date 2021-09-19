@@ -12,8 +12,17 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.nio
+package angelos.interop
 
-import angelos.jni.Posix
+internal actual class Endian {
+    actual companion object {
+        actual inline fun checkNativeOrder(): Boolean = endian()
 
-internal actual inline fun checkNativeOrder(): Boolean = Posix.isLittleEndian()
+        @JvmStatic
+        private external fun endian(): Boolean
+
+        init {
+            System.loadLibrary("jniendian")
+        }
+    }
+}

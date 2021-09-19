@@ -14,6 +14,7 @@
  */
 package angelos.io
 
+import angelos.interop.FileSystem
 import angelos.nio.BufferOverflowException
 import angelos.nio.BufferUnderflowException
 import angelos.nio.ByteBuffer
@@ -34,7 +35,7 @@ class FileDescriptor internal constructor(
     fun read(buffer: ByteBuffer, count: ULong) {
         if (buffer.remaining().toULong() < count)
             throw BufferUnderflowException()
-        if(readFile(_number, buffer.array(), buffer.position, count) != count)
+        if(FileSystem.readFile(_number, buffer.array(), buffer.position, count) != count)
             throw IOException("Couldn't read $count bytes from file.")
         _position += count
     }
@@ -42,25 +43,25 @@ class FileDescriptor internal constructor(
     fun write(buffer: ByteBuffer, count: ULong) {
         if (buffer.remaining().toULong() < count)
             throw BufferOverflowException()
-        if(writeFile(_number, buffer.array(), buffer.position, count) != count)
+        if(FileSystem.writeFile(_number, buffer.array(), buffer.position, count) != count)
             throw IOException("Couldn't write $count bytes to file.")
         _position += count
     }
 
     fun tell(): ULong{
-        val position = tellFile(_number)
+        val position = FileSystem.tellFile(_number)
         if (position != _position)
             throw SyncFailedException("File descriptor out of sync with physical cursor.")
         return position
     }
 
-    fun seek(position: Long, whence: Seek): ULong{
-        _position = seekFile(_number, position, whence)
+    fun seek(position: Long, whence: Seek): ULong {
+        _position = FileSystem.seekFile(_number, position, whence)
         return _position
     }
 
     override fun close(){
-        closeFile(_number)
+        FileSystem.closeFile(_number)
         _number = 0
     }
 
@@ -69,12 +70,3 @@ class FileDescriptor internal constructor(
     }
 
 }
-
-
-@ExperimentalUnsignedTypes
-internal expect inline fun readFile(number: Int, array: UByteArray, index: Int, count: ULong): ULong
-@ExperimentalUnsignedTypes
-internal expect inline fun writeFile(number: Int, array: UByteArray, index: Int, count: ULong): ULong
-internal expect inline fun tellFile(number: Int): ULong
-internal expect inline fun seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): ULong
-internal expect inline fun closeFile(number: Int): Boolean

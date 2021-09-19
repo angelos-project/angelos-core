@@ -14,6 +14,8 @@
  */
 package angelos.io
 
+import angelos.interop.FileSystem
+
 class Dir(path: RealPath) : FileObject(path), Iterable<FileObject> {
 
     class DirIterator(private val dir: Dir): Iterator<FileObject>{
@@ -21,18 +23,18 @@ class Dir(path: RealPath) : FileObject(path), Iterable<FileObject> {
         private var _entry: FileEntry = FileEntry("", 0)
 
         init {
-            _dir = openDir(dir.path.toString())
-            _entry = readDir(_dir!!)
+            _dir = FileSystem.openDir(dir.path.toString())
+            _entry = FileSystem.readDir(_dir!!)
         }
 
         override fun hasNext(): Boolean = _entry.second != 0
 
         override fun next(): FileObject {
             val current = _entry
-            _entry = readDir(_dir!!)
+            _entry = FileSystem.readDir(_dir!!)
 
             if(_entry.second == 0){
-                closeDir(_dir!!)
+                FileSystem.closeDir(_dir!!)
                 _dir = null
             }
 
@@ -41,7 +43,7 @@ class Dir(path: RealPath) : FileObject(path), Iterable<FileObject> {
 
         protected fun finalize(){
             if(_dir != null)
-                closeDir(_dir!!)
+                FileSystem.closeDir(_dir!!)
         }
     }
 

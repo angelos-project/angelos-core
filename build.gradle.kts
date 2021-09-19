@@ -18,7 +18,11 @@ kotlin {
             useJUnit()
             systemProperty(
                 "java.library.path",
-                file("${project(":jniposix").buildDir}/lib/main/debug").absolutePath
+                listOf(
+                    file("${project(":jniendian").buildDir}/lib/main/debug").absolutePath,
+                    file("${project(":jnifilesystem").buildDir}/lib/main/debug").absolutePath,
+                ).joinToString(":") + ":" + System.getProperty("java.library.path")
+
             )
         }
     }
@@ -55,5 +59,12 @@ kotlin {
 }
 
 tasks.withType(AbstractCompile::class) {
-    dependsOn(":jniposix:assemble")
+    dependsOn(":jniendian:assemble")
+    dependsOn(":jnifilesystem:assemble")
 }
+
+// Generate C++ native header file.
+// javac -h ./jni/src/main/public/ src/jvmMain/java/angelos/jni/Posix.java
+
+// https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/jniTOC.html
+// https://programmerclick.com/article/73771902404/
