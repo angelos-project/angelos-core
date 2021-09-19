@@ -15,11 +15,16 @@
 
 import angelos.nio.ByteOrder
 import org.junit.Test
+import kotlin.test.assertEquals
+
+import java.nio.ByteOrder as JavaByteOrder
 
 class ByteOrderTest {
 
     @Test
     fun nativeByteOrder() {
-        ByteOrder.nativeOrder()
+        assertEquals(
+            JavaByteOrder.nativeOrder() == JavaByteOrder.LITTLE_ENDIAN,
+            ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN)
     }
 }

@@ -1,4 +1,4 @@
-include(":jni")
+include(":jniposix")
 
 rootProject.name = "angelos-core"
 

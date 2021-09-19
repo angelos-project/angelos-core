@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("multiplatform") version "1.5.30"
 }
@@ -18,6 +16,10 @@ kotlin {
         }
         testRuns["test"].executionTask.configure {
             useJUnit()
+            systemProperty(
+                "java.library.path",
+                file("${project(":jniposix").buildDir}/lib/main/debug").absolutePath
+            )
         }
     }
     js(IR) {
@@ -53,6 +55,5 @@ kotlin {
 }
 
 tasks.withType(AbstractCompile::class) {
-    dependsOn(":jni:assemble")
+    dependsOn(":jniposix:assemble")
 }
-
