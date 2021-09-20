@@ -36,9 +36,9 @@ internal actual class FileSystem {
         actual inline fun getFileType(path: String): Int {TODO("Not yet implemented")}
         actual inline fun getFileInfo(path: String): FileObject.Info {TODO("Not yet implemented")}
         actual inline fun getLinkTarget(path: String): String {TODO("Not yet implemented")}
-        actual inline fun openDir(path: String): Any {TODO("Not yet implemented")}
-        actual inline fun readDir(dir: Any): FileEntry {TODO("Not yet implemented")}
-        actual inline fun closeDir(dir: Any): Boolean {TODO("Not yet implemented")}
+        actual inline fun openDir(path: String): Long {TODO("Not yet implemented")}
+        actual inline fun readDir(dir: Long): FileEntry {TODO("Not yet implemented")}
+        actual inline fun closeDir(dir: Long): Boolean {TODO("Not yet implemented")}
         actual inline fun openFile(path: String, option: Int): Int {TODO("Not yet implemented")}
 
     }

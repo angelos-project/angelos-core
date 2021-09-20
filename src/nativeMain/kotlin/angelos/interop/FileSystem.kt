@@ -38,12 +38,12 @@ internal actual class FileSystem {
         actual inline fun tellFile(number: Int): ULong = lseek(number, 0, SEEK_CUR).toULong()
 
         actual inline fun seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): ULong {
-            val newPos: Long = lseek(number, position, when(whence){
+            val newPos: Long = lseek(number, position, when (whence) {
                 FileDescriptor.Seek.SET -> SEEK_SET
                 FileDescriptor.Seek.CUR -> SEEK_CUR
                 FileDescriptor.Seek.END -> SEEK_END
             })
-            if(newPos < 0)
+            if (newPos < 0)
                 throw IOException("Failed seeking in file.")
             return newPos.toULong()
         }
@@ -52,7 +52,7 @@ internal actual class FileSystem {
 
         actual inline fun checkReadable(path: String): Boolean = access(path, R_OK) == 0
         actual inline fun checkWritable(path: String): Boolean = access(path, W_OK) == 0
-        actual inline fun checkExecutable(path: String): Boolean  = access(path, X_OK) == 0
+        actual inline fun checkExecutable(path: String): Boolean = access(path, X_OK) == 0
         actual inline fun checkExists(path: String): Boolean = access(path, F_OK) == 0
 
         actual inline fun getFileType(path: String): Int = when (posixStat(path).st_mode and S_IFMT.toUShort()) {
@@ -85,11 +85,12 @@ internal actual class FileSystem {
             }
         }
 
-        actual inline fun openDir(path: String): Any = opendir(path) ?: throw FileNotFoundException("File not found.\n$path")
+        actual inline fun openDir(path: String): Long =
+            (opendir(path) ?: throw FileNotFoundException("File not found.\n$path")).toLong()
 
-        actual inline fun readDir(dir: Any): FileEntry {
+        actual inline fun readDir(dir: Long): FileEntry {
             memScoped {
-                val dpPtr: CPointer<dirent>? = readdir(dir as CValuesRef<DIR>)
+                val dpPtr: CPointer<dirent>? = readdir(dir.toCPointer())
                 return if (dpPtr == null)
                     FileEntry("", 0)
                 else {
@@ -104,9 +105,9 @@ internal actual class FileSystem {
             }
         }
 
-        actual inline fun closeDir(dir: Any): Boolean = closedir(dir as CValuesRef<DIR>) == 0
+        actual inline fun closeDir(dir: Long): Boolean = closedir(dir.toCPointer()) == 0
 
-        actual inline fun openFile(path: String, option: Int): Int  = open(path, when (option) {
+        actual inline fun openFile(path: String, option: Int): Int = open(path, when (option) {
             1 -> O_WRONLY
             2 -> O_RDWR
             else -> O_RDONLY

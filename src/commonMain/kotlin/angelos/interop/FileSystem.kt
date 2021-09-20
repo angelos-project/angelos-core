@@ -36,9 +36,9 @@ internal expect class FileSystem {
         inline fun getFileType(path: String): Int
         inline fun getFileInfo(path: String): FileObject.Info
         inline fun getLinkTarget(path: String): String
-        inline fun openDir(path: String): Any
-        inline fun readDir(dir: Any): FileEntry
-        inline fun closeDir(dir: Any): Boolean
+        inline fun openDir(path: String): Long
+        inline fun readDir(dir: Long): FileEntry
+        inline fun closeDir(dir: Long): Boolean
         inline fun openFile(path: String, option: Int): Int
     }
 }

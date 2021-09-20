@@ -13,7 +13,6 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/jniendian" />
             <option value="$PROJECT_DIR$/jnifilesystem" />
-            <option value="$PROJECT_DIR$/jniposix" />
           </set>
         </option>
       </GradleProjectSettings>
