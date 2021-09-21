@@ -15,7 +15,7 @@
 package angelos.interop
 
 import angelos.io.FileDescriptor
-import angelos.io.FileEntry
+import angelos.io.Dir.FileEntry
 import angelos.io.FileObject
 
 internal actual class FileSystem {

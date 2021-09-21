@@ -15,34 +15,59 @@
 package angelos.interop
 
 import angelos.io.FileDescriptor
-import angelos.io.FileEntry
+import angelos.io.Dir.FileEntry
 import angelos.io.FileNotFoundException
 import angelos.io.FileObject
 
 internal actual class FileSystem {
     actual companion object {
         @ExperimentalUnsignedTypes
-        actual inline fun readFile(number: Int, array: UByteArray, index: Int, count: ULong): ULong = fs_read(number, array.toByteArray(), index, count.toLong()).toULong()
+        actual inline fun readFile(number: Int, array: UByteArray, index: Int, count: ULong): ULong =
+            fs_read(number, array.toByteArray(), index, count.toLong()).toULong()
 
         @ExperimentalUnsignedTypes
-        actual inline fun writeFile(number: Int, array: UByteArray, index: Int, count: ULong): ULong = fs_write(number, array.toByteArray(), index, count.toLong()).toULong()
+        actual inline fun writeFile(number: Int, array: UByteArray, index: Int, count: ULong): ULong =
+            fs_write(number, array.toByteArray(), index, count.toLong()).toULong()
+
         actual inline fun tellFile(number: Int): ULong = fs_lseek(number, 0, SeekDirective.CUR.whence).toULong()
-        actual inline fun seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): ULong = fs_lseek(number, position, when (whence) {
-            FileDescriptor.Seek.SET -> SeekDirective.SET.whence
-            FileDescriptor.Seek.CUR -> SeekDirective.CUR.whence
-            FileDescriptor.Seek.END -> SeekDirective.END.whence
-        }).toULong()
+
+        actual inline fun seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): ULong =
+            fs_lseek(number, position, when (whence) {
+                FileDescriptor.Seek.SET -> SeekDirective.SET.whence
+                FileDescriptor.Seek.CUR -> SeekDirective.CUR.whence
+                FileDescriptor.Seek.END -> SeekDirective.END.whence
+            }).toULong()
+
         actual inline fun closeFile(number: Int): Boolean = fs_close(number) == 0
 
         actual inline fun checkReadable(path: String): Boolean = fs_access(path, AccessFlag.R_OK.flag) == 0
+
         actual inline fun checkWritable(path: String): Boolean = fs_access(path, AccessFlag.W_OK.flag) == 0
+
         actual inline fun checkExecutable(path: String): Boolean = fs_access(path, AccessFlag.X_OK.flag) == 0
+
         actual inline fun checkExists(path: String): Boolean = fs_access(path, AccessFlag.F_OK.flag) == 0
-        actual inline fun getFileType(path: String): Int {TODO("Not yet implemented")}
-        actual inline fun getFileInfo(path: String): FileObject.Info {TODO("Not yet implemented")}
+
+        actual inline fun getFileType(path: String): Int {
+            val type: Int = fs_filetype(path)
+            if (type == -1)
+                throw FileNotFoundException("File not found.\n$path")
+            return type
+        }
+
+        actual inline fun getFileInfo(path: String): FileObject.Info = fs_fileinfo(path) ?: throw FileNotFoundException("File not found.\n$path")
+
         actual inline fun getLinkTarget(path: String): String = fs_readlink(path)
-        actual inline fun openDir(path: String): Long = fs_opendir(path) ?: throw FileNotFoundException("File not found.\n$path")
+
+        actual inline fun openDir(path: String): Long {
+            val number = fs_opendir(path)
+            if (number == 0L)
+                throw FileNotFoundException("File not found.\n$path")
+            return number
+        }
+
         actual inline fun readDir(dir: Long): FileEntry = fs_readdir(dir)
+
         actual inline fun closeDir(dir: Long): Boolean = fs_closedir(dir) == 0
 
         actual inline fun openFile(path: String, option: Int): Int = fs_open(path, when (option) {
@@ -51,20 +76,20 @@ internal actual class FileSystem {
             else -> AccessMode.READ_WRITE.mode
         })
 
-        enum class SeekDirective(val whence: Int){
+        enum class SeekDirective(val whence: Int) {
             SET(0),
             CUR(1),
             END(2),
         }
 
-        enum class AccessFlag(val flag: Int){
+        enum class AccessFlag(val flag: Int) {
             F_OK(0),
             X_OK(0x01),
             W_OK(0x02),
             R_OK(0x04)
         }
 
-        enum class AccessMode(val mode: Int){
+        enum class AccessMode(val mode: Int) {
             READ_ONLY(0),
             WRITE_ONLY(0x01),
             READ_WRITE(0x02),
@@ -86,13 +111,19 @@ internal actual class FileSystem {
         private external fun fs_access(path: String, amode: Int): Int
 
         @JvmStatic
+        private external fun fs_filetype(path: String): Int
+
+        @JvmStatic
+        private external fun fs_fileinfo(path: String): FileObject.Info?
+
+        @JvmStatic
         private external fun fs_readlink(path: String): String
 
         @JvmStatic
         private external fun fs_open(path: String, option: Int): Int
 
         @JvmStatic
-        private external fun fs_opendir(path: String): Long?
+        private external fun fs_opendir(path: String): Long
 
         @JvmStatic
         private external fun fs_readdir(dir: Long): FileEntry

@@ -17,6 +17,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <inttypes.h>
 #include <dirent.h>
 
@@ -82,6 +83,79 @@ static jint fs_access(JNIEnv * env, jclass thisClass, jstring path, jint amode){
 
 /*
  * Class:     angelos_interop_FileSystem
+ * Method:    fs_filetype
+ * Signature: (Ljava/lang/String;)I
+ */
+static jint fs_filetype(JNIEnv * env, jclass thisClass, jstring path){
+    const char *path_buf = (*env)->GetStringUTFChars(env, path, NULL);
+    struct stat* file_stat = malloc(sizeof(struct stat));
+    int success = stat(path_buf, file_stat);
+    (*env)->ReleaseStringUTFChars(env, path, path_buf);
+
+    int type = 0;
+    if(success == 0){
+        switch(file_stat->st_mode & S_IFMT) {
+            case S_IFLNK:
+                type = 1;
+                break;
+            case S_IFDIR:
+                type = 2;
+                break;
+            case S_IFREG:
+                type = 3;
+                break;
+            default:
+                type = 0;
+        }
+    } else {
+        type = -1;
+    }
+
+    free(file_stat);
+    return (jint)type;
+}
+
+/*
+ * Class:     angelos_interop_FileSystem
+ * Method:    fs_fileinfo
+ * Signature: (Ljava/lang/String;)Langelos/io/FileObject/Info;
+ */
+static jobject fs_fileinfo(JNIEnv * env, jclass thisClass, jstring path){
+    const char *path_buf = (*env)->GetStringUTFChars(env, path, NULL);
+    struct stat* file_stat = malloc(sizeof(struct stat));
+    int success = stat(path_buf, file_stat);
+    (*env)->ReleaseStringUTFChars(env, path, path_buf);
+
+    if (success != 0)
+        free(file_stat);
+        return NULL; // Return NULL if file not found
+
+    jclass local_cls = (*env)->FindClass(env, "angelos/io/FileObject/Info");
+    if (local_cls == NULL) // Quit program if Java class can't be found
+        exit(1);
+
+    jclass global_cls = (*env)->NewGlobalRef(env, local_cls);
+    jmethodID cls_init = (*env)->GetMethodID(env, global_cls, "<init>", "(ZIIJJJJJ)V");
+    if (cls_init == NULL) // Quit program if Java class constructor can't be found
+        exit(1);
+
+    jobject file_info = (*env)->NewObject(
+        env, global_cls, cls_init,
+        file_stat->st_uid,
+        file_stat->st_gid,
+        file_stat->st_atimespec.tv_sec,
+        file_stat->st_mtimespec.tv_sec,
+        file_stat->st_ctimespec.tv_sec,
+        file_stat->st_birthtimespec.tv_sec,
+        file_stat->st_size
+    );
+    free(file_stat);
+
+    return file_info;
+}
+
+/*
+ * Class:     angelos_interop_FileSystem
  * Method:    fs_readlink
  * Signature: (Ljava/lang/String;)Ljava/lang/String;
  */
@@ -109,12 +183,12 @@ static jlong fs_opendir(JNIEnv * env, jclass thisClass, jstring name){
 /*
  * Class:     angelos_interop_FileSystem
  * Method:    fs_readdir
- * Signature: (J)Langelos/io/FileEntry;
+ * Signature: (J)Langelos/io/Dir$FileEntry;
  */
 static jobject fs_readdir(JNIEnv * env, jclass thisClass, jlong dirp){
     struct dirent *entry = readdir((DIR *)dirp);
 
-    jclass local_cls = (*env)->FindClass(env, "angelos/io/FileEntry");
+    jclass local_cls = (*env)->FindClass(env, "angelos/io/Dir$FileEntry");
     if (local_cls == NULL) // Quit program if Java class can't be found
         exit(1);
 
@@ -139,7 +213,9 @@ static jobject fs_readdir(JNIEnv * env, jclass thisClass, jlong dirp){
                 type = 0;
         }
 
-    jobject file_entry = (*env)->NewObject(env, global_cls, cls_init, (*env)->NewStringUTF(env, entry != NULL ? entry->d_name : ""), type);
+    jobject file_entry = (*env)->NewObject(
+        env, global_cls, cls_init, (*env)->NewStringUTF(
+            env, entry != NULL ? entry->d_name : ""), type);
     free(entry);
 
     return file_entry;
@@ -157,7 +233,7 @@ static jint fs_closedir(JNIEnv * env, jclass thisClass, jlong dirp){
 /*
  * Class:     angelos_interop_FileSystem
  * Method:    fs_open
- * Signature: (Ljava/lang/CharSequence;I)I
+ * Signature: (Ljava/lang/String;I)I
  */
 static jint fs_open(JNIEnv * env, jclass thisClass, jstring path, jint perm){
     const char *buf = (*env)->GetStringUTFChars(env, path, NULL);
@@ -172,11 +248,13 @@ static JNINativeMethod funcs[] = {
 	{ "fs_write", "(I[BIJ)J", (void *)&fs_write },
 	{ "fs_lseek", "(IJI)J", (void *)&fs_lseek },
 	{ "fs_access", "(Ljava/lang/String;I)I", (void *)&fs_access },
+	{ "fs_filetype", "(Ljava/lang/String;)I", (void *)&fs_filetype },
+	{ "fs_fileinfo", "(Ljava/lang/String;)Langelos/io/FileObject$Info;", (void *)&fs_fileinfo },
 	{ "fs_readlink", "(Ljava/lang/String;)Ljava/lang/String;", (void *)&fs_readlink },
 	{ "fs_opendir", "(Ljava/lang/String;)J", (void *)&fs_opendir },
-	{ "fs_readdir", "(J)Langelos/io/FileEntry;", (void *)&fs_readdir },
-	{ "fs_closedir", "(Langelos/jni/DIR;)I", (void *)&fs_closedir },
-	{ "fs_open", "(Ljava/lang/CharSequence;I)I", (void *)&fs_open },
+	{ "fs_readdir", "(J)Langelos/io/Dir$FileEntry;", (void *)&fs_readdir },
+	{ "fs_closedir", "(J)I", (void *)&fs_closedir },
+	{ "fs_open", "(Ljava/lang/String;I)I", (void *)&fs_open },
 };
 
 #define CURRENT_JNI JNI_VERSION_1_6

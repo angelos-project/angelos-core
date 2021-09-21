@@ -27,18 +27,18 @@ class Dir(path: RealPath) : FileObject(path), Iterable<FileObject> {
             _entry = FileSystem.readDir(_dir)
         }
 
-        override fun hasNext(): Boolean = _entry.second != 0
+        override fun hasNext(): Boolean = _entry.number != 0
 
         override fun next(): FileObject {
             val current = _entry
             _entry = FileSystem.readDir(_dir)
 
-            if(_entry.second == 0){
+            if(_entry.number == 0){
                 FileSystem.closeDir(_dir)
                 _dir = 0
             }
 
-            return RealPath.getItem(dir.path.join(current.first), RealPath.getType(current.second))
+            return RealPath.getItem(dir.path.join(current.name), RealPath.getType(current.number))
         }
 
         protected fun finalize(){
@@ -48,11 +48,11 @@ class Dir(path: RealPath) : FileObject(path), Iterable<FileObject> {
         }
     }
 
+    class FileEntry(val name: String, val number: Int)
+
     override fun iterator(): DirIterator = DirIterator(this)
 
     fun walk(recursive: Boolean = true) = FileTreeWalk(this, Int.MAX_VALUE)
     fun walk(maxDepth: Int) = FileTreeWalk(this, maxDepth)
 }
-
-internal typealias FileEntry = Pair<String, Int>
 

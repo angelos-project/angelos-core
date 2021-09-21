@@ -65,8 +65,8 @@ internal actual class FileSystem {
         actual inline fun getFileInfo(path: String): FileObject.Info {
             val data = posixStat(path)
             return FileObject.Info(
-                user = data.st_uid,
-                group = data.st_gid,
+                user = data.st_uid.toInt(),
+                group = data.st_gid.toInt(),
                 accessedAt = data.st_atimespec.tv_sec,
                 modifiedAt = data.st_mtimespec.tv_sec,
                 changedAt = data.st_ctimespec.tv_sec,
@@ -88,14 +88,14 @@ internal actual class FileSystem {
         actual inline fun openDir(path: String): Long =
             (opendir(path) ?: throw FileNotFoundException("File not found.\n$path")).toLong()
 
-        actual inline fun readDir(dir: Long): FileEntry {
+        actual inline fun readDir(dir: Long): Dir.FileEntry {
             memScoped {
                 val dpPtr: CPointer<dirent>? = readdir(dir.toCPointer())
                 return if (dpPtr == null)
-                    FileEntry("", 0)
+                    Dir.FileEntry("", 0)
                 else {
                     val dp = dpPtr.asStableRef<dirent>().get()
-                    FileEntry(dp.d_name.toString(), when (dp.d_type.toInt()) {
+                    Dir.FileEntry(dp.d_name.toString(), when (dp.d_type.toInt()) {
                         DT_LNK -> 1
                         DT_DIR -> 2
                         DT_REG -> 3

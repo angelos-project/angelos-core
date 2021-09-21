@@ -25,10 +25,10 @@ open class FileObject (path: RealPath){
     val path: RealPath
         get() = _path
 
-    val user: UInt
+    val user: Int
         get() = _info.user
 
-    val group: UInt
+    val group: Int
         get() = _info.group
 
     val lastAccessed: Long
@@ -60,8 +60,8 @@ open class FileObject (path: RealPath){
     }
 
     data class Info(
-        val user: UInt,
-        val group: UInt,
+        val user: Int,
+        val group: Int,
         val accessedAt: Long,
         val modifiedAt: Long,
         val changedAt: Long,
