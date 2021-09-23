@@ -43,10 +43,17 @@ static jint fs_close(JNIEnv * env, jclass thisClass, jint fd){
  * Method:    fs_read
  * Signature: (I[BIJ)J
  */
-static jlong fs_read(JNIEnv * env, jclass thisClass, jint fd, jbyteArray buf, jint index, jlong count){
-    jbyte *elements = (*env)->GetByteArrayElements(env, buf, NULL) + index;
-    ssize_t length = read((int)fd, (void*)elements, (size_t)count);
-    return (jlong)length;
+static jlong fs_read(JNIEnv * env, jclass thisClass, jint fd, jbyteArray output, jint index, jlong count){
+    jsize size = (*env)->GetArrayLength(env, output);
+    unsigned char* buf = (*env)->GetByteArrayElements(env, output, NULL);
+    if (size < count)
+        count = size;
+
+    ssize_t length = read((int)fd, buf, (size_t)count);
+
+    (*env)->ReleaseByteArrayElements(env, output, buf, 0);
+
+    return length;
 }
 
 /*
@@ -54,10 +61,14 @@ static jlong fs_read(JNIEnv * env, jclass thisClass, jint fd, jbyteArray buf, ji
  * Method:    fs_write
  * Signature: (I[BIJ)J
  */
-static jlong fs_write(JNIEnv * env, jclass thisClass, jint fd, jbyteArray buf, jint index, jlong count){
-    jbyte *elements = (*env)->GetByteArrayElements(env, buf, NULL) + index;
-    ssize_t length = write((int)fd, (void*)elements, (size_t)count);
-    return (jlong)length;
+static jlong fs_write(JNIEnv * env, jclass thisClass, jint fd, jbyteArray input, jint index, jlong count){
+    unsigned char* buf = malloc((int)count);
+
+    (*env)->GetByteArrayRegion(env, input, index, count, (jbyte*)buf);
+    ssize_t length = write((int)fd, (void*)buf, (size_t)count);
+
+    free(buf);
+    return length;
 }
 
 /*
@@ -161,11 +172,22 @@ static jobject fs_fileinfo(JNIEnv * env, jclass thisClass, jstring path){
  */
 static jstring fs_readlink(JNIEnv * env, jclass thisClass, jstring path){
     const char *link = (*env)->GetStringUTFChars(env, path, NULL);
-    char target[4096];
-    size_t length = readlink(link, target, 4096);
-    target[length > 4094 ? 4095: length + 1] = 0;
-    (*env)->ReleaseStringUTFChars(env, path, link);
-    return (*env)->NewStringUTF(env,target);
+    unsigned char* target = malloc(4096);
+    printf("LINK: %s", link);
+
+    ssize_t length = readlink(link, target, 4096);
+    if (length == -1){
+        free(target);
+        return NULL;
+    }
+
+    target[length > 2095 ? 2095 : length] = '\0';
+    printf("TARGET: %s", target);
+
+    //(*env)->ReleaseStringUTFChars(env, path, link);
+    //return (*env)->NewStringUTF(env,target);
+    free(target);
+    return NULL;
 }
 
 /*
@@ -193,7 +215,7 @@ static jobject fs_readdir(JNIEnv * env, jclass thisClass, jlong dirp){
         exit(1);
 
     jclass global_cls = (*env)->NewGlobalRef(env, local_cls);
-    jmethodID cls_init = (*env)->GetMethodID(env, global_cls, "<init>", "(ZLjava/lang/String;I)V");
+    jmethodID cls_init = (*env)->GetMethodID(env, global_cls, "<init>", "(Ljava/lang/String;I)V");
     if (cls_init == NULL) // Quit program if Java class constructor can't be found
         exit(1);
 
@@ -216,9 +238,11 @@ static jobject fs_readdir(JNIEnv * env, jclass thisClass, jlong dirp){
     jobject file_entry = (*env)->NewObject(
         env, global_cls, cls_init, (*env)->NewStringUTF(
             env, entry != NULL ? entry->d_name : ""), type);
-    free(entry);
+    if (entry == NULL)
+        free(entry);
 
     return file_entry;
+    //return NULL;
 }
 
 /*

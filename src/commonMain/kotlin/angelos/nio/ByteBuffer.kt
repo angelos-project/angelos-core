@@ -18,7 +18,7 @@ import kotlin.jvm.JvmStatic
 
 @ExperimentalUnsignedTypes
 class ByteBuffer internal constructor(
-    array: UByteArray,
+    array: ByteArray,
     capacity: Int = 0,
     position: Int = 0,
     direct: Boolean = false,
@@ -31,7 +31,8 @@ class ByteBuffer internal constructor(
     private var _endian: ByteOrder = ByteOrder.BIG_ENDIAN
     private var _reverse: Boolean = ByteOrder.BIG_ENDIAN != nativeEndianness
 
-    private val _array: UByteArray = array
+    private val _array: ByteArray = array
+    private val _view: UByteArray = array.asUByteArray()
 
     val capacity: Int
         get() = _capacity
@@ -60,7 +61,7 @@ class ByteBuffer internal constructor(
         this.position = position
     }
 
-    constructor(capacity: Int) : this(UByteArray(size = capacity), capacity, 0, direct = true)
+    constructor(capacity: Int) : this(ByteArray(size = capacity), capacity, 0, direct = true)
 
     companion object {
         @JvmStatic
@@ -76,11 +77,11 @@ class ByteBuffer internal constructor(
 
         @JvmStatic
         fun allocate(capacity: Int): ByteBuffer {
-            return wrap(UByteArray(size = capacity), 0, capacity)
+            return wrap(ByteArray(size = capacity), 0, capacity)
         }
 
         @JvmStatic
-        fun wrap(array: UByteArray, offset: Int = 0, length: Int = array.size): ByteBuffer {
+        fun wrap(array: ByteArray, offset: Int = 0, length: Int = array.size): ByteBuffer {
             return ByteBuffer(array, array.size, offset)
         }
 
@@ -122,7 +123,7 @@ class ByteBuffer internal constructor(
         checkArraySize(dst.size, offset, length)
         checkForUnderflow(length)
 
-        _array.copyInto(dst, offset, _position, _position + length)
+        _view.copyInto(dst, offset, _position, _position + length)
     }
 
     fun write(src: ByteBuffer) {
@@ -132,7 +133,7 @@ class ByteBuffer internal constructor(
         checkForOverflow(src.remaining())
 
         if (src.remaining() > 0) {
-            src._array.copyInto(_array, _position, src._position, _position + src.remaining())
+            src._view.copyInto(_view, _position, src._position, _position + src.remaining())
         }
     }
 
@@ -140,12 +141,12 @@ class ByteBuffer internal constructor(
         checkArraySize(src.size, offset, length)
         checkForOverflow(length)
 
-        src.copyInto(_array, _position, offset, offset + length)
+        src.copyInto(_view, _position, offset, offset + length)
     }
 
     fun hasArray(): Boolean = true
 
-    fun array(): UByteArray = _array
+    fun array(): ByteArray = _array
 
     fun arrayOffset(): Int = _position
 
@@ -157,25 +158,25 @@ class ByteBuffer internal constructor(
 
     fun read(): UByte {
         checkArraySize(_capacity, _position, 1)
-        val b: UByte = _array[_position]
+        val b: UByte = _view[_position]
         _position++
         return b
     }
 
     fun write(b: UByte) {
         checkArraySize(_capacity, _position, 1)
-        _array[_position] = b
+        _view[_position] = b
         _position++
     }
 
     fun read(index: Int): UByte {
         checkArraySize(_capacity, index, 1)
-        return _array[index]
+        return _view[index]
     }
 
     fun write(index: Int, b: UByte) {
         checkArraySize(_capacity, index, 1)
-        _array[index] = b
+        _view[index] = b
     }
 
     fun slice(range: IntRange): ByteBuffer {
@@ -189,11 +190,11 @@ class ByteBuffer internal constructor(
         checkArraySize(_capacity, _position, 2)
         var value: Int
         if (_reverse) {
-            value = _array[_position + 0].toInt()
-            value += (_array[_position + 1].toInt() shl 8)
+            value = _view[_position + 0].toInt()
+            value += (_view[_position + 1].toInt() shl 8)
         } else {
-            value = _array[_position + 1].toInt()
-            value += (_array[_position + 0].toInt() shl 8)
+            value = _view[_position + 1].toInt()
+            value += (_view[_position + 0].toInt() shl 8)
         }
         _position += 2
         return value.toChar()
@@ -202,11 +203,11 @@ class ByteBuffer internal constructor(
     fun writeChar(value: Char) {
         checkArraySize(_capacity, _position, 2)
         if (_reverse) {
-            _array[_position + 0] = (value.code and 0xFF).toUByte()
-            _array[_position + 1] = ((value.code ushr 8) and 0xFF).toUByte()
+            _view[_position + 0] = (value.code and 0xFF).toUByte()
+            _view[_position + 1] = ((value.code ushr 8) and 0xFF).toUByte()
         } else {
-            _array[_position + 1] = (value.code and 0xFF).toUByte()
-            _array[_position + 0] = ((value.code ushr 8) and 0xFF).toUByte()
+            _view[_position + 1] = (value.code and 0xFF).toUByte()
+            _view[_position + 0] = ((value.code ushr 8) and 0xFF).toUByte()
         }
 
         _position += 2
@@ -216,11 +217,11 @@ class ByteBuffer internal constructor(
         checkArraySize(_capacity, _position, 2)
         var value: Int
         if (_reverse) {
-            value = _array[_position + 0].toInt()
-            value += (_array[_position + 1].toInt() shl 8)
+            value = _view[_position + 0].toInt()
+            value += (_view[_position + 1].toInt() shl 8)
         } else {
-            value = _array[_position + 1].toInt()
-            value += (_array[_position + 0].toInt() shl 8)
+            value = _view[_position + 1].toInt()
+            value += (_view[_position + 0].toInt() shl 8)
         }
         _position += 2
         return value.toShort()
@@ -229,11 +230,11 @@ class ByteBuffer internal constructor(
     fun writeShort(value: Short) {
         checkArraySize(_capacity, _position, 2)
         if (_reverse) {
-            _array[_position + 0] = (value.toInt() and 0xFF).toUByte()
-            _array[_position + 1] = ((value.toInt() ushr 8) and 0xFF).toUByte()
+            _view[_position + 0] = (value.toInt() and 0xFF).toUByte()
+            _view[_position + 1] = ((value.toInt() ushr 8) and 0xFF).toUByte()
         } else {
-            _array[_position + 1] = (value.toInt() and 0xFF).toUByte()
-            _array[_position + 0] = ((value.toInt() ushr 8) and 0xFF).toUByte()
+            _view[_position + 1] = (value.toInt() and 0xFF).toUByte()
+            _view[_position + 0] = ((value.toInt() ushr 8) and 0xFF).toUByte()
         }
         _position += 2
     }
@@ -242,11 +243,11 @@ class ByteBuffer internal constructor(
         checkArraySize(_capacity, _position, 2)
         var value: Int
         if (_reverse) {
-            value = _array[_position + 0].toInt()
-            value += (_array[_position + 1].toInt() shl 8)
+            value = _view[_position + 0].toInt()
+            value += (_view[_position + 1].toInt() shl 8)
         } else {
-            value = _array[_position + 1].toInt()
-            value += (_array[_position + 0].toInt() shl 8)
+            value = _view[_position + 1].toInt()
+            value += (_view[_position + 0].toInt() shl 8)
         }
         _position += 2
         return value.toUShort()
@@ -255,11 +256,11 @@ class ByteBuffer internal constructor(
     fun writeUShort(value: UShort) {
         checkArraySize(_capacity, _position, 2)
         if (_reverse) {
-            _array[_position + 0] = (value.toInt() and 0xFF).toUByte()
-            _array[_position + 1] = ((value.toInt() ushr 8) and 0xFF).toUByte()
+            _view[_position + 0] = (value.toInt() and 0xFF).toUByte()
+            _view[_position + 1] = ((value.toInt() ushr 8) and 0xFF).toUByte()
         } else {
-            _array[_position + 1] = (value.toInt() and 0xFF).toUByte()
-            _array[_position + 0] = ((value.toInt() ushr 8) and 0xFF).toUByte()
+            _view[_position + 1] = (value.toInt() and 0xFF).toUByte()
+            _view[_position + 0] = ((value.toInt() ushr 8) and 0xFF).toUByte()
         }
         _position += 2
     }
@@ -268,15 +269,15 @@ class ByteBuffer internal constructor(
         checkArraySize(_capacity, _position, 4)
         var value: Int
         if (_reverse) {
-            value = _array[_position + 0].toInt()
-            value += (_array[_position + 1].toInt() shl 8)
-            value += (_array[_position + 2].toInt() shl 16)
-            value += (_array[_position + 3].toInt() shl 24)
+            value = _view[_position + 0].toInt()
+            value += (_view[_position + 1].toInt() shl 8)
+            value += (_view[_position + 2].toInt() shl 16)
+            value += (_view[_position + 3].toInt() shl 24)
         } else {
-            value = _array[_position + 3].toInt()
-            value += (_array[_position + 2].toInt() shl 8)
-            value += (_array[_position + 1].toInt() shl 16)
-            value += (_array[_position + 0].toInt() shl 24)
+            value = _view[_position + 3].toInt()
+            value += (_view[_position + 2].toInt() shl 8)
+            value += (_view[_position + 1].toInt() shl 16)
+            value += (_view[_position + 0].toInt() shl 24)
         }
         _position += 4
         return value
@@ -285,15 +286,15 @@ class ByteBuffer internal constructor(
     fun writeInt(value: Int) {
         checkArraySize(_capacity, _position, 4)
         if (_reverse) {
-            _array[_position + 0] = (value and 0xFF).toUByte()
-            _array[_position + 1] = ((value ushr 8) and 0xFF).toUByte()
-            _array[_position + 2] = ((value ushr 16) and 0xFF).toUByte()
-            _array[_position + 3] = ((value ushr 24) and 0xFF).toUByte()
+            _view[_position + 0] = (value and 0xFF).toUByte()
+            _view[_position + 1] = ((value ushr 8) and 0xFF).toUByte()
+            _view[_position + 2] = ((value ushr 16) and 0xFF).toUByte()
+            _view[_position + 3] = ((value ushr 24) and 0xFF).toUByte()
         } else {
-            _array[_position + 3] = (value and 0xFF).toUByte()
-            _array[_position + 2] = ((value ushr 8) and 0xFF).toUByte()
-            _array[_position + 1] = ((value ushr 16) and 0xFF).toUByte()
-            _array[_position + 0] = ((value ushr 24) and 0xFF).toUByte()
+            _view[_position + 3] = (value and 0xFF).toUByte()
+            _view[_position + 2] = ((value ushr 8) and 0xFF).toUByte()
+            _view[_position + 1] = ((value ushr 16) and 0xFF).toUByte()
+            _view[_position + 0] = ((value ushr 24) and 0xFF).toUByte()
         }
         _position += 4
     }
@@ -302,15 +303,15 @@ class ByteBuffer internal constructor(
         checkArraySize(_capacity, _position, 4)
         var value: UInt
         if (_reverse) {
-            value = _array[_position + 3].toUInt()
-            value += (_array[_position + 2].toUInt() shl 8)
-            value += (_array[_position + 1].toUInt() shl 16)
-            value += (_array[_position + 0].toUInt() shl 24)
+            value = _view[_position + 3].toUInt()
+            value += (_view[_position + 2].toUInt() shl 8)
+            value += (_view[_position + 1].toUInt() shl 16)
+            value += (_view[_position + 0].toUInt() shl 24)
         } else {
-            value = _array[_position + 3].toUInt()
-            value += (_array[_position + 2].toUInt() shl 8)
-            value += (_array[_position + 1].toUInt() shl 16)
-            value += (_array[_position + 0].toUInt() shl 24)
+            value = _view[_position + 3].toUInt()
+            value += (_view[_position + 2].toUInt() shl 8)
+            value += (_view[_position + 1].toUInt() shl 16)
+            value += (_view[_position + 0].toUInt() shl 24)
         }
         _position += 4
         return value
@@ -320,15 +321,15 @@ class ByteBuffer internal constructor(
         checkArraySize(_capacity, _position, 4)
         val data: Int = value.toInt()
         if (_reverse) {
-            _array[_position + 0] = (data and 0xFF).toUByte()
-            _array[_position + 1] = ((data ushr 8) and 0xFF).toUByte()
-            _array[_position + 2] = ((data ushr 16) and 0xFF).toUByte()
-            _array[_position + 3] = ((data ushr 24) and 0xFF).toUByte()
+            _view[_position + 0] = (data and 0xFF).toUByte()
+            _view[_position + 1] = ((data ushr 8) and 0xFF).toUByte()
+            _view[_position + 2] = ((data ushr 16) and 0xFF).toUByte()
+            _view[_position + 3] = ((data ushr 24) and 0xFF).toUByte()
         } else {
-            _array[_position + 3] = (data and 0xFF).toUByte()
-            _array[_position + 2] = ((data ushr 8) and 0xFF).toUByte()
-            _array[_position + 1] = ((data ushr 16) and 0xFF).toUByte()
-            _array[_position + 0] = ((data ushr 24) and 0xFF).toUByte()
+            _view[_position + 3] = (data and 0xFF).toUByte()
+            _view[_position + 2] = ((data ushr 8) and 0xFF).toUByte()
+            _view[_position + 1] = ((data ushr 16) and 0xFF).toUByte()
+            _view[_position + 0] = ((data ushr 24) and 0xFF).toUByte()
         }
         _position += 4
     }
@@ -337,23 +338,23 @@ class ByteBuffer internal constructor(
         checkArraySize(_capacity, _position, 8)
         var value: Long
         if (_reverse) {
-            value = _array[_position + 0].toLong()
-            value += (_array[_position + 1].toLong() shl 8)
-            value += (_array[_position + 2].toLong() shl 16)
-            value += (_array[_position + 3].toLong() shl 24)
-            value += (_array[_position + 4].toLong() shl 32)
-            value += (_array[_position + 5].toLong() shl 40)
-            value += (_array[_position + 6].toLong() shl 48)
-            value += (_array[_position + 7].toLong() shl 56)
+            value = _view[_position + 0].toLong()
+            value += (_view[_position + 1].toLong() shl 8)
+            value += (_view[_position + 2].toLong() shl 16)
+            value += (_view[_position + 3].toLong() shl 24)
+            value += (_view[_position + 4].toLong() shl 32)
+            value += (_view[_position + 5].toLong() shl 40)
+            value += (_view[_position + 6].toLong() shl 48)
+            value += (_view[_position + 7].toLong() shl 56)
         } else {
-            value = _array[_position + 7].toLong()
-            value += (_array[_position + 6].toLong() shl 8)
-            value += (_array[_position + 5].toLong() shl 16)
-            value += (_array[_position + 4].toLong() shl 24)
-            value += (_array[_position + 3].toLong() shl 32)
-            value += (_array[_position + 2].toLong() shl 40)
-            value += (_array[_position + 1].toLong() shl 48)
-            value += (_array[_position + 0].toLong() shl 56)
+            value = _view[_position + 7].toLong()
+            value += (_view[_position + 6].toLong() shl 8)
+            value += (_view[_position + 5].toLong() shl 16)
+            value += (_view[_position + 4].toLong() shl 24)
+            value += (_view[_position + 3].toLong() shl 32)
+            value += (_view[_position + 2].toLong() shl 40)
+            value += (_view[_position + 1].toLong() shl 48)
+            value += (_view[_position + 0].toLong() shl 56)
         }
         _position += 8
         return value
@@ -362,23 +363,23 @@ class ByteBuffer internal constructor(
     fun writeLong(value: Long) {
         checkArraySize(_capacity, _position, 8)
         if (_reverse) {
-            _array[_position + 0] = (value and 0xFF).toUByte()
-            _array[_position + 1] = ((value ushr 8) and 0xFF).toUByte()
-            _array[_position + 2] = ((value ushr 16) and 0xFF).toUByte()
-            _array[_position + 3] = ((value ushr 24) and 0xFF).toUByte()
-            _array[_position + 4] = ((value ushr 32) and 0xFF).toUByte()
-            _array[_position + 5] = ((value ushr 40) and 0xFF).toUByte()
-            _array[_position + 6] = ((value ushr 48) and 0xFF).toUByte()
-            _array[_position + 7] = ((value ushr 56) and 0xFF).toUByte()
+            _view[_position + 0] = (value and 0xFF).toUByte()
+            _view[_position + 1] = ((value ushr 8) and 0xFF).toUByte()
+            _view[_position + 2] = ((value ushr 16) and 0xFF).toUByte()
+            _view[_position + 3] = ((value ushr 24) and 0xFF).toUByte()
+            _view[_position + 4] = ((value ushr 32) and 0xFF).toUByte()
+            _view[_position + 5] = ((value ushr 40) and 0xFF).toUByte()
+            _view[_position + 6] = ((value ushr 48) and 0xFF).toUByte()
+            _view[_position + 7] = ((value ushr 56) and 0xFF).toUByte()
         } else {
-            _array[_position + 7] = (value and 0xFF).toUByte()
-            _array[_position + 6] = ((value ushr 8) and 0xFF).toUByte()
-            _array[_position + 5] = ((value ushr 16) and 0xFF).toUByte()
-            _array[_position + 4] = ((value ushr 24) and 0xFF).toUByte()
-            _array[_position + 3] = ((value ushr 32) and 0xFF).toUByte()
-            _array[_position + 2] = ((value ushr 40) and 0xFF).toUByte()
-            _array[_position + 1] = ((value ushr 48) and 0xFF).toUByte()
-            _array[_position + 0] = ((value ushr 56) and 0xFF).toUByte()
+            _view[_position + 7] = (value and 0xFF).toUByte()
+            _view[_position + 6] = ((value ushr 8) and 0xFF).toUByte()
+            _view[_position + 5] = ((value ushr 16) and 0xFF).toUByte()
+            _view[_position + 4] = ((value ushr 24) and 0xFF).toUByte()
+            _view[_position + 3] = ((value ushr 32) and 0xFF).toUByte()
+            _view[_position + 2] = ((value ushr 40) and 0xFF).toUByte()
+            _view[_position + 1] = ((value ushr 48) and 0xFF).toUByte()
+            _view[_position + 0] = ((value ushr 56) and 0xFF).toUByte()
         }
         _position += 8
     }
@@ -387,23 +388,23 @@ class ByteBuffer internal constructor(
         checkArraySize(_capacity, _position, 8)
         var value: ULong
         if (_reverse) {
-            value = _array[_position + 0].toULong()
-            value += (_array[_position + 1].toULong() shl 8)
-            value += (_array[_position + 2].toULong() shl 16)
-            value += (_array[_position + 3].toULong() shl 24)
-            value += (_array[_position + 4].toULong() shl 32)
-            value += (_array[_position + 5].toULong() shl 40)
-            value += (_array[_position + 6].toULong() shl 48)
-            value += (_array[_position + 7].toULong() shl 56)
+            value = _view[_position + 0].toULong()
+            value += (_view[_position + 1].toULong() shl 8)
+            value += (_view[_position + 2].toULong() shl 16)
+            value += (_view[_position + 3].toULong() shl 24)
+            value += (_view[_position + 4].toULong() shl 32)
+            value += (_view[_position + 5].toULong() shl 40)
+            value += (_view[_position + 6].toULong() shl 48)
+            value += (_view[_position + 7].toULong() shl 56)
         } else {
-            value = _array[_position + 7].toULong()
-            value += (_array[_position + 6].toULong() shl 8)
-            value += (_array[_position + 5].toULong() shl 16)
-            value += (_array[_position + 4].toULong() shl 24)
-            value += (_array[_position + 3].toULong() shl 32)
-            value += (_array[_position + 2].toULong() shl 40)
-            value += (_array[_position + 1].toULong() shl 48)
-            value += (_array[_position + 0].toULong() shl 56)
+            value = _view[_position + 7].toULong()
+            value += (_view[_position + 6].toULong() shl 8)
+            value += (_view[_position + 5].toULong() shl 16)
+            value += (_view[_position + 4].toULong() shl 24)
+            value += (_view[_position + 3].toULong() shl 32)
+            value += (_view[_position + 2].toULong() shl 40)
+            value += (_view[_position + 1].toULong() shl 48)
+            value += (_view[_position + 0].toULong() shl 56)
         }
         _position += 8
         return value
@@ -413,23 +414,23 @@ class ByteBuffer internal constructor(
         checkArraySize(_capacity, _position, 8)
         val data: Long = value.toLong()
         if (_reverse) {
-            _array[_position + 0] = (data and 0xFF).toUByte()
-            _array[_position + 1] = ((data ushr 8) and 0xFF).toUByte()
-            _array[_position + 2] = ((data ushr 16) and 0xFF).toUByte()
-            _array[_position + 3] = ((data ushr 24) and 0xFF).toUByte()
-            _array[_position + 4] = ((data ushr 32) and 0xFF).toUByte()
-            _array[_position + 5] = ((data ushr 40) and 0xFF).toUByte()
-            _array[_position + 6] = ((data ushr 48) and 0xFF).toUByte()
-            _array[_position + 7] = ((data ushr 56) and 0xFF).toUByte()
+            _view[_position + 0] = (data and 0xFF).toUByte()
+            _view[_position + 1] = ((data ushr 8) and 0xFF).toUByte()
+            _view[_position + 2] = ((data ushr 16) and 0xFF).toUByte()
+            _view[_position + 3] = ((data ushr 24) and 0xFF).toUByte()
+            _view[_position + 4] = ((data ushr 32) and 0xFF).toUByte()
+            _view[_position + 5] = ((data ushr 40) and 0xFF).toUByte()
+            _view[_position + 6] = ((data ushr 48) and 0xFF).toUByte()
+            _view[_position + 7] = ((data ushr 56) and 0xFF).toUByte()
         } else {
-            _array[_position + 7] = (data and 0xFF).toUByte()
-            _array[_position + 6] = ((data ushr 8) and 0xFF).toUByte()
-            _array[_position + 5] = ((data ushr 16) and 0xFF).toUByte()
-            _array[_position + 4] = ((data ushr 24) and 0xFF).toUByte()
-            _array[_position + 3] = ((data ushr 32) and 0xFF).toUByte()
-            _array[_position + 2] = ((data ushr 40) and 0xFF).toUByte()
-            _array[_position + 1] = ((data ushr 48) and 0xFF).toUByte()
-            _array[_position + 0] = ((data ushr 56) and 0xFF).toUByte()
+            _view[_position + 7] = (data and 0xFF).toUByte()
+            _view[_position + 6] = ((data ushr 8) and 0xFF).toUByte()
+            _view[_position + 5] = ((data ushr 16) and 0xFF).toUByte()
+            _view[_position + 4] = ((data ushr 24) and 0xFF).toUByte()
+            _view[_position + 3] = ((data ushr 32) and 0xFF).toUByte()
+            _view[_position + 2] = ((data ushr 40) and 0xFF).toUByte()
+            _view[_position + 1] = ((data ushr 48) and 0xFF).toUByte()
+            _view[_position + 0] = ((data ushr 56) and 0xFF).toUByte()
         }
         _position += 8
     }
@@ -438,15 +439,15 @@ class ByteBuffer internal constructor(
         checkArraySize(_capacity, _position, 4)
         var value: Int
         if (_reverse) {
-            value = _array[_position + 0].toInt()
-            value += (_array[_position + 1].toInt() shl 8)
-            value += (_array[_position + 2].toInt() shl 16)
-            value += (_array[_position + 3].toInt() shl 24)
+            value = _view[_position + 0].toInt()
+            value += (_view[_position + 1].toInt() shl 8)
+            value += (_view[_position + 2].toInt() shl 16)
+            value += (_view[_position + 3].toInt() shl 24)
         } else {
-            value = _array[_position + 3].toInt()
-            value += (_array[_position + 2].toInt() shl 8)
-            value += (_array[_position + 1].toInt() shl 16)
-            value += (_array[_position + 0].toInt() shl 24)
+            value = _view[_position + 3].toInt()
+            value += (_view[_position + 2].toInt() shl 8)
+            value += (_view[_position + 1].toInt() shl 16)
+            value += (_view[_position + 0].toInt() shl 24)
         }
         _position += 4
         return Float.fromBits(value)
@@ -456,15 +457,15 @@ class ByteBuffer internal constructor(
         checkArraySize(_capacity, _position, 4)
         val data: Int = value.toRawBits()
         if (_reverse) {
-            _array[_position + 0] = (data and 0xFF).toUByte()
-            _array[_position + 1] = ((data ushr 8) and 0xFF).toUByte()
-            _array[_position + 2] = ((data ushr 16) and 0xFF).toUByte()
-            _array[_position + 3] = ((data ushr 24) and 0xFF).toUByte()
+            _view[_position + 0] = (data and 0xFF).toUByte()
+            _view[_position + 1] = ((data ushr 8) and 0xFF).toUByte()
+            _view[_position + 2] = ((data ushr 16) and 0xFF).toUByte()
+            _view[_position + 3] = ((data ushr 24) and 0xFF).toUByte()
         } else {
-            _array[_position + 3] = (data and 0xFF).toUByte()
-            _array[_position + 2] = ((data ushr 8) and 0xFF).toUByte()
-            _array[_position + 1] = ((data ushr 16) and 0xFF).toUByte()
-            _array[_position + 0] = ((data ushr 24) and 0xFF).toUByte()
+            _view[_position + 3] = (data and 0xFF).toUByte()
+            _view[_position + 2] = ((data ushr 8) and 0xFF).toUByte()
+            _view[_position + 1] = ((data ushr 16) and 0xFF).toUByte()
+            _view[_position + 0] = ((data ushr 24) and 0xFF).toUByte()
         }
         _position += 4
     }
@@ -473,23 +474,23 @@ class ByteBuffer internal constructor(
         checkArraySize(_capacity, _position, 8)
         var value: Long
         if (_reverse) {
-            value = _array[_position + 0].toLong()
-            value += (_array[_position + 1].toLong() shl 8)
-            value += (_array[_position + 2].toLong() shl 16)
-            value += (_array[_position + 3].toLong() shl 24)
-            value += (_array[_position + 4].toLong() shl 32)
-            value += (_array[_position + 5].toLong() shl 40)
-            value += (_array[_position + 6].toLong() shl 48)
-            value += (_array[_position + 7].toLong() shl 56)
+            value = _view[_position + 0].toLong()
+            value += (_view[_position + 1].toLong() shl 8)
+            value += (_view[_position + 2].toLong() shl 16)
+            value += (_view[_position + 3].toLong() shl 24)
+            value += (_view[_position + 4].toLong() shl 32)
+            value += (_view[_position + 5].toLong() shl 40)
+            value += (_view[_position + 6].toLong() shl 48)
+            value += (_view[_position + 7].toLong() shl 56)
         } else {
-            value = _array[_position + 7].toLong()
-            value += (_array[_position + 6].toLong() shl 8)
-            value += (_array[_position + 5].toLong() shl 16)
-            value += (_array[_position + 4].toLong() shl 24)
-            value += (_array[_position + 3].toLong() shl 32)
-            value += (_array[_position + 2].toLong() shl 40)
-            value += (_array[_position + 1].toLong() shl 48)
-            value += (_array[_position + 0].toLong() shl 56)
+            value = _view[_position + 7].toLong()
+            value += (_view[_position + 6].toLong() shl 8)
+            value += (_view[_position + 5].toLong() shl 16)
+            value += (_view[_position + 4].toLong() shl 24)
+            value += (_view[_position + 3].toLong() shl 32)
+            value += (_view[_position + 2].toLong() shl 40)
+            value += (_view[_position + 1].toLong() shl 48)
+            value += (_view[_position + 0].toLong() shl 56)
         }
         _position += 8
         return Double.fromBits(value)
@@ -499,23 +500,23 @@ class ByteBuffer internal constructor(
         checkArraySize(_capacity, _position, 8)
         val data: Long = value.toRawBits()
         if (_reverse) {
-            _array[_position + 0] = (data and 0xFF).toUByte()
-            _array[_position + 1] = ((data ushr 8) and 0xFF).toUByte()
-            _array[_position + 2] = ((data ushr 16) and 0xFF).toUByte()
-            _array[_position + 3] = ((data ushr 24) and 0xFF).toUByte()
-            _array[_position + 4] = ((data ushr 32) and 0xFF).toUByte()
-            _array[_position + 5] = ((data ushr 40) and 0xFF).toUByte()
-            _array[_position + 6] = ((data ushr 48) and 0xFF).toUByte()
-            _array[_position + 7] = ((data ushr 56) and 0xFF).toUByte()
+            _view[_position + 0] = (data and 0xFF).toUByte()
+            _view[_position + 1] = ((data ushr 8) and 0xFF).toUByte()
+            _view[_position + 2] = ((data ushr 16) and 0xFF).toUByte()
+            _view[_position + 3] = ((data ushr 24) and 0xFF).toUByte()
+            _view[_position + 4] = ((data ushr 32) and 0xFF).toUByte()
+            _view[_position + 5] = ((data ushr 40) and 0xFF).toUByte()
+            _view[_position + 6] = ((data ushr 48) and 0xFF).toUByte()
+            _view[_position + 7] = ((data ushr 56) and 0xFF).toUByte()
         } else {
-            _array[_position + 7] = (data and 0xFF).toUByte()
-            _array[_position + 6] = ((data ushr 8) and 0xFF).toUByte()
-            _array[_position + 5] = ((data ushr 16) and 0xFF).toUByte()
-            _array[_position + 4] = ((data ushr 24) and 0xFF).toUByte()
-            _array[_position + 3] = ((data ushr 32) and 0xFF).toUByte()
-            _array[_position + 2] = ((data ushr 40) and 0xFF).toUByte()
-            _array[_position + 1] = ((data ushr 48) and 0xFF).toUByte()
-            _array[_position + 0] = ((data ushr 56) and 0xFF).toUByte()
+            _view[_position + 7] = (data and 0xFF).toUByte()
+            _view[_position + 6] = ((data ushr 8) and 0xFF).toUByte()
+            _view[_position + 5] = ((data ushr 16) and 0xFF).toUByte()
+            _view[_position + 4] = ((data ushr 24) and 0xFF).toUByte()
+            _view[_position + 3] = ((data ushr 32) and 0xFF).toUByte()
+            _view[_position + 2] = ((data ushr 40) and 0xFF).toUByte()
+            _view[_position + 1] = ((data ushr 48) and 0xFF).toUByte()
+            _view[_position + 0] = ((data ushr 56) and 0xFF).toUByte()
         }
         _position += 8
     }

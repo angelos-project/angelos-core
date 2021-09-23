@@ -21,10 +21,10 @@ import angelos.io.FileObject
 internal expect class FileSystem {
     companion object {
         @ExperimentalUnsignedTypes
-        inline fun readFile(number: Int, array: UByteArray, index: Int, count: ULong): ULong
+        inline fun readFile(number: Int, array: ByteArray, index: Int, count: ULong): ULong
 
         @ExperimentalUnsignedTypes
-        inline fun writeFile(number: Int, array: UByteArray, index: Int, count: ULong): ULong
+        inline fun writeFile(number: Int, array: ByteArray, index: Int, count: ULong): ULong
         inline fun tellFile(number: Int): ULong
         inline fun seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): ULong
         inline fun closeFile(number: Int): Boolean

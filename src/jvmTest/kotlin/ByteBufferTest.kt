@@ -155,7 +155,7 @@ class ByteBufferTest {
 
     @Test
     fun array() {
-        assertEquals(buffer.array() is UByteArray, true, "Method 'array' should return a UByteArray.")
+        assertEquals(buffer.array() is ByteArray, true, "Method 'array' should return a UByteArray.")
     }
 
     @Test
@@ -516,7 +516,7 @@ class ByteBufferTest {
 
     @Test
     fun wrap() {
-        buffer = ByteBuffer.wrap(UByteArray(size))
+        buffer = ByteBuffer.wrap(ByteArray(size))
         assertEquals(buffer.capacity, size, "Value 'capacity' should always be the same as the given size.")
         assertEquals(buffer.position, 0, "Property 'position' should implicitly be set to 0.")
         assertEquals(buffer.direct, false, "Value 'direct' should implicitly be set to 'false'.")

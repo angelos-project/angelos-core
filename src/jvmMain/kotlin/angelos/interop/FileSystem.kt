@@ -22,12 +22,12 @@ import angelos.io.FileObject
 internal actual class FileSystem {
     actual companion object {
         @ExperimentalUnsignedTypes
-        actual inline fun readFile(number: Int, array: UByteArray, index: Int, count: ULong): ULong =
-            fs_read(number, array.toByteArray(), index, count.toLong()).toULong()
+        actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: ULong): ULong =
+            fs_read(number, array, index, count.toLong()).toULong()
 
         @ExperimentalUnsignedTypes
-        actual inline fun writeFile(number: Int, array: UByteArray, index: Int, count: ULong): ULong =
-            fs_write(number, array.toByteArray(), index, count.toLong()).toULong()
+        actual inline fun writeFile(number: Int, array: ByteArray, index: Int, count: ULong): ULong =
+            fs_write(number, array, index, count.toLong()).toULong()
 
         actual inline fun tellFile(number: Int): ULong = fs_lseek(number, 0, SeekDirective.CUR.whence).toULong()
 
