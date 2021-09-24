@@ -103,10 +103,10 @@ class FileSystemTest {
     @Test
     fun testWrite(){
         val message = "Hello, world!"
-        val size = message.toByteArray().size
+        val size = message.toByteArray().size.toLong()
 
         val file = FileSystem.openFile(tmpFile.toString(), 3)
-        assertTrue(FileSystem.writeFile(file, message.toByteArray(), 0, size.toULong()) == size.toULong())
+        assertTrue(FileSystem.writeFile(file, message.toByteArray(), 0, size) == size)
         assertTrue(FileSystem.closeFile(file))
 
         assertEquals(java.nio.file.Files.newBufferedReader(tmpFile).readLine(), message)
@@ -115,15 +115,15 @@ class FileSystemTest {
     @Test
     fun testRead(){
         val message = "Hello, world!"
-        val size = message.toByteArray().size
-        var loaded = ByteArray(size)
+        val size = message.toByteArray().size.toLong()
+        var loaded = ByteArray(size.toInt())
 
         val writer = java.nio.file.Files.newBufferedWriter(tmpFile)
         writer.write(message)
         writer.close()
 
         val file = FileSystem.openFile(tmpFile.toString(), 3)
-        assertTrue(FileSystem.readFile(file, loaded, 0, size.toULong()) == size.toULong())
+        assertTrue(FileSystem.readFile(file, loaded, 0, size) == size)
         assertTrue(FileSystem.closeFile(file))
 
         assertEquals(loaded.contentToString(), message.toByteArray().contentToString())
@@ -132,18 +132,18 @@ class FileSystemTest {
     @Test
     fun testFile() {
         val message = "Hello, world!".toByteArray()
-        val size = message.size
+        val size = message.size.toLong()
         val file = FileSystem.openFile(tmpFile.toString(), 3)
         assertNotEquals(file, 0)
 
-        assertTrue(FileSystem.tellFile(file) == 0.toULong())
-        assertTrue(FileSystem.writeFile(file, message, 0, size.toULong()) == 13.toULong())
+        assertTrue(FileSystem.tellFile(file) == 0L)
+        assertTrue(FileSystem.writeFile(file, message, 0, size) == 13L)
 
-        assertTrue(FileSystem.tellFile(file) == size.toULong())
-        assertTrue(FileSystem.seekFile(file, 0, FileDescriptor.Seek.SET) == 0.toULong())
+        assertTrue(FileSystem.tellFile(file) == size)
+        assertTrue(FileSystem.seekFile(file, 0, FileDescriptor.Seek.SET) == 0L)
 
-        var loaded = ByteArray(size)
-        assertTrue(FileSystem.readFile(file, loaded, 0, size.toULong()) == 13.toULong())
+        val loaded = ByteArray(size.toInt())
+        assertTrue(FileSystem.readFile(file, loaded, 0, size) == 13L)
         assertEquals(message.contentToString(), loaded.contentToString())
 
         assertTrue(FileSystem.closeFile(file))

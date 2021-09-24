@@ -22,21 +22,21 @@ import angelos.io.FileObject
 internal actual class FileSystem {
     actual companion object {
         @ExperimentalUnsignedTypes
-        actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: ULong): ULong =
-            fs_read(number, array, index, count.toLong()).toULong()
+        actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long =
+            fs_read(number, array, index, count)
 
         @ExperimentalUnsignedTypes
-        actual inline fun writeFile(number: Int, array: ByteArray, index: Int, count: ULong): ULong =
-            fs_write(number, array, index, count.toLong()).toULong()
+        actual inline fun writeFile(number: Int, array: ByteArray, index: Int, count: Long): Long =
+            fs_write(number, array, index, count)
 
-        actual inline fun tellFile(number: Int): ULong = fs_lseek(number, 0, SeekDirective.CUR.whence).toULong()
+        actual inline fun tellFile(number: Int): Long = fs_lseek(number, 0, SeekDirective.CUR.whence)
 
-        actual inline fun seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): ULong =
+        actual inline fun seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): Long =
             fs_lseek(number, position, when (whence) {
                 FileDescriptor.Seek.SET -> SeekDirective.SET.whence
                 FileDescriptor.Seek.CUR -> SeekDirective.CUR.whence
                 FileDescriptor.Seek.END -> SeekDirective.END.whence
-            }).toULong()
+            })
 
         actual inline fun closeFile(number: Int): Boolean = fs_close(number) == 0
 

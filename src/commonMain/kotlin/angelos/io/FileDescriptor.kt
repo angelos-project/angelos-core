@@ -26,38 +26,38 @@ class FileDescriptor internal constructor(
 ) : Closable {
     private var _position: ULong = 0u
 
-    val position: ULong
-        get() = _position
+    val position: Long
+        get() = _position.toLong()
 
     val number: Int
         get() = _number
 
-    fun read(buffer: ByteBuffer, count: ULong) {
-        if (buffer.remaining().toULong() < count)
+    fun read(buffer: ByteBuffer, count: Long) {
+        if (buffer.remaining() < count)
             throw BufferUnderflowException()
         if(FileSystem.readFile(_number, buffer.array(), buffer.position, count) != count)
             throw IOException("Couldn't read $count bytes from file.")
-        _position += count
+        _position += count.toULong()
     }
 
-    fun write(buffer: ByteBuffer, count: ULong) {
-        if (buffer.remaining().toULong() < count)
+    fun write(buffer: ByteBuffer, count: Long) {
+        if (buffer.remaining() < count)
             throw BufferOverflowException()
         if(FileSystem.writeFile(_number, buffer.array(), buffer.position, count) != count)
             throw IOException("Couldn't write $count bytes to file.")
-        _position += count
+        _position += count.toULong()
     }
 
-    fun tell(): ULong{
+    fun tell(): Long{
         val position = FileSystem.tellFile(_number)
-        if (position != _position)
+        if (position.toULong() != _position)
             throw SyncFailedException("File descriptor out of sync with physical cursor.")
         return position
     }
 
-    fun seek(position: Long, whence: Seek): ULong {
-        _position = FileSystem.seekFile(_number, position, whence)
-        return _position
+    fun seek(position: Long, whence: Seek): Long {
+        _position = FileSystem.seekFile(_number, position, whence).toULong()
+        return _position.toLong()
     }
 
     override fun close(){

@@ -22,22 +22,22 @@ internal actual class FileSystem {
     actual companion object {
 
         @ExperimentalUnsignedTypes
-        actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: ULong): ULong {
+        actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long {
             array.usePinned {
-                return read(number, it.addressOf(index), count).toULong()
+                return read(number, it.addressOf(index), count.toULong())
             }
         }
 
         @ExperimentalUnsignedTypes
-        actual inline fun writeFile(number: Int, array: ByteArray, index: Int, count: ULong): ULong {
+        actual inline fun writeFile(number: Int, array: ByteArray, index: Int, count: Long): Long {
             array.usePinned {
-                return write(number, it.addressOf(index), count).toULong()
+                return write(number, it.addressOf(index), count.toULong())
             }
         }
 
-        actual inline fun tellFile(number: Int): ULong = lseek(number, 0, SEEK_CUR).toULong()
+        actual inline fun tellFile(number: Int): Long = lseek(number, 0, SEEK_CUR)
 
-        actual inline fun seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): ULong {
+        actual inline fun seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): Long {
             val newPos: Long = lseek(number, position, when (whence) {
                 FileDescriptor.Seek.SET -> SEEK_SET
                 FileDescriptor.Seek.CUR -> SEEK_CUR
@@ -45,7 +45,7 @@ internal actual class FileSystem {
             })
             if (newPos < 0)
                 throw IOException("Failed seeking in file.")
-            return newPos.toULong()
+            return newPos
         }
 
         actual inline fun closeFile(number: Int): Boolean = close(number) == 0

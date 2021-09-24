@@ -21,7 +21,7 @@ typealias PathElements = Triple<String, List<String>, PathSeparator>
 /**
  * Path abstract class.
  */
-abstract class Path internal constructor(protected val root: String, val path: List<String>, val separator: PathSeparator) {
+abstract class Path internal constructor(val root: String, val path: List<String>, val separator: PathSeparator) {
     val absolute: Boolean = root.isNotEmpty()
 
     constructor(elements: PathElements): this(elements.first, elements.second, elements.third)
@@ -42,16 +42,16 @@ abstract class Path internal constructor(protected val root: String, val path: L
             separator: PathSeparator,
         ): PathElements = when {
             separator == PathSeparator.WINDOWS && path.contains(windowsRegex) -> PathElements(path.substring(0..2),
-                path.substring(3..path.length).split(separator.toChar()),
+                path.substring(3..(path.length-1)).split(separator.toChar()),
                 separator)
             separator == PathSeparator.POSIX && path.contains(posixRegex) -> PathElements("/",
-                path.substring(1..path.length).split(separator.toChar()),
+                path.substring(1..(path.length-1)).split(separator.toChar()),
                 separator)
             else -> PathElements("", path.split(separator.toChar()), separator)
         }
 
-        val windowsRegex: Regex = Regex.fromLiteral("""^[a-zA-Z]:\\""")
-        val posixRegex: Regex = Regex.fromLiteral("""^\/""")
+        val windowsRegex: Regex = Regex("""^[a-zA-Z]:\\""")
+        val posixRegex: Regex = Regex("""^\/""")
     }
 
     abstract fun join(vararg elements: String): Path

@@ -21,12 +21,12 @@ import angelos.io.FileObject
 internal actual class FileSystem {
     actual companion object {
         @ExperimentalUnsignedTypes
-        actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: ULong): ULong {TODO("Not yet implemented")}
+        actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long {TODO("Not yet implemented")}
 
         @ExperimentalUnsignedTypes
-        actual inline fun writeFile(number: Int, array: ByteArray, index: Int, count: ULong): ULong {TODO("Not yet implemented")}
-        actual inline fun tellFile(number: Int): ULong {TODO("Not yet implemented")}
-        actual inline fun seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): ULong {TODO("Not yet implemented")}
+        actual inline fun writeFile(number: Int, array: ByteArray, index: Int, count: Long): Long {TODO("Not yet implemented")}
+        actual inline fun tellFile(number: Int): Long {TODO("Not yet implemented")}
+        actual inline fun seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): Long {TODO("Not yet implemented")}
         actual inline fun closeFile(number: Int): Boolean {TODO("Not yet implemented")}
 
         actual inline fun checkReadable(path: String): Boolean {TODO("Not yet implemented")}
