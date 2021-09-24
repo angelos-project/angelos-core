@@ -57,12 +57,12 @@ internal actual class FileSystem {
 
         actual inline fun getFileInfo(path: String): FileObject.Info = fs_fileinfo(path) ?: throw FileNotFoundException("File not found.\n$path")
 
-        actual inline fun getLinkTarget(path: String): String = fs_readlink(path)
+        actual inline fun getLinkTarget(path: String): String = fs_readlink(path) ?: throw FileNotFoundException("File not found.\n$path")
 
         actual inline fun openDir(path: String): Long {
             val number = fs_opendir(path)
             if (number == 0L)
-                throw FileNotFoundException("File not found.\n$path")
+                throw FileNotFoundException("Directory not found.\n$path")
             return number
         }
 
@@ -70,11 +70,16 @@ internal actual class FileSystem {
 
         actual inline fun closeDir(dir: Long): Boolean = fs_closedir(dir) == 0
 
-        actual inline fun openFile(path: String, option: Int): Int = fs_open(path, when (option) {
-            1 -> AccessMode.READ_ONLY.mode
-            2 -> AccessMode.WRITE_ONLY.mode
-            else -> AccessMode.READ_WRITE.mode
-        })
+        actual inline fun openFile(path: String, option: Int): Int{
+            val fd = fs_open(path, when (option) {
+                1 -> AccessMode.READ_ONLY.mode
+                2 -> AccessMode.WRITE_ONLY.mode
+                else -> AccessMode.READ_WRITE.mode
+            })
+            if (fd == -1)
+                throw FileNotFoundException("File not found.\n$path")
+            return fd
+        }
 
         enum class SeekDirective(val whence: Int) {
             SET(0),
@@ -117,7 +122,7 @@ internal actual class FileSystem {
         private external fun fs_fileinfo(path: String): FileObject.Info?
 
         @JvmStatic
-        private external fun fs_readlink(path: String): String
+        private external fun fs_readlink(path: String): String?
 
         @JvmStatic
         private external fun fs_open(path: String, option: Int): Int

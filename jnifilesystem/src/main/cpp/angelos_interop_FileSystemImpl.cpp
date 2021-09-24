@@ -100,7 +100,7 @@ static jint fs_access(JNIEnv * env, jclass thisClass, jstring path, jint amode){
 static jint fs_filetype(JNIEnv * env, jclass thisClass, jstring path){
     const char *path_buf = (*env)->GetStringUTFChars(env, path, NULL);
     struct stat* file_stat = malloc(sizeof(struct stat));
-    int success = stat(path_buf, file_stat);
+    int success = lstat(path_buf, file_stat);
     (*env)->ReleaseStringUTFChars(env, path, path_buf);
 
     int type = 0;
@@ -137,16 +137,17 @@ static jobject fs_fileinfo(JNIEnv * env, jclass thisClass, jstring path){
     int success = stat(path_buf, file_stat);
     (*env)->ReleaseStringUTFChars(env, path, path_buf);
 
-    if (success != 0)
+    if (success != 0){
         free(file_stat);
         return NULL; // Return NULL if file not found
+    }
 
-    jclass local_cls = (*env)->FindClass(env, "angelos/io/FileObject/Info");
+    jclass local_cls = (*env)->FindClass(env, "angelos/io/FileObject$Info");
     if (local_cls == NULL) // Quit program if Java class can't be found
         exit(1);
 
     jclass global_cls = (*env)->NewGlobalRef(env, local_cls);
-    jmethodID cls_init = (*env)->GetMethodID(env, global_cls, "<init>", "(ZIIJJJJJ)V");
+    jmethodID cls_init = (*env)->GetMethodID(env, global_cls, "<init>", "(IIJJJJJ)V");
     if (cls_init == NULL) // Quit program if Java class constructor can't be found
         exit(1);
 
@@ -173,7 +174,6 @@ static jobject fs_fileinfo(JNIEnv * env, jclass thisClass, jstring path){
 static jstring fs_readlink(JNIEnv * env, jclass thisClass, jstring path){
     const char *link = (*env)->GetStringUTFChars(env, path, NULL);
     unsigned char* target = malloc(4096);
-    printf("LINK: %s", link);
 
     ssize_t length = readlink(link, target, 4096);
     if (length == -1){
@@ -182,12 +182,11 @@ static jstring fs_readlink(JNIEnv * env, jclass thisClass, jstring path){
     }
 
     target[length > 2095 ? 2095 : length] = '\0';
-    printf("TARGET: %s", target);
+    (*env)->ReleaseStringUTFChars(env, path, link);
+    jstring target_str = (*env)->NewStringUTF(env,target);
 
-    //(*env)->ReleaseStringUTFChars(env, path, link);
-    //return (*env)->NewStringUTF(env,target);
     free(target);
-    return NULL;
+    return target_str;
 }
 
 /*

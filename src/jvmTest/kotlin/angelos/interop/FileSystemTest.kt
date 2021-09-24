@@ -15,51 +15,80 @@
 package angelos.interop
 
 import angelos.io.FileDescriptor
+import angelos.io.FileNotFoundException
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import kotlin.io.path.deleteIfExists
 
 
 class FileSystemTest {
     lateinit var tmpDir: java.nio.file.Path
     lateinit var tmpFile: java.nio.file.Path
+    lateinit var tmpLink: java.nio.file.Path
+    lateinit var tmpMissing: java.nio.file.Path
 
     @Before
     fun setUp() {
         tmpDir = java.nio.file.Files.createTempDirectory("temporary")
         tmpFile = java.nio.file.Files.createTempFile(tmpDir, "test", ".tmp")
+        tmpLink = java.nio.file.Files.createSymbolicLink(
+            java.nio.file.Paths.get(tmpDir.toString(), "link.tmp"), tmpFile)
+        tmpMissing = java.nio.file.Paths.get(tmpDir.toString(), "missing.tmp")
     }
 
     @After
     fun tearDown() {
         java.nio.file.Files.deleteIfExists(tmpFile)
+        java.nio.file.Files.deleteIfExists(tmpLink)
         java.nio.file.Files.deleteIfExists(tmpDir)
+    }
+
+    private inline fun <reified E : Exception> assertExceptionThrown(test: () -> Unit, message: String) {
+        var happened = false
+        try {
+            test()
+        } catch (e: Exception) {
+            if (e is E) {
+                happened = true
+            } else {
+                throw e
+            }
+        } finally {
+            kotlin.test.assertEquals(happened, true, message)
+        }
     }
 
     @Test
     fun checkExists() {
         assertTrue(FileSystem.checkExists(tmpDir.toString()))
         assertTrue(FileSystem.checkExists(tmpFile.toString()))
+        assertTrue(FileSystem.checkExists(tmpLink.toString()))
+        assertFalse(FileSystem.checkExists(tmpMissing.toString()))
     }
 
     @Test
     fun checkReadable() {
         assertTrue(FileSystem.checkReadable(tmpDir.toString()))
         assertTrue(FileSystem.checkReadable(tmpFile.toString()))
+        assertTrue(FileSystem.checkReadable(tmpLink.toString()))
+        assertFalse(FileSystem.checkReadable(tmpMissing.toString()))
     }
 
     @Test
     fun checkWritable() {
         assertTrue(FileSystem.checkWritable(tmpDir.toString()))
         assertTrue(FileSystem.checkWritable(tmpFile.toString()))
+        assertTrue(FileSystem.checkWritable(tmpLink.toString()))
+        assertFalse(FileSystem.checkWritable(tmpMissing.toString()))
     }
 
     @Test
     fun checkExecutable() {
         assertTrue(FileSystem.checkExecutable(tmpDir.toString()))
         assertFalse(FileSystem.checkExecutable(tmpFile.toString()))
+        assertFalse(FileSystem.checkExecutable(tmpLink.toString()))
+        assertFalse(FileSystem.checkExecutable(tmpMissing.toString()))
     }
 
     @Test
@@ -97,7 +126,6 @@ class FileSystemTest {
         assertTrue(FileSystem.readFile(file, loaded, 0, size.toULong()) == size.toULong())
         assertTrue(FileSystem.closeFile(file))
 
-
         assertEquals(loaded.contentToString(), message.toByteArray().contentToString())
     }
 
@@ -124,10 +152,32 @@ class FileSystemTest {
 
     @Test
     fun testReadLink(){
-        val tmpLink: java.nio.file.Path = java.nio.file.Files.createLink(java.nio.file.Paths.get(tmpDir.toString(), "link.tmp"), tmpFile)
-        //println(tmpLink)
-        println(FileSystem.getLinkTarget(tmpLink.toString()))
+        assertEquals(FileSystem.getLinkTarget(tmpLink.toString()), tmpFile.toString())
 
-        tmpLink.deleteIfExists()
+        assertExceptionThrown<FileNotFoundException>(
+            {FileSystem.getLinkTarget(tmpMissing.toString())},
+            "Missing file should raise FileNotFoundException"
+        )
+    }
+
+    @Test
+    fun testFileType(){
+        assertEquals(FileSystem.getFileType(tmpLink.toString()), 1)
+        assertEquals(FileSystem.getFileType(tmpDir.toString()), 2)
+        assertEquals(FileSystem.getFileType(tmpFile.toString()), 3)
+        assertExceptionThrown<FileNotFoundException>(
+            {FileSystem.getFileType(tmpMissing.toString())},
+            "Missing file should raise FileNotFoundException"
+        )
+    }
+
+    @Test
+    fun testFileInfo(){
+        val fileInfo = FileSystem.getFileInfo(tmpFile.toString())
+        assertTrue(fileInfo.createdAt > 0)
+        assertExceptionThrown<FileNotFoundException>(
+            {FileSystem.getFileInfo(tmpMissing.toString())},
+            "Missing file should raise FileNotFoundException"
+        )
     }
 }
