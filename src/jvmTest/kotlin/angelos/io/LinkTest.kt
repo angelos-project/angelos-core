@@ -20,7 +20,7 @@ import org.junit.Test
 
 import org.junit.Assert.*
 
-class FileTest {
+class LinkTest {
     lateinit var tmpDir: java.nio.file.Path
     lateinit var tmpFile: java.nio.file.Path
     lateinit var tmpLink: java.nio.file.Path
@@ -39,7 +39,6 @@ class FileTest {
     fun tearDown() {
         java.nio.file.Files.deleteIfExists(tmpFile)
         java.nio.file.Files.deleteIfExists(tmpLink)
-        java.nio.file.Files.deleteIfExists(tmpMissing)
         java.nio.file.Files.deleteIfExists(tmpDir)
     }
 
@@ -59,24 +58,39 @@ class FileTest {
     }
 
     @Test
-    fun getSize() {
-        assertTrue(File(VirtualPath(tmpDir.toString()).toRealPath()).size > 0L)
-        assertTrue(File(VirtualPath(tmpFile.toString()).toRealPath()).size == 0L)
-        assertTrue(File(VirtualPath(tmpLink.toString()).toRealPath()).size == 0L)
-        assertExceptionThrown<FileNotFoundException>({
-            File(VirtualPath(tmpMissing.toString()).toRealPath()).size},
-            "Size property on missing file should trigger FileNotFoundException."
+    fun getTarget() {
+        assertExceptionThrown<NotLinkException>({
+            Link(VirtualPath(tmpDir.toString()).toRealPath()).target},
+            "Target property on non-link should trigger NotLinkException."
+        )
+        assertExceptionThrown<NotLinkException>({
+            Link(VirtualPath(tmpFile.toString()).toRealPath()).target},
+            "getItem method on missing file should trigger NotLinkException."
+        )
+        assertEquals(Link(VirtualPath(tmpLink.toString()).toRealPath()).target, tmpFile.toString())
+        assertExceptionThrown<NotLinkException>({
+            Link(VirtualPath(tmpMissing.toString()).toRealPath()).target},
+            "getItem method on missing file should trigger FileNotFoundException."
         )
     }
 
     @Test
-    fun open() {
-        assertExceptionThrown<FileNotFoundException>({
-            File(VirtualPath(tmpDir.toString()).toRealPath()).open(File.OpenOption.READ_WRITE)},
-            "Open method on non-file should trigger FileNotFoundException."
+    fun goToTarget() {
+        assertExceptionThrown<NotLinkException>({
+            Link(VirtualPath(tmpDir.toString()).toRealPath()).goToTarget()},
+            "goToTarget method to non-link should trigger NotLinkException."
         )
-        assertTrue(File(VirtualPath(tmpFile.toString()).toRealPath()).open(File.OpenOption.READ_WRITE) is FileDescriptor)
-        assertTrue(File(VirtualPath(tmpLink.toString()).toRealPath()).open(File.OpenOption.READ_WRITE) is FileDescriptor)
-        assertTrue(File(VirtualPath(tmpMissing.toString()).toRealPath()).open(File.OpenOption.READ_WRITE) is FileDescriptor)
+        assertExceptionThrown<NotLinkException>({
+            Link(VirtualPath(tmpFile.toString()).toRealPath()).goToTarget()},
+            "goToTarget method to non-link file should trigger NotLinkException."
+        )
+        assertEquals(
+            Link(VirtualPath(tmpLink.toString()).toRealPath()).goToTarget().path.toString(),
+            File(VirtualPath(tmpFile.toString()).toRealPath()).path.toString()
+        )
+        assertExceptionThrown<NotLinkException>({
+            Link(VirtualPath(tmpMissing.toString()).toRealPath()).goToTarget()},
+            "goToTarget method to missing file should trigger FileNotFoundException."
+        )
     }
 }

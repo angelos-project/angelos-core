@@ -17,15 +17,11 @@ package angelos.io
 import angelos.interop.FileSystem
 
 class Dir(path: RealPath) : FileObject(path), Iterable<FileObject> {
+    val skip = path.path.last() == "." || path.path.last() == ".."
 
     class DirIterator(private val dir: Dir): Iterator<FileObject>{
-        private var _dir: Long = 0
-        private var _entry: FileEntry = FileEntry("", 0)
-
-        init {
-            _dir = FileSystem.openDir(dir.path.toString())
-            _entry = FileSystem.readDir(_dir)
-        }
+        private var _dir = FileSystem.openDir(dir.path.toString())
+        private var _entry = FileSystem.readDir(_dir)
 
         override fun hasNext(): Boolean = _entry.number != 0
 

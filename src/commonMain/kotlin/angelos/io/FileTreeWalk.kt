@@ -19,7 +19,7 @@ class FileTreeWalk(private val dir: Dir, val maxDepth: Int) : Sequence<FileObjec
         private var _hierarchy: MutableList<Dir.DirIterator> = mutableListOf(dir.iterator())
 
         override fun hasNext(): Boolean {
-            while (!_hierarchy.last().hasNext())
+            while(_hierarchy.size > 0 && !_hierarchy.last().hasNext())
                 _hierarchy.removeLast()
 
             return _hierarchy.lastOrNull()?.hasNext() ?: false
@@ -28,7 +28,7 @@ class FileTreeWalk(private val dir: Dir, val maxDepth: Int) : Sequence<FileObjec
         override fun next(): FileObject {
             val current = _hierarchy.last().next()
 
-            if (current is Dir && _hierarchy.size < maxDepth)
+            if (current is Dir && current.readable && !current!!.skip && _hierarchy.size < maxDepth)
                 _hierarchy.add(current.iterator())
 
             return current

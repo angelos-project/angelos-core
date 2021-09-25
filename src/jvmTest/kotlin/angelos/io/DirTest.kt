@@ -19,8 +19,9 @@ import org.junit.Before
 import org.junit.Test
 
 import org.junit.Assert.*
+import kotlin.test.assertContains
 
-class FileTest {
+class DirTest {
     lateinit var tmpDir: java.nio.file.Path
     lateinit var tmpFile: java.nio.file.Path
     lateinit var tmpLink: java.nio.file.Path
@@ -39,7 +40,6 @@ class FileTest {
     fun tearDown() {
         java.nio.file.Files.deleteIfExists(tmpFile)
         java.nio.file.Files.deleteIfExists(tmpLink)
-        java.nio.file.Files.deleteIfExists(tmpMissing)
         java.nio.file.Files.deleteIfExists(tmpDir)
     }
 
@@ -59,24 +59,27 @@ class FileTest {
     }
 
     @Test
-    fun getSize() {
-        assertTrue(File(VirtualPath(tmpDir.toString()).toRealPath()).size > 0L)
-        assertTrue(File(VirtualPath(tmpFile.toString()).toRealPath()).size == 0L)
-        assertTrue(File(VirtualPath(tmpLink.toString()).toRealPath()).size == 0L)
-        assertExceptionThrown<FileNotFoundException>({
-            File(VirtualPath(tmpMissing.toString()).toRealPath()).size},
-            "Size property on missing file should trigger FileNotFoundException."
-        )
+    operator fun iterator() {
+        // Method that returns a directory iterator class
+        // This method is implicitly tested in walk().
     }
 
     @Test
-    fun open() {
-        assertExceptionThrown<FileNotFoundException>({
-            File(VirtualPath(tmpDir.toString()).toRealPath()).open(File.OpenOption.READ_WRITE)},
-            "Open method on non-file should trigger FileNotFoundException."
-        )
-        assertTrue(File(VirtualPath(tmpFile.toString()).toRealPath()).open(File.OpenOption.READ_WRITE) is FileDescriptor)
-        assertTrue(File(VirtualPath(tmpLink.toString()).toRealPath()).open(File.OpenOption.READ_WRITE) is FileDescriptor)
-        assertTrue(File(VirtualPath(tmpMissing.toString()).toRealPath()).open(File.OpenOption.READ_WRITE) is FileDescriptor)
+    fun walk() {
+        val files = mutableListOf<String>()
+        Dir(VirtualPath(tmpDir.toString()).toRealPath()).walk().forEach {
+            if(it !is Dir || (it is Dir && !it.skip))
+                files.add(it.path.toString())
+        }
+        assertContains(files, tmpFile.toString())
+        assertContains(files, tmpLink.toString())
+
+        val files2 = mutableListOf<String>()
+        Dir(VirtualPath(tmpDir.toString()).toRealPath()).walk(1).forEach {
+            if(it !is Dir || (it is Dir && !it.skip))
+                files2.add(it.path.toString())
+        }
+        assertContains(files2, tmpFile.toString())
+        assertContains(files2, tmpLink.toString())
     }
 }

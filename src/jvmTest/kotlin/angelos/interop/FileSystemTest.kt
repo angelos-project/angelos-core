@@ -16,6 +16,7 @@ package angelos.interop
 
 import angelos.io.FileDescriptor
 import angelos.io.FileNotFoundException
+import angelos.io.NotLinkException
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -154,7 +155,7 @@ class FileSystemTest {
     fun testReadLink(){
         assertEquals(FileSystem.getLinkTarget(tmpLink.toString()), tmpFile.toString())
 
-        assertExceptionThrown<FileNotFoundException>(
+        assertExceptionThrown<NotLinkException>(
             {FileSystem.getLinkTarget(tmpMissing.toString())},
             "Missing file should raise FileNotFoundException"
         )

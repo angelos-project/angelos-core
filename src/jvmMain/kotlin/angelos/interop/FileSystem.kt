@@ -18,6 +18,7 @@ import angelos.io.FileDescriptor
 import angelos.io.Dir.FileEntry
 import angelos.io.FileNotFoundException
 import angelos.io.FileObject
+import angelos.io.NotLinkException
 
 internal actual class FileSystem {
     actual companion object {
@@ -57,7 +58,7 @@ internal actual class FileSystem {
 
         actual inline fun getFileInfo(path: String): FileObject.Info = fs_fileinfo(path) ?: throw FileNotFoundException("File not found.\n$path")
 
-        actual inline fun getLinkTarget(path: String): String = fs_readlink(path) ?: throw FileNotFoundException("File not found.\n$path")
+        actual inline fun getLinkTarget(path: String): String = fs_readlink(path) ?: throw NotLinkException("Not a symbolic link.\n$path")
 
         actual inline fun openDir(path: String): Long {
             val number = fs_opendir(path)
