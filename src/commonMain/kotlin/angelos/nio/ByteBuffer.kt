@@ -16,6 +16,11 @@ package angelos.nio
 
 import kotlin.jvm.JvmStatic
 
+/**
+ * Direct buffer Kotlin/JVM: package jdk.internal.misc.Unsafe;
+ * Direct buffer Kotlin/Native: kotlin or kotlin.cinterop
+ */
+
 @ExperimentalUnsignedTypes
 class ByteBuffer internal constructor(
     array: ByteArray,

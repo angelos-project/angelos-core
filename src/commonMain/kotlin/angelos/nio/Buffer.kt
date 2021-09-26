@@ -14,123 +14,190 @@
  */
 package angelos.nio
 
-import angelos.nio.ReadOnlyBufferException
-import kotlin.jvm.JvmStatic
+import kotlin.math.absoluteValue
+import kotlin.math.min
 
-
-abstract class Buffer(capacity: Int, limit: Int, position: Int, mark: Int) : Any() {
-    private var _capacity: Int = 0
-    var capacity: Int
+abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOrder = nativeEndianness) {
+    private var _capacity: Int
+    val capacity: Int
         get() = _capacity
-    private var _limit: Int = 0
-    var limit: Int
+
+    protected var _limit: Int
+    val limit: Int
         get() = _limit
-        set(value) {
-            if ((value < 0) || (value > _capacity))
-                throw IllegalArgumentException()
 
-            if (value < _mark)
-                _mark = -1
-
-            if (_position > value)
-                _position = value
-
-            _limit = value
-        }
-    private var _position: Int = 0
+    protected var _position: Int = 0
     var position: Int
         get() = _position
-        set(value) {
-            if ((value < 0) || (value > _limit))
-                throw IllegalArgumentException()
+        set(value) {_position = min(value.absoluteValue, _limit)}
 
-            if (value <= _mark)
-                _mark = -1
-
-            _position = value
-        }
-    private var _mark: Int = -1
-    val mark: Int
-        get() = _mark
-
-    var address: Any? = null // TODO()
+    private var _endian: ByteOrder = order
+    protected var _reverse: Boolean = _endian != nativeEndianness
 
     init {
-        if (capacity < 0)
-            throw IllegalArgumentException()
+        _capacity = capacity.absoluteValue.toInt()
+        _limit = min(limit.absoluteValue.toInt(), _capacity)
+        this.position = min(position.absoluteValue.toInt(), _limit)
+    }
 
-        this.capacity = capacity
-        this.limit = limit
-        this.position = position
+    protected abstract fun _readChar(): Char
+    protected abstract fun _writeChar(value: Char)
+    protected abstract fun _readShort(): Short
+    protected abstract fun _writeShort(value: Short)
+    protected abstract fun _readUShort(): UShort
+    protected abstract fun _writeUShort(value: UShort)
+    protected abstract fun _readInt(): Int
+    protected abstract fun _writeInt(value: Int)
+    protected abstract fun _readUInt(): UInt
+    protected abstract fun _writeUInt(value: UInt)
+    protected abstract fun _readLong(): Long
+    protected abstract fun _writeLong(value: Long)
+    protected abstract fun _readULong(): ULong
+    protected abstract fun _writeULong(value: ULong)
+    protected abstract fun _readFloat(): Int
+    protected abstract fun _writeFloat(value: Int)
+    protected abstract fun _readDouble(): Long
+    protected abstract fun _writeDouble(value: Long)
 
-        if (mark >= 0) {
-            if (mark > _position)
-                throw IllegalArgumentException()
+    protected abstract fun load(offset: Int): UByte
+    protected abstract fun save(value: UByte, offset: Int)
 
-            _mark = mark
+    private inline fun enoughSpace(size: Int) {
+        if (_limit - _position < size)
+            throw BufferUnderflowException("End of buffer.")
+    }
+
+    private inline fun forwardPosition(length: Int) {_position += length}
+
+    fun readChar(): Char {
+        enoughSpace(2)
+        val value = _readChar()
+        forwardPosition(2)
+        return value
+    }
+
+    fun writeChar(value: Char) {
+        enoughSpace(2)
+        _writeChar(value)
+        forwardPosition(2)
+    }
+
+    fun readShort(): Short {
+        enoughSpace(2)
+        val value = _readShort()
+        forwardPosition(2)
+        return value
+    }
+
+    fun writeShort(value: Short) {
+        enoughSpace(2)
+        _writeShort(value)
+        forwardPosition(2)
+    }
+
+    fun readUShort(): UShort {
+        enoughSpace(2)
+        val value = _readUShort()
+        forwardPosition(2)
+        return value
+    }
+
+    fun writeUShort(value: UShort) {
+        enoughSpace(2)
+        _writeUShort(value)
+        forwardPosition(2)
+    }
+
+    fun readInt(): Int {
+        enoughSpace(4)
+        val value = _readInt()
+        forwardPosition(4)
+        return value
+    }
+
+    fun writeInt(value: Int) {
+        enoughSpace(4)
+        _writeInt(value)
+        forwardPosition(4)
+    }
+
+    fun readUInt(): UInt {
+        enoughSpace(4)
+        val value = _readUInt()
+        forwardPosition(4)
+        return value
+    }
+
+    fun writeUInt(value: UInt) {
+        enoughSpace(4)
+        _writeUInt(value)
+        forwardPosition(4)
+    }
+
+    fun readLong(): Long {
+        enoughSpace(8)
+        val value = _readLong()
+        forwardPosition(8)
+        return value
+    }
+
+    fun writeLong(value: Long) {
+        enoughSpace(8)
+        _writeLong(value)
+        forwardPosition(8)
+    }
+
+    fun readULong(): ULong {
+        enoughSpace(8)
+        val value = _readULong()
+        forwardPosition(8)
+        return value
+    }
+
+    fun writeULong(value: ULong) {
+        enoughSpace(8)
+        _writeULong(value)
+        forwardPosition(8)
+    }
+
+    fun readFloat(): Float {
+        enoughSpace(4)
+        val value = _readFloat()
+        forwardPosition(4)
+        return Float.fromBits(value)
+    }
+
+    fun writeFloat(value: Float) {
+        enoughSpace(4)
+        _writeFloat(value.toRawBits())
+        forwardPosition(4)
+    }
+
+    fun readDouble(): Double {
+        enoughSpace(8)
+        val value = _readDouble()
+        forwardPosition(8)
+        return Double.fromBits(value)
+    }
+
+    fun writeDouble(value: Double) {
+        enoughSpace(8)
+        _writeDouble(value.toRawBits())
+        forwardPosition(8)
+    }
+
+    abstract class ByteBufferOperations {
+        abstract fun <T>get(o: Any, address: Long): T
+
+        abstract fun <T>put(o: Any, address: Long, value: T)
+
+        companion object{
+            fun allocate(size: Int): ByteArray = ByteArray(size)
         }
     }
 
-    fun clear() {
-        _limit = _capacity
-        _position = 0
-        _mark = -1
+    companion object{
+        private val nativeEndianness: ByteOrder = ByteOrder.nativeOrder()
     }
 
-    fun flip() {
-        _limit = _position
-        _position = 0
-        _mark = -1
-    }
-
-    fun hasRemaining(): Boolean {
-        return remaining() > 0
-    }
-
-    abstract fun isReadOnly(): Boolean
-
-    fun updateMark() {
-        _mark = _position
-    }
-
-    fun remaining(): Int {
-        return _limit - _position
-    }
-
-    fun rewind() {
-        _position = 0
-        _mark = -1
-    }
-
-    protected fun checkForUnderflow(length: Int = 0) {
-        if (length == 0 && (!hasRemaining()))
-            throw BufferUnderflowException()
-        if (remaining() < length)
-            throw BufferUnderflowException()
-    }
-
-    protected fun checkForOverflow(length: Int = 0) {
-        if (length == 0 && (!hasRemaining()))
-            throw BufferOverflowException()
-        if (remaining() < length)
-            throw BufferOverflowException()
-    }
-
-    protected fun checkIndex(index: Int) {
-        if (index < 0 || index >= _limit)
-            throw IndexOutOfBoundsException()
-    }
-
-    protected fun checkIfReadOnly() {
-        if (isReadOnly())
-            throw ReadOnlyBufferException()
-    }
-
-    companion object {
-        @JvmStatic
-        protected fun checkArraySize(arrayLength: Int, offset: Int, length: Int) {
-            if ((offset < 0) || (length < 0) || (arrayLength < length + offset))
-                throw IndexOutOfBoundsException()
-        }
-    }
 }
