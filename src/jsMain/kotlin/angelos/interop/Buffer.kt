@@ -14,8 +14,8 @@
  */
 package angelos.interop
 
-internal expect class Buffer {
-    companion object{
+internal actual class Buffer {
+    actual companion object {
 
     }
 }

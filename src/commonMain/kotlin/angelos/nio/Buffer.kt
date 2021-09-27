@@ -34,11 +34,20 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
     private var _endian: ByteOrder = order
     protected var _reverse: Boolean = _endian != nativeEndianness
 
+    var order: ByteOrder
+        get() = _endian
+        set(value) {
+            _endian = value
+            _reverse = _endian != nativeEndianness
+        }
+
     init {
         _capacity = capacity.absoluteValue.toInt()
         _limit = min(limit.absoluteValue.toInt(), _capacity)
         this.position = min(position.absoluteValue.toInt(), _limit)
     }
+
+    fun rewind() = 0.also { position = it }
 
     protected abstract fun _readChar(): Char
     protected abstract fun _writeChar(value: Char)
@@ -59,8 +68,8 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
     protected abstract fun _readDouble(): Long
     protected abstract fun _writeDouble(value: Long)
 
-    protected abstract fun load(offset: Int): UByte
-    protected abstract fun save(value: UByte, offset: Int)
+    //protected abstract fun load(offset: Int): UByte
+    //protected abstract fun save(value: UByte, offset: Int)
 
     private inline fun enoughSpace(size: Int) {
         if (_limit - _position < size)
@@ -193,6 +202,18 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
 
         companion object{
             fun allocate(size: Int): ByteArray = ByteArray(size)
+
+            inline fun reverseShort(value: Short): Short = (
+                    value.toInt() shl 8 and 0xff00 or value.toInt() shr 8 and 0xff).toShort()
+
+            inline fun reverseInt(value: Int): Int = (value shl 24 and 0xff000000.toInt()) or
+                    (value shl 8 and 0xff0000) or
+                    (value shr 8 and 0xff00) or
+                    (value shr 24 and 0xff)
+
+            inline fun reverseLong(value: Long): Long =
+                reverseInt(((value ushr 0) and 0xFFFFFFFFL).toInt()).toLong() shl 32 or
+                        reverseInt(((value ushr 32) and 0xFFFFFFFFL).toInt()).toLong()
         }
     }
 

@@ -23,9 +23,9 @@ class ByteHeapBuffer(capacity: Long, limit: Long, position: Long) : Buffer(capac
     protected val _view: UByteArray = _array.asUByteArray()
 
     override inline fun _readChar(): Char = when (_reverse) {
-        true -> load(0).toInt() +
+        true -> load(0).toInt() or
                 (load(1).toInt() shl 8)
-        false -> load(1).toInt() +
+        false -> load(1).toInt() or
                 (load(0).toInt() shl 8)
     }.toChar()
 
@@ -41,9 +41,9 @@ class ByteHeapBuffer(capacity: Long, limit: Long, position: Long) : Buffer(capac
     }
 
     override inline fun _readShort(): Short = when (_reverse) {
-        true -> load(0).toInt() +
+        true -> load(0).toInt() or
                 (load(1).toInt() shl 8)
-        false -> load(1).toInt() +
+        false -> load(1).toInt() or
                 (load(0).toInt() shl 8)
     }.toShort()
 
@@ -59,9 +59,9 @@ class ByteHeapBuffer(capacity: Long, limit: Long, position: Long) : Buffer(capac
     }
 
     override inline fun _readUShort(): UShort = when (_reverse) {
-        true -> (load(0).toInt() +
+        true -> (load(0).toInt() or
                 (load(1).toInt() shl 8))
-        false -> (load(1).toInt() +
+        false -> (load(1).toInt() or
                 (load(0).toInt() shl 8))
     }.toUShort()
 
@@ -77,13 +77,13 @@ class ByteHeapBuffer(capacity: Long, limit: Long, position: Long) : Buffer(capac
     }
 
     override inline fun _readInt(): Int = when (_reverse) {
-        true -> load(0).toInt() +
-                (load(1).toInt() shl 8) +
-                (load(2).toInt() shl 16) +
+        true -> load(0).toInt() or
+                (load(1).toInt() shl 8) or
+                (load(2).toInt() shl 16) or
                 (load(3).toInt() shl 24)
-        false -> load(3).toInt() +
-                (load(2).toInt() shl 8) +
-                (load(1).toInt() shl 16) +
+        false -> load(3).toInt() or
+                (load(2).toInt() shl 8) or
+                (load(1).toInt() shl 16) or
                 (load(0).toInt() shl 24)
     }
 
@@ -103,13 +103,13 @@ class ByteHeapBuffer(capacity: Long, limit: Long, position: Long) : Buffer(capac
     }
 
     override inline fun _readUInt(): UInt = when (_reverse) {
-        true -> load(0).toUInt() +
-                (load(1).toUInt() shl 8) +
-                (load(2).toUInt() shl 16) +
+        true -> load(0).toUInt() or
+                (load(1).toUInt() shl 8) or
+                (load(2).toUInt() shl 16) or
                 (load(3).toUInt() shl 24)
-        false -> load(3).toUInt() +
-                (load(2).toUInt() shl 8) +
-                (load(1).toUInt() shl 16) +
+        false -> load(3).toUInt() or
+                (load(2).toUInt() shl 8) or
+                (load(1).toUInt() shl 16) or
                 (load(0).toUInt() shl 24)
     }
 
@@ -129,21 +129,21 @@ class ByteHeapBuffer(capacity: Long, limit: Long, position: Long) : Buffer(capac
     }
 
     override inline fun _readLong(): Long = when (_reverse) {
-        true -> load(0).toLong() +
-                (load(1).toLong() shl 8) +
-                (load(2).toLong() shl 16) +
-                (load(3).toLong() shl 24) +
-                (load(4).toLong() shl 32) +
-                (load(5).toLong() shl 40) +
-                (load(6).toLong() shl 48) +
+        true -> load(0).toLong() or
+                (load(1).toLong() shl 8) or
+                (load(2).toLong() shl 16) or
+                (load(3).toLong() shl 24) or
+                (load(4).toLong() shl 32) or
+                (load(5).toLong() shl 40) or
+                (load(6).toLong() shl 48) or
                 (load(7).toLong() shl 56)
-        false -> load(7).toLong() +
-                (load(6).toLong() shl 8) +
-                (load(5).toLong() shl 16) +
-                (load(4).toLong() shl 24) +
-                (load(3).toLong() shl 32) +
-                (load(2).toLong() shl 40) +
-                (load(1).toLong() shl 48) +
+        false -> load(7).toLong() or
+                (load(6).toLong() shl 8) or
+                (load(5).toLong() shl 16) or
+                (load(4).toLong() shl 24) or
+                (load(3).toLong() shl 32) or
+                (load(2).toLong() shl 40) or
+                (load(1).toLong() shl 48) or
                 (load(0).toLong() shl 56)
     }
 
@@ -171,21 +171,21 @@ class ByteHeapBuffer(capacity: Long, limit: Long, position: Long) : Buffer(capac
     }
 
     override inline fun _readULong(): ULong = when (_reverse) {
-        true -> load(0).toULong() +
-                (load(1).toULong() shl 8) +
-                (load(2).toULong() shl 16) +
-                (load(3).toULong() shl 24) +
-                (load(4).toULong() shl 32) +
-                (load(5).toULong() shl 40) +
-                (load(6).toULong() shl 48) +
+        true -> load(0).toULong() or
+                (load(1).toULong() shl 8) or
+                (load(2).toULong() shl 16) or
+                (load(3).toULong() shl 24) or
+                (load(4).toULong() shl 32) or
+                (load(5).toULong() shl 40) or
+                (load(6).toULong() shl 48) or
                 (load(7).toULong() shl 56)
-        false -> load(7).toULong() +
-                (load(6).toULong() shl 8) +
-                (load(5).toULong() shl 16) +
-                (load(4).toULong() shl 24) +
-                (load(3).toULong() shl 32) +
-                (load(2).toULong() shl 40) +
-                (load(1).toULong() shl 48) +
+        false -> load(7).toULong() or
+                (load(6).toULong() shl 8) or
+                (load(5).toULong() shl 16) or
+                (load(4).toULong() shl 24) or
+                (load(3).toULong() shl 32) or
+                (load(2).toULong() shl 40) or
+                (load(1).toULong() shl 48) or
                 (load(0).toULong() shl 56)
     }
 
@@ -213,13 +213,13 @@ class ByteHeapBuffer(capacity: Long, limit: Long, position: Long) : Buffer(capac
     }
 
     override inline fun _readFloat(): Int = when (_reverse) {
-        true -> load(0).toInt() +
-                (load(1).toInt() shl 8) +
-                (load(2).toInt() shl 16) +
+        true -> load(0).toInt() or
+                (load(1).toInt() shl 8) or
+                (load(2).toInt() shl 16) or
                 (load(3).toInt() shl 24)
-        false -> load(3).toInt() +
-                (load(2).toInt() shl 8) +
-                (load(1).toInt() shl 16) +
+        false -> load(3).toInt() or
+                (load(2).toInt() shl 8) or
+                (load(1).toInt() shl 16) or
                 (load(0).toInt() shl 24)
     }
 
@@ -239,21 +239,21 @@ class ByteHeapBuffer(capacity: Long, limit: Long, position: Long) : Buffer(capac
     }
 
     override inline fun _readDouble(): Long = when (_reverse) {
-        true -> load(0).toLong() +
-                (load(1).toLong() shl 8) +
-                (load(2).toLong() shl 16) +
-                (load(3).toLong() shl 24) +
-                (load(4).toLong() shl 32) +
-                (load(5).toLong() shl 40) +
-                (load(6).toLong() shl 48) +
+        true -> load(0).toLong() or
+                (load(1).toLong() shl 8) or
+                (load(2).toLong() shl 16) or
+                (load(3).toLong() shl 24) or
+                (load(4).toLong() shl 32) or
+                (load(5).toLong() shl 40) or
+                (load(6).toLong() shl 48) or
                 (load(7).toLong() shl 56)
-        false -> load(7).toLong() +
-                (load(6).toLong() shl 8) +
-                (load(5).toLong() shl 16) +
-                (load(4).toLong() shl 24) +
-                (load(3).toLong() shl 32) +
-                (load(2).toLong() shl 40) +
-                (load(1).toLong() shl 48) +
+        false -> load(7).toLong() or
+                (load(6).toLong() shl 8) or
+                (load(5).toLong() shl 16) or
+                (load(4).toLong() shl 24) or
+                (load(3).toLong() shl 32) or
+                (load(2).toLong() shl 40) or
+                (load(1).toLong() shl 48) or
                 (load(0).toLong() shl 56)
     }
 
@@ -280,11 +280,11 @@ class ByteHeapBuffer(capacity: Long, limit: Long, position: Long) : Buffer(capac
         }
     }
 
-    override inline fun load(offset: Int): UByte {
+    protected inline fun load(offset: Int): UByte {
         return _view[_position + offset]
     }
 
-    override inline fun save(value: UByte, offset: Int) {
+    protected inline fun save(value: UByte, offset: Int) {
         _view[_position + offset] = value
     }
 }

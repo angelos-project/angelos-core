@@ -1,14 +1,11 @@
 package angelos.nio
 
 import org.junit.After
-import org.junit.Test
-
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Test
 
-
-@ExperimentalUnsignedTypes
-class ByteHeapBufferTest {
+class ByteDirectBufferTest{
     private val short: Short = 0B1010101_10101010
     private val ushort: UShort = 0B10101010_10101010u
 
@@ -19,7 +16,7 @@ class ByteHeapBufferTest {
     private val ulong: ULong = 0B10101010_10101010_10101010_10101010_10101010_10101010_10101010_10101010u
 
     private val size: Long = 128
-    private var buffer: ByteHeapBuffer = ByteHeapBuffer(size, size, 0L)
+    private var buffer: ByteDirectBuffer = ByteDirectBuffer(size, size, 0L)
 
     fun reverseEndian(){
         buffer.order = if(buffer.order == ByteOrder.LITTLE_ENDIAN)
