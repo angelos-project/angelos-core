@@ -14,78 +14,31 @@
  */
 package angelos.nio
 
+import kotlin.math.absoluteValue
+
+@ExperimentalUnsignedTypes
 @Suppress("OVERRIDE_BY_INLINE")
 actual class ByteDirectBuffer actual constructor(capacity: Long, limit: Long, position: Long) :
     Buffer(capacity, limit, position) {
-    actual override inline fun _readChar(): Char {
-        TODO("Not yet implemented")
-    }
 
-    actual override inline fun _writeChar(value: Char) {
-        TODO("Not yet implemented")
-    }
+    private val _inner = ByteBufferOperations()
 
-    actual override inline fun _readShort(): Short {
-        TODO("Not yet implemented")
-    }
-
-    actual override inline fun _writeShort(value: Short) {
-        TODO("Not yet implemented")
-    }
-
-    actual override inline fun _readUShort(): UShort {
-        TODO("Not yet implemented")
-    }
-
-    actual override inline fun _writeUShort(value: UShort) {
-        TODO("Not yet implemented")
-    }
-
-    actual override inline fun _readInt(): Int {
-        TODO("Not yet implemented")
-    }
-
-    actual override inline fun _writeInt(value: Int) {
-        TODO("Not yet implemented")
-    }
-
-    actual override inline fun _readUInt(): UInt {
-        TODO("Not yet implemented")
-    }
-
-    actual override inline fun _writeUInt(value: UInt) {
-        TODO("Not yet implemented")
-    }
-
-    actual override inline fun _readLong(): Long {
-        TODO("Not yet implemented")
-    }
-
-    actual override inline fun _writeLong(value: Long) {
-        TODO("Not yet implemented")
-    }
-
-    actual override inline fun _readULong(): ULong {
-        TODO("Not yet implemented")
-    }
-
-    actual override inline fun _writeULong(value: ULong) {
-        TODO("Not yet implemented")
-    }
-
-    actual override inline fun _readFloat(): Int {
-        TODO("Not yet implemented")
-    }
-
-    actual override inline fun _writeFloat(value: Int) {
-        TODO("Not yet implemented")
-    }
-
-    actual override inline fun _readDouble(): Long {
-        TODO("Not yet implemented")
-    }
-
-    actual override inline fun _writeDouble(value: Long) {
-        TODO("Not yet implemented")
-    }
+    actual override inline fun _readChar(): Char = _inner.readChar()
+    actual override inline fun _writeChar(value: Char) = _inner.writeChar(value)
+    actual override inline fun _readShort(): Short = _inner.readShort()
+    actual override inline fun _writeShort(value: Short) = _inner.writeShort(value)
+    actual override inline fun _readUShort(): UShort = _inner.readUShort()
+    actual override inline fun _writeUShort(value: UShort) = _inner.writeUShort(value)
+    actual override inline fun _readInt(): Int = _inner.readInt()
+    actual override inline fun _writeInt(value: Int) = _inner.writeInt(value)
+    actual override inline fun _readUInt(): UInt = _inner.readUInt()
+    actual override inline fun _writeUInt(value: UInt) = _inner.writeUInt(value)
+    actual override inline fun _readLong(): Long = _inner.readLong()
+    actual override inline fun _writeLong(value: Long) = _inner.writeLong(value)
+    actual override inline fun _readULong(): ULong = _inner.readULong()
+    actual override inline fun _writeULong(value: ULong) = _inner.writeULong(value)
+    actual override inline fun _readFloat(): Int = _inner.readFloat()
+    actual override inline fun _writeFloat(value: Int) = _inner.writeFloat(value)
+    actual override inline fun _readDouble(): Long = _inner.readDouble()
+    actual override inline fun _writeDouble(value: Long) = _inner.writeDouble(value)
 }

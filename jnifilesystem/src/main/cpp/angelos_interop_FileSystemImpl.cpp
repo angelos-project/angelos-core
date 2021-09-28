@@ -241,7 +241,6 @@ static jobject fs_readdir(JNIEnv * env, jclass thisClass, jlong dirp){
         free(entry);
 
     return file_entry;
-    //return NULL;
 }
 
 /*

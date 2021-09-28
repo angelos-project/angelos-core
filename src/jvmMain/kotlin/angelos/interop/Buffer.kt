@@ -27,59 +27,59 @@ internal actual class Buffer {
             theUnsafe = f.get(null) as Unsafe
         }
 
-        fun allocateMemory(size: Long): Long {
+        actual fun allocateMemory(size: Long): Long {
             return theUnsafe.allocateMemory(size)
         }
 
-        fun freeMemory(address: Long) {
+        actual fun freeMemory(address: Long) {
             return theUnsafe.freeMemory(address)
         }
 
-        fun getShort(address: Long): Short {
+        actual fun getShort(address: Long): Short {
             return theUnsafe.getShort(address)
         }
 
-        fun putShort(address: Long, x: Short) {
+        actual fun putShort(address: Long, x: Short) {
             theUnsafe.putShort(address, x)
         }
 
-        fun getChar(address: Long): Char {
+        actual fun getChar(address: Long): Char {
             return theUnsafe.getChar(address)
         }
 
-        fun putChar(address: Long, x: Char) {
+        actual fun putChar(address: Long, x: Char) {
             theUnsafe.putChar(address, x)
         }
 
-        fun getInt(address: Long): Int {
+        actual fun getInt(address: Long): Int {
             return theUnsafe.getInt(address)
         }
 
-        fun putInt(address: Long, x: Int) {
+        actual fun putInt(address: Long, x: Int) {
             theUnsafe.putInt(address, x)
         }
 
-        fun getLong(address: Long): Long {
+        actual fun getLong(address: Long): Long {
             return theUnsafe.getLong(address)
         }
 
-        fun putLong(address: Long, x: Long) {
+        actual fun putLong(address: Long, x: Long) {
             theUnsafe.putLong(address, x)
         }
 
-        fun getFloat(address: Long): Float {
+        actual fun getFloat(address: Long): Float {
             return theUnsafe.getFloat(address)
         }
 
-        fun putFloat(address: Long, x: Float) {
+        actual fun putFloat(address: Long, x: Float) {
             theUnsafe.putFloat(address, x)
         }
 
-        fun getDouble(address: Long): Double {
+        actual fun getDouble(address: Long): Double {
             return theUnsafe.getDouble(address)
         }
 
-        fun putDouble(address: Long, x: Double) {
+        actual fun putDouble(address: Long, x: Double) {
             theUnsafe.putDouble(address, x)
         }
     }

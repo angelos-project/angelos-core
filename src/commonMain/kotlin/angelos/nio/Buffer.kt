@@ -14,6 +14,7 @@
  */
 package angelos.nio
 
+import kotlin.jvm.JvmStatic
 import kotlin.math.absoluteValue
 import kotlin.math.min
 
@@ -29,7 +30,9 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
     protected var _position: Int = 0
     var position: Int
         get() = _position
-        set(value) {_position = min(value.absoluteValue, _limit)}
+        set(value) {
+            _position = min(value.absoluteValue, _limit)
+        }
 
     private var _endian: ByteOrder = order
     protected var _reverse: Boolean = _endian != nativeEndianness
@@ -49,34 +52,33 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
 
     fun rewind() = 0.also { position = it }
 
-    protected abstract fun _readChar(): Char
-    protected abstract fun _writeChar(value: Char)
-    protected abstract fun _readShort(): Short
-    protected abstract fun _writeShort(value: Short)
-    protected abstract fun _readUShort(): UShort
-    protected abstract fun _writeUShort(value: UShort)
-    protected abstract fun _readInt(): Int
-    protected abstract fun _writeInt(value: Int)
-    protected abstract fun _readUInt(): UInt
-    protected abstract fun _writeUInt(value: UInt)
-    protected abstract fun _readLong(): Long
-    protected abstract fun _writeLong(value: Long)
-    protected abstract fun _readULong(): ULong
-    protected abstract fun _writeULong(value: ULong)
-    protected abstract fun _readFloat(): Int
-    protected abstract fun _writeFloat(value: Int)
-    protected abstract fun _readDouble(): Long
-    protected abstract fun _writeDouble(value: Long)
-
-    //protected abstract fun load(offset: Int): UByte
-    //protected abstract fun save(value: UByte, offset: Int)
+    internal abstract fun _readChar(): Char
+    internal abstract fun _writeChar(value: Char)
+    internal abstract fun _readShort(): Short
+    internal abstract fun _writeShort(value: Short)
+    internal abstract fun _readUShort(): UShort
+    internal abstract fun _writeUShort(value: UShort)
+    internal abstract fun _readInt(): Int
+    internal abstract fun _writeInt(value: Int)
+    internal abstract fun _readUInt(): UInt
+    internal abstract fun _writeUInt(value: UInt)
+    internal abstract fun _readLong(): Long
+    internal abstract fun _writeLong(value: Long)
+    internal abstract fun _readULong(): ULong
+    internal abstract fun _writeULong(value: ULong)
+    internal abstract fun _readFloat(): Int
+    internal abstract fun _writeFloat(value: Int)
+    internal abstract fun _readDouble(): Long
+    internal abstract fun _writeDouble(value: Long)
 
     private inline fun enoughSpace(size: Int) {
         if (_limit - _position < size)
             throw BufferUnderflowException("End of buffer.")
     }
 
-    private inline fun forwardPosition(length: Int) {_position += length}
+    private inline fun forwardPosition(length: Int) {
+        _position += length
+    }
 
     fun readChar(): Char {
         enoughSpace(2)
@@ -195,30 +197,302 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
         forwardPosition(8)
     }
 
-    abstract class ByteBufferOperations {
-        abstract fun <T>get(o: Any, address: Long): T
+    @ExperimentalUnsignedTypes
+    protected inner class ByteBufferOperations {
 
-        abstract fun <T>put(o: Any, address: Long, value: T)
+        private val _array: ByteArray = ByteArray(capacity)
+        private val _view: UByteArray = _array.asUByteArray()
 
-        companion object{
-            fun allocate(size: Int): ByteArray = ByteArray(size)
+        internal inline fun readChar(): Char = when (_reverse) {
+            true -> load(0).toInt() or
+                    (load(1).toInt() shl 8)
+            false -> load(1).toInt() or
+                    (load(0).toInt() shl 8)
+        }.toChar()
 
-            inline fun reverseShort(value: Short): Short = (
-                    value.toInt() shl 8 and 0xff00 or value.toInt() shr 8 and 0xff).toShort()
+        internal inline fun writeChar(value: Char) = when (_reverse) {
+            true -> {
+                save((value.code and 0xFF).toUByte(), 0)
+                save(((value.code ushr 8) and 0xFF).toUByte(), 1)
+            }
+            false -> {
+                save((value.code and 0xFF).toUByte(), 1)
+                save(((value.code ushr 8) and 0xFF).toUByte(), 0)
+            }
+        }
 
-            inline fun reverseInt(value: Int): Int = (value shl 24 and 0xff000000.toInt()) or
-                    (value shl 8 and 0xff0000) or
-                    (value shr 8 and 0xff00) or
-                    (value shr 24 and 0xff)
+        internal inline fun readShort(): Short = when (_reverse) {
+            true -> load(0).toInt() or
+                    (load(1).toInt() shl 8)
+            false -> load(1).toInt() or
+                    (load(0).toInt() shl 8)
+        }.toShort()
 
-            inline fun reverseLong(value: Long): Long =
-                reverseInt(((value ushr 0) and 0xFFFFFFFFL).toInt()).toLong() shl 32 or
-                        reverseInt(((value ushr 32) and 0xFFFFFFFFL).toInt()).toLong()
+        internal inline fun writeShort(value: Short) = when (_reverse) {
+            true -> {
+                save((value.toInt() and 0xFF).toUByte(), 0)
+                save(((value.toInt() ushr 8) and 0xFF).toUByte(), 1)
+            }
+            false -> {
+                save((value.toInt() and 0xFF).toUByte(), 1)
+                save(((value.toInt() ushr 8) and 0xFF).toUByte(), 0)
+            }
+        }
+
+        internal inline fun readUShort(): UShort = when (_reverse) {
+            true -> (load(0).toInt() or
+                    (load(1).toInt() shl 8))
+            false -> (load(1).toInt() or
+                    (load(0).toInt() shl 8))
+        }.toUShort()
+
+        internal inline fun writeUShort(value: UShort) = when (_reverse) {
+            true -> {
+                save((value.toInt() and 0xFF).toUByte(), 0)
+                save(((value.toInt() ushr 8) and 0xFF).toUByte(), 1)
+            }
+            false -> {
+                save((value.toInt() and 0xFF).toUByte(), 1)
+                save(((value.toInt() ushr 8) and 0xFF).toUByte(), 0)
+            }
+        }
+
+        internal inline fun readInt(): Int = when (_reverse) {
+            true -> load(0).toInt() or
+                    (load(1).toInt() shl 8) or
+                    (load(2).toInt() shl 16) or
+                    (load(3).toInt() shl 24)
+            false -> load(3).toInt() or
+                    (load(2).toInt() shl 8) or
+                    (load(1).toInt() shl 16) or
+                    (load(0).toInt() shl 24)
+        }
+
+        internal inline fun writeInt(value: Int) = when (_reverse) {
+            true -> {
+                save((value and 0xFF).toUByte(), 0)
+                save(((value ushr 8) and 0xFF).toUByte(), 1)
+                save(((value ushr 16) and 0xFF).toUByte(), 2)
+                save(((value ushr 24) and 0xFF).toUByte(), 3)
+            }
+            false -> {
+                save((value and 0xFF).toUByte(), 3)
+                save(((value ushr 8) and 0xFF).toUByte(), 2)
+                save(((value ushr 16) and 0xFF).toUByte(), 1)
+                save(((value ushr 24) and 0xFF).toUByte(), 0)
+            }
+        }
+
+        internal inline fun readUInt(): UInt = when (_reverse) {
+            true -> load(0).toUInt() or
+                    (load(1).toUInt() shl 8) or
+                    (load(2).toUInt() shl 16) or
+                    (load(3).toUInt() shl 24)
+            false -> load(3).toUInt() or
+                    (load(2).toUInt() shl 8) or
+                    (load(1).toUInt() shl 16) or
+                    (load(0).toUInt() shl 24)
+        }
+
+        internal inline fun writeUInt(value: UInt) = when (_reverse) {
+            true -> {
+                save((value.toInt() and 0xFF).toUByte(), 0)
+                save(((value.toInt() ushr 8) and 0xFF).toUByte(), 1)
+                save(((value.toInt() ushr 16) and 0xFF).toUByte(), 2)
+                save(((value.toInt() ushr 24) and 0xFF).toUByte(), 3)
+            }
+            false -> {
+                save((value.toInt() and 0xFF).toUByte(), 3)
+                save(((value.toInt() ushr 8) and 0xFF).toUByte(), 2)
+                save(((value.toInt() ushr 16) and 0xFF).toUByte(), 1)
+                save(((value.toInt() ushr 24) and 0xFF).toUByte(), 0)
+            }
+        }
+
+        internal inline fun readLong(): Long = when (_reverse) {
+            true -> load(0).toLong() or
+                    (load(1).toLong() shl 8) or
+                    (load(2).toLong() shl 16) or
+                    (load(3).toLong() shl 24) or
+                    (load(4).toLong() shl 32) or
+                    (load(5).toLong() shl 40) or
+                    (load(6).toLong() shl 48) or
+                    (load(7).toLong() shl 56)
+            false -> load(7).toLong() or
+                    (load(6).toLong() shl 8) or
+                    (load(5).toLong() shl 16) or
+                    (load(4).toLong() shl 24) or
+                    (load(3).toLong() shl 32) or
+                    (load(2).toLong() shl 40) or
+                    (load(1).toLong() shl 48) or
+                    (load(0).toLong() shl 56)
+        }
+
+        internal inline fun writeLong(value: Long) = when (_reverse) {
+            true -> {
+                save((value and 0xFF).toUByte(), 0)
+                save(((value ushr 8) and 0xFF).toUByte(), 1)
+                save(((value ushr 16) and 0xFF).toUByte(), 2)
+                save(((value ushr 24) and 0xFF).toUByte(), 3)
+                save(((value ushr 32) and 0xFF).toUByte(), 4)
+                save(((value ushr 40) and 0xFF).toUByte(), 5)
+                save(((value ushr 48) and 0xFF).toUByte(), 6)
+                save(((value ushr 56) and 0xFF).toUByte(), 7)
+            }
+            false -> {
+                save((value and 0xFF).toUByte(), 7)
+                save(((value ushr 8) and 0xFF).toUByte(), 6)
+                save(((value ushr 16) and 0xFF).toUByte(), 5)
+                save(((value ushr 24) and 0xFF).toUByte(), 4)
+                save(((value ushr 32) and 0xFF).toUByte(), 3)
+                save(((value ushr 40) and 0xFF).toUByte(), 2)
+                save(((value ushr 48) and 0xFF).toUByte(), 1)
+                save(((value ushr 56) and 0xFF).toUByte(), 0)
+            }
+        }
+
+        internal inline fun readULong(): ULong = when (_reverse) {
+            true -> load(0).toULong() or
+                    (load(1).toULong() shl 8) or
+                    (load(2).toULong() shl 16) or
+                    (load(3).toULong() shl 24) or
+                    (load(4).toULong() shl 32) or
+                    (load(5).toULong() shl 40) or
+                    (load(6).toULong() shl 48) or
+                    (load(7).toULong() shl 56)
+            false -> load(7).toULong() or
+                    (load(6).toULong() shl 8) or
+                    (load(5).toULong() shl 16) or
+                    (load(4).toULong() shl 24) or
+                    (load(3).toULong() shl 32) or
+                    (load(2).toULong() shl 40) or
+                    (load(1).toULong() shl 48) or
+                    (load(0).toULong() shl 56)
+        }
+
+        internal inline fun writeULong(value: ULong) = when (_reverse) {
+            true -> {
+                save((value.toLong() and 0xFF).toUByte(), 0)
+                save(((value.toLong() ushr 8) and 0xFF).toUByte(), 1)
+                save(((value.toLong() ushr 16) and 0xFF).toUByte(), 2)
+                save(((value.toLong() ushr 24) and 0xFF).toUByte(), 3)
+                save(((value.toLong() ushr 32) and 0xFF).toUByte(), 4)
+                save(((value.toLong() ushr 40) and 0xFF).toUByte(), 5)
+                save(((value.toLong() ushr 48) and 0xFF).toUByte(), 6)
+                save(((value.toLong() ushr 56) and 0xFF).toUByte(), 7)
+            }
+            false -> {
+                save((value.toLong() and 0xFF).toUByte(), 7)
+                save(((value.toLong() ushr 8) and 0xFF).toUByte(), 6)
+                save(((value.toLong() ushr 16) and 0xFF).toUByte(), 5)
+                save(((value.toLong() ushr 24) and 0xFF).toUByte(), 4)
+                save(((value.toLong() ushr 32) and 0xFF).toUByte(), 3)
+                save(((value.toLong() ushr 40) and 0xFF).toUByte(), 2)
+                save(((value.toLong() ushr 48) and 0xFF).toUByte(), 1)
+                save(((value.toLong() ushr 56) and 0xFF).toUByte(), 0)
+            }
+        }
+
+        internal inline fun readFloat(): Int = when (_reverse) {
+            true -> load(0).toInt() or
+                    (load(1).toInt() shl 8) or
+                    (load(2).toInt() shl 16) or
+                    (load(3).toInt() shl 24)
+            false -> load(3).toInt() or
+                    (load(2).toInt() shl 8) or
+                    (load(1).toInt() shl 16) or
+                    (load(0).toInt() shl 24)
+        }
+
+        internal inline fun writeFloat(value: Int) = when (_reverse) {
+            true -> {
+                save((value and 0xFF).toUByte(), 0)
+                save(((value ushr 8) and 0xFF).toUByte(), 1)
+                save(((value ushr 16) and 0xFF).toUByte(), 2)
+                save(((value ushr 24) and 0xFF).toUByte(), 3)
+            }
+            false -> {
+                save((value and 0xFF).toUByte(), 3)
+                save(((value ushr 8) and 0xFF).toUByte(), 2)
+                save(((value ushr 16) and 0xFF).toUByte(), 1)
+                save(((value ushr 24) and 0xFF).toUByte(), 0)
+            }
+        }
+
+        internal inline fun readDouble(): Long = when (_reverse) {
+            true -> load(0).toLong() or
+                    (load(1).toLong() shl 8) or
+                    (load(2).toLong() shl 16) or
+                    (load(3).toLong() shl 24) or
+                    (load(4).toLong() shl 32) or
+                    (load(5).toLong() shl 40) or
+                    (load(6).toLong() shl 48) or
+                    (load(7).toLong() shl 56)
+            false -> load(7).toLong() or
+                    (load(6).toLong() shl 8) or
+                    (load(5).toLong() shl 16) or
+                    (load(4).toLong() shl 24) or
+                    (load(3).toLong() shl 32) or
+                    (load(2).toLong() shl 40) or
+                    (load(1).toLong() shl 48) or
+                    (load(0).toLong() shl 56)
+        }
+
+        internal inline fun writeDouble(value: Long) = when (_reverse) {
+            true -> {
+                save((value and 0xFF).toUByte(), 0)
+                save(((value ushr 8) and 0xFF).toUByte(), 1)
+                save(((value ushr 16) and 0xFF).toUByte(), 2)
+                save(((value ushr 24) and 0xFF).toUByte(), 3)
+                save(((value ushr 32) and 0xFF).toUByte(), 4)
+                save(((value ushr 40) and 0xFF).toUByte(), 5)
+                save(((value ushr 48) and 0xFF).toUByte(), 6)
+                save(((value ushr 56) and 0xFF).toUByte(), 7)
+            }
+            false -> {
+                save((value and 0xFF).toUByte(), 7)
+                save(((value ushr 8) and 0xFF).toUByte(), 6)
+                save(((value ushr 16) and 0xFF).toUByte(), 5)
+                save(((value ushr 24) and 0xFF).toUByte(), 4)
+                save(((value ushr 32) and 0xFF).toUByte(), 3)
+                save(((value ushr 40) and 0xFF).toUByte(), 2)
+                save(((value ushr 48) and 0xFF).toUByte(), 1)
+                save(((value ushr 56) and 0xFF).toUByte(), 0)
+            }
+        }
+
+        internal inline fun load(offset: Int): UByte {
+            return _view[_position + offset]
+        }
+
+        internal inline fun save(value: UByte, offset: Int) {
+            _view[_position + offset] = value
         }
     }
 
-    companion object{
-        private val nativeEndianness: ByteOrder = ByteOrder.nativeOrder()
-    }
+    companion object {
 
+        @JvmStatic
+        private val nativeEndianness: ByteOrder = ByteOrder.nativeOrder()
+
+        @JvmStatic
+        inline fun reverseShort(value: Short): Short = (
+                (value.toInt() shl 8 and 0xff00) or (value.toInt() shr 8 and 0xff)).toShort()
+
+        @JvmStatic
+        inline fun reverseInt(value: Int): Int = (value shl 24 and -0x1000000) or
+                (value shl 8 and 0xff0000) or
+                (value shr 8 and 0xff00) or
+                (value shr 24 and 0xff)
+
+        @JvmStatic
+        inline fun reverseLong(value: Long): Long = (value shl 56 and -0x1000000_00000000) or
+                (value shl 40 and 0xff0000_00000000) or
+                (value shl 24 and 0xff00_00000000) or
+                (value shl 8 and 0xff_00000000) or
+                (value shr 8 and 0xff000000) or
+                (value shr 24 and 0xff0000) or
+                (value shr 40 and 0xff00) or
+                (value shr 56 and 0xff)
+    }
 }

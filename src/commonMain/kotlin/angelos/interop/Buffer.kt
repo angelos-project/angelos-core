@@ -15,7 +15,20 @@
 package angelos.interop
 
 internal expect class Buffer {
-    companion object{
-
+   companion object{
+        fun allocateMemory(size: Long): Long
+        fun freeMemory(address: Long)
+        fun getShort(address: Long): Short
+        fun putShort(address: Long, x: Short)
+        fun getChar(address: Long): Char
+        fun putChar(address: Long, x: Char)
+        fun getInt(address: Long): Int
+        fun putInt(address: Long, x: Int)
+        fun getLong(address: Long): Long
+        fun putLong(address: Long, x: Long)
+        fun getFloat(address: Long): Float
+        fun putFloat(address: Long, x: Float)
+        fun getDouble(address: Long): Double
+        fun putDouble(address: Long, x: Double)
     }
 }
