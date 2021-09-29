@@ -25,14 +25,17 @@ class FileTest {
     lateinit var tmpFile: java.nio.file.Path
     lateinit var tmpLink: java.nio.file.Path
     lateinit var tmpMissing: java.nio.file.Path
+    lateinit var drive: PhysicalDrive
 
     @Before
     fun setUp() {
         tmpDir = java.nio.file.Files.createTempDirectory("temporary")
         tmpFile = java.nio.file.Files.createTempFile(tmpDir, "test", ".tmp")
         tmpLink = java.nio.file.Files.createSymbolicLink(
-            java.nio.file.Paths.get(tmpDir.toString(), "link.tmp"), tmpFile)
+            java.nio.file.Paths.get(tmpDir.toString(), "link.tmp"), tmpFile
+        )
         tmpMissing = java.nio.file.Paths.get(tmpDir.toString(), "missing.tmp")
+        drive = PhysicalDrive.createFileSystem(PhysicalDrive.Drive.UNIX)
     }
 
     @After
@@ -60,11 +63,11 @@ class FileTest {
 
     @Test
     fun getSize() {
-        assertTrue(File(VirtualPath(tmpDir.toString()).toRealPath()).size > 0L)
-        assertTrue(File(VirtualPath(tmpFile.toString()).toRealPath()).size == 0L)
-        assertTrue(File(VirtualPath(tmpLink.toString()).toRealPath()).size == 0L)
+        assertTrue(File(drive.getPath(VirtualPath(tmpDir.toString()))).size > 0L)
+        assertTrue(File(drive.getPath(VirtualPath(tmpFile.toString()))).size == 0L)
+        assertTrue(File(drive.getPath(VirtualPath(tmpLink.toString()))).size == 0L)
         assertExceptionThrown<FileNotFoundException>({
-            File(VirtualPath(tmpMissing.toString()).toRealPath()).size},
+            File(drive.getPath(VirtualPath(tmpMissing.toString()))).size},
             "Size property on missing file should trigger FileNotFoundException."
         )
     }
@@ -72,11 +75,11 @@ class FileTest {
     @Test
     fun open() {
         assertExceptionThrown<FileNotFoundException>({
-            File(VirtualPath(tmpDir.toString()).toRealPath()).open(File.OpenOption.READ_WRITE)},
+            File(drive.getPath(VirtualPath(tmpDir.toString()))).open(File.OpenOption.READ_WRITE)},
             "Open method on non-file should trigger FileNotFoundException."
         )
-        assertTrue(File(VirtualPath(tmpFile.toString()).toRealPath()).open(File.OpenOption.READ_WRITE) is FileDescriptor)
-        assertTrue(File(VirtualPath(tmpLink.toString()).toRealPath()).open(File.OpenOption.READ_WRITE) is FileDescriptor)
-        assertTrue(File(VirtualPath(tmpMissing.toString()).toRealPath()).open(File.OpenOption.READ_WRITE) is FileDescriptor)
+        assertTrue(File(drive.getPath(VirtualPath(tmpFile.toString()))).open(File.OpenOption.READ_WRITE) is FileDescriptor)
+        assertTrue(File(drive.getPath(VirtualPath(tmpLink.toString()))).open(File.OpenOption.READ_WRITE) is FileDescriptor)
+        assertTrue(File(drive.getPath(VirtualPath(tmpMissing.toString()))).open(File.OpenOption.READ_WRITE) is FileDescriptor)
     }
 }

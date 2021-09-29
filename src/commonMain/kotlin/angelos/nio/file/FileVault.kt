@@ -14,11 +14,19 @@
  */
 package angelos.nio.file
 
-import angelos.io.Dir
-import angelos.io.FileDescriptor
-import angelos.io.FileObject
+import angelos.io.*
 
 abstract class FileVault (val drive: String) {
+    abstract fun getRoot(): Dir
+    fun getPath(path: VirtualPath): RealPath {
+        return path.toRealPath(this)
+    }
+
+    fun getDirectory(path: RealPath): Dir = if(!path.isDir())
+        path.baseDir().getItem() as Dir
+    else
+        path.getItem() as Dir
+
     internal abstract fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long
     internal abstract fun writeFile(number: Int, array: ByteArray, index: Int, count: Long): Long
     internal abstract fun tellFile(number: Int): Long

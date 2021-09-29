@@ -26,6 +26,7 @@ class DirTest {
     lateinit var tmpFile: java.nio.file.Path
     lateinit var tmpLink: java.nio.file.Path
     lateinit var tmpMissing: java.nio.file.Path
+    lateinit var drive: PhysicalDrive
 
     @Before
     fun setUp() {
@@ -34,6 +35,7 @@ class DirTest {
         tmpLink = java.nio.file.Files.createSymbolicLink(
             java.nio.file.Paths.get(tmpDir.toString(), "link.tmp"), tmpFile)
         tmpMissing = java.nio.file.Paths.get(tmpDir.toString(), "missing.tmp")
+        drive = PhysicalDrive.createFileSystem(PhysicalDrive.Drive.UNIX)
     }
 
     @After
@@ -67,7 +69,7 @@ class DirTest {
     @Test
     fun walk() {
         val files = mutableListOf<String>()
-        Dir(VirtualPath(tmpDir.toString()).toRealPath()).walk().forEach {
+        drive.getDirectory(drive.getPath(VirtualPath(tmpDir.toString()))).walk().forEach {
             if(it !is Dir || (it is Dir && !it.skip))
                 files.add(it.path.toString())
         }
@@ -75,7 +77,7 @@ class DirTest {
         assertContains(files, tmpLink.toString())
 
         val files2 = mutableListOf<String>()
-        Dir(VirtualPath(tmpDir.toString()).toRealPath()).walk(1).forEach {
+        drive.getDirectory(drive.getPath(VirtualPath(tmpDir.toString()))).walk(1).forEach {
             if(it !is Dir || (it is Dir && !it.skip))
                 files2.add(it.path.toString())
         }

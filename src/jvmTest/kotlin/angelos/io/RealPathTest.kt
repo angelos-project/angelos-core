@@ -25,14 +25,17 @@ class RealPathTest {
     lateinit var tmpFile: java.nio.file.Path
     lateinit var tmpLink: java.nio.file.Path
     lateinit var tmpMissing: java.nio.file.Path
+    lateinit var drive: PhysicalDrive
 
     @Before
     fun setUp() {
         tmpDir = java.nio.file.Files.createTempDirectory("temporary")
         tmpFile = java.nio.file.Files.createTempFile(tmpDir, "test", ".tmp")
         tmpLink = java.nio.file.Files.createSymbolicLink(
-            java.nio.file.Paths.get(tmpDir.toString(), "link.tmp"), tmpFile)
+            java.nio.file.Paths.get(tmpDir.toString(), "link.tmp"), tmpFile
+        )
         tmpMissing = java.nio.file.Paths.get(tmpDir.toString(), "missing.tmp")
+        drive = PhysicalDrive.createFileSystem(PhysicalDrive.Drive.UNIX)
     }
 
     @After
@@ -59,52 +62,52 @@ class RealPathTest {
 
     @Test
     fun getItem() {
-        assertTrue(VirtualPath(tmpDir.toString()).toRealPath().getItem() is Dir)
-        assertTrue(VirtualPath(tmpFile.toString()).toRealPath().getItem() is File)
-        assertTrue(VirtualPath(tmpLink.toString()).toRealPath().getItem() is Link)
+        assertTrue(drive.getPath(VirtualPath(tmpDir.toString())).getItem() is Dir)
+        assertTrue(drive.getPath(VirtualPath(tmpFile.toString())).getItem() is File)
+        assertTrue(drive.getPath(VirtualPath(tmpLink.toString())).getItem() is Link)
         assertExceptionThrown<FileNotFoundException>({
-            VirtualPath(tmpMissing.toString()).toRealPath().getItem()},
+            drive.getPath(VirtualPath(tmpMissing.toString())).getItem()},
             "getItem method on missing file should trigger FileNotFoundException."
         )
     }
 
     @Test
     fun exists() {
-        assertTrue(VirtualPath(tmpDir.toString()).toRealPath().exists())
-        assertTrue(VirtualPath(tmpFile.toString()).toRealPath().exists())
-        assertTrue(VirtualPath(tmpLink.toString()).toRealPath().exists())
-        assertFalse(VirtualPath(tmpMissing.toString()).toRealPath().exists())
+        assertTrue(drive.getPath(VirtualPath(tmpDir.toString())).exists())
+        assertTrue(drive.getPath(VirtualPath(tmpFile.toString())).exists())
+        assertTrue(drive.getPath(VirtualPath(tmpLink.toString())).exists())
+        assertFalse(drive.getPath(VirtualPath(tmpMissing.toString())).exists())
     }
 
     @Test
     fun isLink() {
-        assertFalse(VirtualPath(tmpDir.toString()).toRealPath().isLink())
-        assertFalse(VirtualPath(tmpFile.toString()).toRealPath().isLink())
-        assertTrue(VirtualPath(tmpLink.toString()).toRealPath().isLink())
+        assertFalse(drive.getPath(VirtualPath(tmpDir.toString())).isLink())
+        assertFalse(drive.getPath(VirtualPath(tmpFile.toString())).isLink())
+        assertTrue(drive.getPath(VirtualPath(tmpLink.toString())).isLink())
         assertExceptionThrown<FileNotFoundException>({
-            VirtualPath(tmpMissing.toString()).toRealPath().isLink()},
+            drive.getPath(VirtualPath(tmpMissing.toString())).isLink()},
             "isLink method on missing file should trigger FileNotFoundException."
         )
     }
 
     @Test
     fun isFile() {
-        assertFalse(VirtualPath(tmpDir.toString()).toRealPath().isFile())
-        assertTrue(VirtualPath(tmpFile.toString()).toRealPath().isFile())
-        assertFalse(VirtualPath(tmpLink.toString()).toRealPath().isFile())
+        assertFalse(drive.getPath(VirtualPath(tmpDir.toString())).isFile())
+        assertTrue(drive.getPath(VirtualPath(tmpFile.toString())).isFile())
+        assertFalse(drive.getPath(VirtualPath(tmpLink.toString())).isFile())
         assertExceptionThrown<FileNotFoundException>({
-            VirtualPath(tmpMissing.toString()).toRealPath().isFile()},
+            drive.getPath(VirtualPath(tmpMissing.toString())).isFile()},
             "isFile method on missing file should trigger FileNotFoundException."
         )
     }
 
     @Test
     fun isDir() {
-        assertTrue(VirtualPath(tmpDir.toString()).toRealPath().isDir())
-        assertFalse(VirtualPath(tmpFile.toString()).toRealPath().isDir())
-        assertFalse(VirtualPath(tmpLink.toString()).toRealPath().isDir())
+        assertTrue(drive.getPath(VirtualPath(tmpDir.toString())).isDir())
+        assertFalse(drive.getPath(VirtualPath(tmpFile.toString())).isDir())
+        assertFalse(drive.getPath(VirtualPath(tmpLink.toString())).isDir())
         assertExceptionThrown<FileNotFoundException>({
-            VirtualPath(tmpMissing.toString()).toRealPath().isDir()},
+            drive.getPath(VirtualPath(tmpMissing.toString())).isDir()},
             "isDir method on missing file should trigger FileNotFoundException."
         )
     }
@@ -113,8 +116,8 @@ class RealPathTest {
     fun join() {
         val winPath = """C:\foo\bar\baz.txt"""
         val posixPath = """/foo/bar/baz.txt"""
-        val vpw = VirtualPath(winPath, PathSeparator.WINDOWS).toRealPath()
-        val vpp = VirtualPath(posixPath).toRealPath()
+        val vpw = VirtualPath(winPath, PathSeparator.WINDOWS).toRealPath(drive)
+        val vpp = VirtualPath(posixPath).toRealPath(drive)
 
         assertEquals(
             vpw.join("""hello\world\here_i_am.tmp""").toString(),

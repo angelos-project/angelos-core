@@ -22,7 +22,7 @@ import angelos.io.NotLinkException
 
 internal actual class FileSystem {
     actual companion object {
-        internal actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long =
+        actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long =
             fs_read(number, array, index, count)
 
         actual inline fun writeFile(number: Int, array: ByteArray, index: Int, count: Long): Long =

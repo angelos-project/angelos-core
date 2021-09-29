@@ -16,7 +16,7 @@ package angelos.io
 
 import angelos.nio.file.FileVault
 
-class RealPath internal constructor(root: String, path: List<String>, separator: PathSeparator, fileSystem: FileVault) :
+class RealPath internal constructor(root: String, path: PathList, separator: PathSeparator, fileSystem: FileVault) :
     Path(root, path, separator) {
 
     val store: FileVault = fileSystem
@@ -51,7 +51,9 @@ class RealPath internal constructor(root: String, path: List<String>, separator:
     fun isDir(): Boolean = getType() == FileObject.Type.DIR
 
     override fun join(vararg elements: String): RealPath =
-        RealPath(root, path + elements, separator, store)
+        RealPath(root, (path + elements) as PathList, separator, store)
     override fun join(path: String): RealPath =
-        RealPath(root, this.path + splitString(path, separator), separator, store)
+        RealPath(root, (this.path + splitString(path, separator)) as PathList, separator, store)
+
+    fun baseDir(): RealPath = RealPath(root, parent(), separator, store)
 }

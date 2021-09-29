@@ -21,8 +21,8 @@ class VirtualPath(path: String, separator: PathSeparator = PathSeparator.POSIX) 
     fun toRealPath(fileSystem: FileVault): RealPath = RealPath(root, path, separator, fileSystem)
 
     override fun join(vararg elements: String): VirtualPath =
-        VirtualPath(joinStrings(elements = elements.asList()), separator)
+        VirtualPath(joinStrings(elements.asList() as PathList), separator)
 
     override fun join(path: String): VirtualPath =
-        VirtualPath(joinStrings(elements = splitString(path, separator)), separator)
+        VirtualPath(joinStrings(splitString(path, separator)), separator)
 }

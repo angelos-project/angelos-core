@@ -15,13 +15,15 @@
 package angelos.io
 
 import kotlin.jvm.JvmStatic
+import kotlin.reflect.KClass
 
-typealias PathElements = Triple<String, List<String>, PathSeparator>
+typealias PathList = MutableList<String>
+typealias PathElements = Triple<String, PathList, PathSeparator>
 
 /**
  * Path abstract class.
  */
-abstract class Path internal constructor(val root: String, val path: List<String>, val separator: PathSeparator) {
+abstract class Path internal constructor(val root: String, val path: PathList, val separator: PathSeparator) {
     val absolute: Boolean = root.isNotEmpty()
 
     constructor(elements: PathElements): this(elements.first, elements.second, elements.third)
@@ -31,10 +33,12 @@ abstract class Path internal constructor(val root: String, val path: List<String
             throw IllegalArgumentException()
     }
 
+
+
     companion object {
         @JvmStatic
-        protected inline fun splitString(path: String, separator: PathSeparator): List<String> =
-            path.split(separator.toChar())
+        protected inline fun splitString(path: String, separator: PathSeparator): PathList =
+            path.split(separator.toChar()) as PathList
 
         @JvmStatic
         protected inline fun getElements(
@@ -42,12 +46,12 @@ abstract class Path internal constructor(val root: String, val path: List<String
             separator: PathSeparator,
         ): PathElements = when {
             separator == PathSeparator.WINDOWS && path.contains(windowsRegex) -> PathElements(path.substring(0..2),
-                path.substring(3..(path.length-1)).split(separator.toChar()),
+                path.substring(3..(path.length-1)).split(separator.toChar()) as PathList,
                 separator)
             separator == PathSeparator.POSIX && path.contains(posixRegex) -> PathElements("/",
-                path.substring(1..(path.length-1)).split(separator.toChar()),
+                path.substring(1..(path.length-1)).split(separator.toChar()) as PathList,
                 separator)
-            else -> PathElements("", path.split(separator.toChar()), separator)
+            else -> PathElements("", path.split(separator.toChar()) as PathList, separator)
         }
 
         val windowsRegex: Regex = Regex("""^[a-zA-Z]:\\""")
@@ -62,6 +66,12 @@ abstract class Path internal constructor(val root: String, val path: List<String
      */
     protected inline fun joinStrings(elements: List<String> = listOf()): String =
         root + (path + elements).joinToString(separator.toString())
+
+    protected inline fun parent(): PathList{
+        val parentPath = path.toMutableList()
+        parentPath.removeLast()
+        return parentPath
+    }
 
     override fun toString(): String = joinStrings()
 }
