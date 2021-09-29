@@ -14,10 +14,14 @@
  */
 package angelos.io
 
-import angelos.interop.FileSystem
-
 class Link(path: RealPath) : FileObject(path) {
-    private val _target: RealPath by lazy { RealPath.wrap(FileSystem.getLinkTarget(path.toString()), path.separator) }
+    private val _target: RealPath by lazy {
+        RealPath.wrap(
+            path.store.getLinkTarget(path.toString()),
+            path.separator,
+            path.store
+        )
+    }
 
     val target: String
         get() = _target.toString()

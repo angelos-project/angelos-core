@@ -51,25 +51,26 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
     }
 
     fun rewind() = 0.also { position = it }
+    fun allowance(): Long = (_capacity - _limit).toLong()
 
-    internal abstract fun _readChar(): Char
-    internal abstract fun _writeChar(value: Char)
-    internal abstract fun _readShort(): Short
-    internal abstract fun _writeShort(value: Short)
-    internal abstract fun _readUShort(): UShort
-    internal abstract fun _writeUShort(value: UShort)
-    internal abstract fun _readInt(): Int
-    internal abstract fun _writeInt(value: Int)
-    internal abstract fun _readUInt(): UInt
-    internal abstract fun _writeUInt(value: UInt)
-    internal abstract fun _readLong(): Long
-    internal abstract fun _writeLong(value: Long)
-    internal abstract fun _readULong(): ULong
-    internal abstract fun _writeULong(value: ULong)
-    internal abstract fun _readFloat(): Int
-    internal abstract fun _writeFloat(value: Int)
-    internal abstract fun _readDouble(): Long
-    internal abstract fun _writeDouble(value: Long)
+    internal abstract fun _getChar(): Char
+    internal abstract fun _putChar(value: Char)
+    internal abstract fun _getShort(): Short
+    internal abstract fun _putShort(value: Short)
+    internal abstract fun _getUShort(): UShort
+    internal abstract fun _putUShort(value: UShort)
+    internal abstract fun _getInt(): Int
+    internal abstract fun _putInt(value: Int)
+    internal abstract fun _getUInt(): UInt
+    internal abstract fun _putUInt(value: UInt)
+    internal abstract fun _getLong(): Long
+    internal abstract fun _putLong(value: Long)
+    internal abstract fun _getULong(): ULong
+    internal abstract fun _putULong(value: ULong)
+    internal abstract fun _getFloat(): Int
+    internal abstract fun _putFloat(value: Int)
+    internal abstract fun _getDouble(): Long
+    internal abstract fun _putDouble(value: Long)
 
     private inline fun enoughSpace(size: Int) {
         if (_limit - _position < size)
@@ -80,120 +81,120 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
         _position += length
     }
 
-    fun readChar(): Char {
+    fun getChar(): Char {
         enoughSpace(2)
-        val value = _readChar()
+        val value = _getChar()
         forwardPosition(2)
         return value
     }
 
-    fun writeChar(value: Char) {
+    fun putChar(value: Char) {
         enoughSpace(2)
-        _writeChar(value)
+        _putChar(value)
         forwardPosition(2)
     }
 
-    fun readShort(): Short {
+    fun getShort(): Short {
         enoughSpace(2)
-        val value = _readShort()
-        forwardPosition(2)
-        return value
-    }
-
-    fun writeShort(value: Short) {
-        enoughSpace(2)
-        _writeShort(value)
-        forwardPosition(2)
-    }
-
-    fun readUShort(): UShort {
-        enoughSpace(2)
-        val value = _readUShort()
+        val value = _getShort()
         forwardPosition(2)
         return value
     }
 
-    fun writeUShort(value: UShort) {
+    fun putShort(value: Short) {
         enoughSpace(2)
-        _writeUShort(value)
+        _putShort(value)
         forwardPosition(2)
     }
 
-    fun readInt(): Int {
+    fun getUShort(): UShort {
+        enoughSpace(2)
+        val value = _getUShort()
+        forwardPosition(2)
+        return value
+    }
+
+    fun putUShort(value: UShort) {
+        enoughSpace(2)
+        _putUShort(value)
+        forwardPosition(2)
+    }
+
+    fun getInt(): Int {
         enoughSpace(4)
-        val value = _readInt()
+        val value = _getInt()
         forwardPosition(4)
         return value
     }
 
-    fun writeInt(value: Int) {
+    fun putInt(value: Int) {
         enoughSpace(4)
-        _writeInt(value)
+        _putInt(value)
         forwardPosition(4)
     }
 
-    fun readUInt(): UInt {
+    fun getUInt(): UInt {
         enoughSpace(4)
-        val value = _readUInt()
+        val value = _getUInt()
         forwardPosition(4)
         return value
     }
 
-    fun writeUInt(value: UInt) {
+    fun putUInt(value: UInt) {
         enoughSpace(4)
-        _writeUInt(value)
+        _putUInt(value)
         forwardPosition(4)
     }
 
-    fun readLong(): Long {
+    fun getLong(): Long {
         enoughSpace(8)
-        val value = _readLong()
+        val value = _getLong()
         forwardPosition(8)
         return value
     }
 
-    fun writeLong(value: Long) {
+    fun putLong(value: Long) {
         enoughSpace(8)
-        _writeLong(value)
+        _putLong(value)
         forwardPosition(8)
     }
 
-    fun readULong(): ULong {
+    fun getULong(): ULong {
         enoughSpace(8)
-        val value = _readULong()
+        val value = _getULong()
         forwardPosition(8)
         return value
     }
 
-    fun writeULong(value: ULong) {
+    fun putULong(value: ULong) {
         enoughSpace(8)
-        _writeULong(value)
+        _putULong(value)
         forwardPosition(8)
     }
 
-    fun readFloat(): Float {
+    fun getFloat(): Float {
         enoughSpace(4)
-        val value = _readFloat()
+        val value = _getFloat()
         forwardPosition(4)
         return Float.fromBits(value)
     }
 
-    fun writeFloat(value: Float) {
+    fun putFloat(value: Float) {
         enoughSpace(4)
-        _writeFloat(value.toRawBits())
+        _putFloat(value.toRawBits())
         forwardPosition(4)
     }
 
-    fun readDouble(): Double {
+    fun getDouble(): Double {
         enoughSpace(8)
-        val value = _readDouble()
+        val value = _getDouble()
         forwardPosition(8)
         return Double.fromBits(value)
     }
 
-    fun writeDouble(value: Double) {
+    fun putDouble(value: Double) {
         enoughSpace(8)
-        _writeDouble(value.toRawBits())
+        _putDouble(value.toRawBits())
         forwardPosition(8)
     }
 
@@ -203,14 +204,14 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
         private val _array: ByteArray = ByteArray(capacity)
         private val _view: UByteArray = _array.asUByteArray()
 
-        internal inline fun readChar(): Char = when (_reverse) {
+        internal inline fun getChar(): Char = when (_reverse) {
             true -> load(0).toInt() or
                     (load(1).toInt() shl 8)
             false -> load(1).toInt() or
                     (load(0).toInt() shl 8)
         }.toChar()
 
-        internal inline fun writeChar(value: Char) = when (_reverse) {
+        internal inline fun putChar(value: Char) = when (_reverse) {
             true -> {
                 save((value.code and 0xFF).toUByte(), 0)
                 save(((value.code ushr 8) and 0xFF).toUByte(), 1)
@@ -221,14 +222,14 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
             }
         }
 
-        internal inline fun readShort(): Short = when (_reverse) {
+        internal inline fun getShort(): Short = when (_reverse) {
             true -> load(0).toInt() or
                     (load(1).toInt() shl 8)
             false -> load(1).toInt() or
                     (load(0).toInt() shl 8)
         }.toShort()
 
-        internal inline fun writeShort(value: Short) = when (_reverse) {
+        internal inline fun putShort(value: Short) = when (_reverse) {
             true -> {
                 save((value.toInt() and 0xFF).toUByte(), 0)
                 save(((value.toInt() ushr 8) and 0xFF).toUByte(), 1)
@@ -239,14 +240,14 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
             }
         }
 
-        internal inline fun readUShort(): UShort = when (_reverse) {
+        internal inline fun getUShort(): UShort = when (_reverse) {
             true -> (load(0).toInt() or
                     (load(1).toInt() shl 8))
             false -> (load(1).toInt() or
                     (load(0).toInt() shl 8))
         }.toUShort()
 
-        internal inline fun writeUShort(value: UShort) = when (_reverse) {
+        internal inline fun putUShort(value: UShort) = when (_reverse) {
             true -> {
                 save((value.toInt() and 0xFF).toUByte(), 0)
                 save(((value.toInt() ushr 8) and 0xFF).toUByte(), 1)
@@ -257,7 +258,7 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
             }
         }
 
-        internal inline fun readInt(): Int = when (_reverse) {
+        internal inline fun getInt(): Int = when (_reverse) {
             true -> load(0).toInt() or
                     (load(1).toInt() shl 8) or
                     (load(2).toInt() shl 16) or
@@ -268,7 +269,7 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
                     (load(0).toInt() shl 24)
         }
 
-        internal inline fun writeInt(value: Int) = when (_reverse) {
+        internal inline fun putInt(value: Int) = when (_reverse) {
             true -> {
                 save((value and 0xFF).toUByte(), 0)
                 save(((value ushr 8) and 0xFF).toUByte(), 1)
@@ -283,7 +284,7 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
             }
         }
 
-        internal inline fun readUInt(): UInt = when (_reverse) {
+        internal inline fun getUInt(): UInt = when (_reverse) {
             true -> load(0).toUInt() or
                     (load(1).toUInt() shl 8) or
                     (load(2).toUInt() shl 16) or
@@ -294,7 +295,7 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
                     (load(0).toUInt() shl 24)
         }
 
-        internal inline fun writeUInt(value: UInt) = when (_reverse) {
+        internal inline fun putUInt(value: UInt) = when (_reverse) {
             true -> {
                 save((value.toInt() and 0xFF).toUByte(), 0)
                 save(((value.toInt() ushr 8) and 0xFF).toUByte(), 1)
@@ -309,7 +310,7 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
             }
         }
 
-        internal inline fun readLong(): Long = when (_reverse) {
+        internal inline fun getLong(): Long = when (_reverse) {
             true -> load(0).toLong() or
                     (load(1).toLong() shl 8) or
                     (load(2).toLong() shl 16) or
@@ -328,7 +329,7 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
                     (load(0).toLong() shl 56)
         }
 
-        internal inline fun writeLong(value: Long) = when (_reverse) {
+        internal inline fun putLong(value: Long) = when (_reverse) {
             true -> {
                 save((value and 0xFF).toUByte(), 0)
                 save(((value ushr 8) and 0xFF).toUByte(), 1)
@@ -351,7 +352,7 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
             }
         }
 
-        internal inline fun readULong(): ULong = when (_reverse) {
+        internal inline fun getULong(): ULong = when (_reverse) {
             true -> load(0).toULong() or
                     (load(1).toULong() shl 8) or
                     (load(2).toULong() shl 16) or
@@ -370,7 +371,7 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
                     (load(0).toULong() shl 56)
         }
 
-        internal inline fun writeULong(value: ULong) = when (_reverse) {
+        internal inline fun putULong(value: ULong) = when (_reverse) {
             true -> {
                 save((value.toLong() and 0xFF).toUByte(), 0)
                 save(((value.toLong() ushr 8) and 0xFF).toUByte(), 1)
@@ -393,7 +394,7 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
             }
         }
 
-        internal inline fun readFloat(): Int = when (_reverse) {
+        internal inline fun getFloat(): Int = when (_reverse) {
             true -> load(0).toInt() or
                     (load(1).toInt() shl 8) or
                     (load(2).toInt() shl 16) or
@@ -404,7 +405,7 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
                     (load(0).toInt() shl 24)
         }
 
-        internal inline fun writeFloat(value: Int) = when (_reverse) {
+        internal inline fun putFloat(value: Int) = when (_reverse) {
             true -> {
                 save((value and 0xFF).toUByte(), 0)
                 save(((value ushr 8) and 0xFF).toUByte(), 1)
@@ -419,7 +420,7 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
             }
         }
 
-        internal inline fun readDouble(): Long = when (_reverse) {
+        internal inline fun getDouble(): Long = when (_reverse) {
             true -> load(0).toLong() or
                     (load(1).toLong() shl 8) or
                     (load(2).toLong() shl 16) or
@@ -438,7 +439,7 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
                     (load(0).toLong() shl 56)
         }
 
-        internal inline fun writeDouble(value: Long) = when (_reverse) {
+        internal inline fun putDouble(value: Long) = when (_reverse) {
             true -> {
                 save((value and 0xFF).toUByte(), 0)
                 save(((value ushr 8) and 0xFF).toUByte(), 1)

@@ -15,22 +15,22 @@
 package angelos.nio
 
 expect class ByteDirectBuffer(capacity: Long, limit: Long, position: Long) : Buffer {
-    override fun _readChar(): Char
-    override fun _writeChar(value: Char)
-    override fun _readShort(): Short
-    override fun _writeShort(value: Short)
-    override fun _readUShort(): UShort
-    override fun _writeUShort(value: UShort)
-    override fun _readInt(): Int
-    override fun _writeInt(value: Int)
-    override fun _readUInt(): UInt
-    override fun _writeUInt(value: UInt)
-    override fun _readLong(): Long
-    override fun _writeLong(value: Long)
-    override fun _readULong(): ULong
-    override fun _writeULong(value: ULong)
-    override fun _readFloat(): Int
-    override fun _writeFloat(value: Int)
-    override fun _readDouble(): Long
-    override fun _writeDouble(value: Long)
+    override fun _getChar(): Char
+    override fun _putChar(value: Char)
+    override fun _getShort(): Short
+    override fun _putShort(value: Short)
+    override fun _getUShort(): UShort
+    override fun _putUShort(value: UShort)
+    override fun _getInt(): Int
+    override fun _putInt(value: Int)
+    override fun _getUInt(): UInt
+    override fun _putUInt(value: UInt)
+    override fun _getLong(): Long
+    override fun _putLong(value: Long)
+    override fun _getULong(): ULong
+    override fun _putULong(value: ULong)
+    override fun _getFloat(): Int
+    override fun _putFloat(value: Int)
+    override fun _getDouble(): Long
+    override fun _putDouble(value: Long)
 }

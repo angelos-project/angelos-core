@@ -14,30 +14,30 @@
  */
 package angelos.interop
 
-import angelos.io.FileDescriptor
 import angelos.io.Dir.FileEntry
+import angelos.io.FileDescriptor
 import angelos.io.FileNotFoundException
 import angelos.io.FileObject
 import angelos.io.NotLinkException
 
 internal actual class FileSystem {
     actual companion object {
-        @ExperimentalUnsignedTypes
-        actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long =
+        internal actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long =
             fs_read(number, array, index, count)
 
-        @ExperimentalUnsignedTypes
         actual inline fun writeFile(number: Int, array: ByteArray, index: Int, count: Long): Long =
             fs_write(number, array, index, count)
 
         actual inline fun tellFile(number: Int): Long = fs_lseek(number, 0, SeekDirective.CUR.whence)
 
         actual inline fun seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): Long =
-            fs_lseek(number, position, when (whence) {
-                FileDescriptor.Seek.SET -> SeekDirective.SET.whence
-                FileDescriptor.Seek.CUR -> SeekDirective.CUR.whence
-                FileDescriptor.Seek.END -> SeekDirective.END.whence
-            })
+            fs_lseek(
+                number, position, when (whence) {
+                    FileDescriptor.Seek.SET -> SeekDirective.SET.whence
+                    FileDescriptor.Seek.CUR -> SeekDirective.CUR.whence
+                    FileDescriptor.Seek.END -> SeekDirective.END.whence
+                }
+            )
 
         actual inline fun closeFile(number: Int): Boolean = fs_close(number) == 0
 
@@ -56,9 +56,11 @@ internal actual class FileSystem {
             return type
         }
 
-        actual inline fun getFileInfo(path: String): FileObject.Info = fs_fileinfo(path) ?: throw FileNotFoundException("File not found.\n$path")
+        actual inline fun getFileInfo(path: String): FileObject.Info =
+            fs_fileinfo(path) ?: throw FileNotFoundException("File not found.\n$path")
 
-        actual inline fun getLinkTarget(path: String): String = fs_readlink(path) ?: throw NotLinkException("Not a symbolic link.\n$path")
+        actual inline fun getLinkTarget(path: String): String =
+            fs_readlink(path) ?: throw NotLinkException("Not a symbolic link.\n$path")
 
         actual inline fun openDir(path: String): Long {
             val number = fs_opendir(path)
@@ -71,12 +73,14 @@ internal actual class FileSystem {
 
         actual inline fun closeDir(dir: Long): Boolean = fs_closedir(dir) == 0
 
-        actual inline fun openFile(path: String, option: Int): Int{
-            val fd = fs_open(path, when (option) {
-                1 -> AccessMode.READ_ONLY.mode
-                2 -> AccessMode.WRITE_ONLY.mode
-                else -> AccessMode.READ_WRITE.mode
-            })
+        actual inline fun openFile(path: String, option: Int): Int {
+            val fd = fs_open(
+                path, when (option) {
+                    1 -> AccessMode.READ_ONLY.mode
+                    2 -> AccessMode.WRITE_ONLY.mode
+                    else -> AccessMode.READ_WRITE.mode
+                }
+            )
             if (fd == -1)
                 throw FileNotFoundException("File not found.\n$path")
             return fd

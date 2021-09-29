@@ -14,8 +14,6 @@
  */
 package angelos.nio
 
-import kotlin.math.absoluteValue
-
 @ExperimentalUnsignedTypes
 @Suppress("OVERRIDE_BY_INLINE")
 actual class ByteDirectBuffer actual constructor(capacity: Long, limit: Long, position: Long) :
@@ -23,22 +21,22 @@ actual class ByteDirectBuffer actual constructor(capacity: Long, limit: Long, po
 
     private val _inner = ByteBufferOperations()
 
-    actual override inline fun _readChar(): Char = _inner.readChar()
-    actual override inline fun _writeChar(value: Char) = _inner.writeChar(value)
-    actual override inline fun _readShort(): Short = _inner.readShort()
-    actual override inline fun _writeShort(value: Short) = _inner.writeShort(value)
-    actual override inline fun _readUShort(): UShort = _inner.readUShort()
-    actual override inline fun _writeUShort(value: UShort) = _inner.writeUShort(value)
-    actual override inline fun _readInt(): Int = _inner.readInt()
-    actual override inline fun _writeInt(value: Int) = _inner.writeInt(value)
-    actual override inline fun _readUInt(): UInt = _inner.readUInt()
-    actual override inline fun _writeUInt(value: UInt) = _inner.writeUInt(value)
-    actual override inline fun _readLong(): Long = _inner.readLong()
-    actual override inline fun _writeLong(value: Long) = _inner.writeLong(value)
-    actual override inline fun _readULong(): ULong = _inner.readULong()
-    actual override inline fun _writeULong(value: ULong) = _inner.writeULong(value)
-    actual override inline fun _readFloat(): Int = _inner.readFloat()
-    actual override inline fun _writeFloat(value: Int) = _inner.writeFloat(value)
-    actual override inline fun _readDouble(): Long = _inner.readDouble()
-    actual override inline fun _writeDouble(value: Long) = _inner.writeDouble(value)
+    actual override inline fun _getChar(): Char = _inner.getChar()
+    actual override inline fun _putChar(value: Char) = _inner.putChar(value)
+    actual override inline fun _getShort(): Short = _inner.getShort()
+    actual override inline fun _putShort(value: Short) = _inner.putShort(value)
+    actual override inline fun _getUShort(): UShort = _inner.getUShort()
+    actual override inline fun _putUShort(value: UShort) = _inner.putUShort(value)
+    actual override inline fun _getInt(): Int = _inner.getInt()
+    actual override inline fun _putInt(value: Int) = _inner.putInt(value)
+    actual override inline fun _getUInt(): UInt = _inner.getUInt()
+    actual override inline fun _putUInt(value: UInt) = _inner.putUInt(value)
+    actual override inline fun _getLong(): Long = _inner.getLong()
+    actual override inline fun _putLong(value: Long) = _inner.putLong(value)
+    actual override inline fun _getULong(): ULong = _inner.getULong()
+    actual override inline fun _putULong(value: ULong) = _inner.putULong(value)
+    actual override inline fun _getFloat(): Int = _inner.getFloat()
+    actual override inline fun _putFloat(value: Int) = _inner.putFloat(value)
+    actual override inline fun _getDouble(): Long = _inner.getDouble()
+    actual override inline fun _putDouble(value: Long) = _inner.putDouble(value)
 }

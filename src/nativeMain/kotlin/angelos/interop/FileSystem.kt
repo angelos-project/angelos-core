@@ -21,14 +21,12 @@ import platform.posix.*
 internal actual class FileSystem {
     actual companion object {
 
-        @ExperimentalUnsignedTypes
-        actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long {
+        internal actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long {
             array.usePinned {
                 return read(number, it.addressOf(index), count.toULong())
             }
         }
 
-        @ExperimentalUnsignedTypes
         actual inline fun writeFile(number: Int, array: ByteArray, index: Int, count: Long): Long {
             array.usePinned {
                 return write(number, it.addressOf(index), count.toULong())

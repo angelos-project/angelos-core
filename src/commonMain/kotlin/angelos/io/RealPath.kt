@@ -14,15 +14,17 @@
  */
 package angelos.io
 
-import angelos.interop.FileSystem
+import angelos.nio.file.FileVault
 
-class RealPath internal constructor(root: String, path: List<String>, separator: PathSeparator) :
+class RealPath internal constructor(root: String, path: List<String>, separator: PathSeparator, fileSystem: FileVault) :
     Path(root, path, separator) {
 
+    val store: FileVault = fileSystem
+
     companion object {
-        internal fun wrap(path: String, separator: PathSeparator): RealPath {
+        internal fun wrap(path: String, separator: PathSeparator, fileSystem: FileVault): RealPath {
             val elements = getElements(path, separator)
-            return RealPath(elements.first, elements.second, elements.third)
+            return RealPath(elements.first, elements.second, elements.third, fileSystem)
         }
 
         internal inline fun getItem(path: RealPath, type: FileObject.Type): FileObject = when (type) {
@@ -40,14 +42,16 @@ class RealPath internal constructor(root: String, path: List<String>, separator:
         }
     }
 
-    private fun getType(): FileObject.Type = getType(FileSystem.getFileType(this.toString()))
+    private fun getType(): FileObject.Type = getType(store.getFileType(this.toString()))
 
     fun getItem(): FileObject = getItem(this, getType())
-    fun exists(): Boolean = FileSystem.checkExists(this.toString())
+    fun exists(): Boolean = store.checkExists(this.toString())
     fun isLink(): Boolean = getType() == FileObject.Type.LINK
     fun isFile(): Boolean = getType() == FileObject.Type.FILE
     fun isDir(): Boolean = getType() == FileObject.Type.DIR
 
-    override fun join(vararg elements: String): RealPath = RealPath(root, path + elements, separator)
-    override fun join(path: String): RealPath = RealPath(root, this.path + splitString(path, separator), separator)
+    override fun join(vararg elements: String): RealPath =
+        RealPath(root, path + elements, separator, store)
+    override fun join(path: String): RealPath =
+        RealPath(root, this.path + splitString(path, separator), separator, store)
 }

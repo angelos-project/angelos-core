@@ -21,7 +21,7 @@ import angelos.io.FileObject
 internal actual class FileSystem {
     actual companion object {
         @ExperimentalUnsignedTypes
-        actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long {TODO("Not yet implemented")}
+        internal actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long {TODO("Not yet implemented")}
 
         @ExperimentalUnsignedTypes
         actual inline fun writeFile(number: Int, array: ByteArray, index: Int, count: Long): Long {TODO("Not yet implemented")}

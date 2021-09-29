@@ -16,75 +16,75 @@ package angelos.nio
 
 actual class ByteDirectBuffer actual constructor(capacity: Long, limit: Long, position: Long) :
     Buffer(capacity, limit, position) {
-    actual override fun _readChar(): Char {
+    actual override fun _getChar(): Char {
         TODO("Not yet implemented")
     }
 
-    actual override fun _writeChar(value: Char) {
+    actual override fun _putChar(value: Char) {
         TODO("Not yet implemented")
     }
 
-    actual override fun _readShort(): Short {
+    actual override fun _getShort(): Short {
         TODO("Not yet implemented")
     }
 
-    actual override fun _writeShort(value: Short) {
+    actual override fun _putShort(value: Short) {
         TODO("Not yet implemented")
     }
 
-    actual override fun _readUShort(): UShort {
+    actual override fun _getUShort(): UShort {
         TODO("Not yet implemented")
     }
 
-    actual override fun _writeUShort(value: UShort) {
+    actual override fun _putUShort(value: UShort) {
         TODO("Not yet implemented")
     }
 
-    actual override fun _readInt(): Int {
+    actual override fun _getInt(): Int {
         TODO("Not yet implemented")
     }
 
-    actual override fun _writeInt(value: Int) {
+    actual override fun _putInt(value: Int) {
         TODO("Not yet implemented")
     }
 
-    actual override fun _readUInt(): UInt {
+    actual override fun _getUInt(): UInt {
         TODO("Not yet implemented")
     }
 
-    actual override fun _writeUInt(value: UInt) {
+    actual override fun _putUInt(value: UInt) {
         TODO("Not yet implemented")
     }
 
-    actual override fun _readLong(): Long {
+    actual override fun _getLong(): Long {
         TODO("Not yet implemented")
     }
 
-    actual override fun _writeLong(value: Long) {
+    actual override fun _putLong(value: Long) {
         TODO("Not yet implemented")
     }
 
-    actual override fun _readULong(): ULong {
+    actual override fun _getULong(): ULong {
         TODO("Not yet implemented")
     }
 
-    actual override fun _writeULong(value: ULong) {
+    actual override fun _putULong(value: ULong) {
         TODO("Not yet implemented")
     }
 
-    actual override fun _readFloat(): Int {
+    actual override fun _getFloat(): Int {
         TODO("Not yet implemented")
     }
 
-    actual override fun _writeFloat(value: Int) {
+    actual override fun _putFloat(value: Int) {
         TODO("Not yet implemented")
     }
 
-    actual override fun _readDouble(): Long {
+    actual override fun _getDouble(): Long {
         TODO("Not yet implemented")
     }
 
-    actual override fun _writeDouble(value: Long) {
+    actual override fun _putDouble(value: Long) {
         TODO("Not yet implemented")
     }
 }
