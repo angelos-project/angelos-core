@@ -14,13 +14,11 @@
  */
 package angelos.io
 
-import angelos.interop.FileSystem
-
 open class FileObject (path: RealPath){
     private val name: String = path.path.last()
     private val suffix: String = name.substringAfter('.')
     private val _path: RealPath = path
-    protected val _info: Info by lazy { FileSystem.getFileInfo(_path.toString()) }
+    protected val _info: Info by lazy { _path.store.getFileInfo(_path.toString()) }
 
     val path: RealPath
         get() = _path
@@ -44,13 +42,13 @@ open class FileObject (path: RealPath){
         get() = _info.createdAt
 
     val readable: Boolean
-        get() = FileSystem.checkReadable(_path.toString())
+        get() = _path.store.checkReadable(_path.toString())
 
     val writable: Boolean
-        get() = FileSystem.checkWritable(_path.toString())
+        get() = _path.store.checkWritable(_path.toString())
 
     val executable: Boolean
-        get() = FileSystem.checkExecutable(_path.toString())
+        get() = _path.store.checkExecutable(_path.toString())
 
     enum class Type {
         UNKNOWN,

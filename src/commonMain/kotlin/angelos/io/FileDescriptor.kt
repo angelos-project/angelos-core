@@ -35,7 +35,7 @@ class FileDescriptor internal constructor(
     fun read(buffer: ByteBuffer, count: Long) {
         if (buffer.remaining() < count)
             throw BufferUnderflowException()
-        if(FileSystem.readFile(_number, buffer.array(), buffer.position, count) != count)
+        if(file.path.store.readFile(_number, buffer.array(), buffer.position, count) != count)
             throw IOException("Couldn't read $count bytes from file.")
         _position += count.toULong()
     }
@@ -43,25 +43,25 @@ class FileDescriptor internal constructor(
     fun write(buffer: ByteBuffer, count: Long) {
         if (buffer.remaining() < count)
             throw BufferOverflowException()
-        if(FileSystem.writeFile(_number, buffer.array(), buffer.position, count) != count)
+        if(file.path.store.writeFile(_number, buffer.array(), buffer.position, count) != count)
             throw IOException("Couldn't write $count bytes to file.")
         _position += count.toULong()
     }
 
     fun tell(): Long{
-        val position = FileSystem.tellFile(_number)
+        val position = file.path.store.tellFile(_number)
         if (position.toULong() != _position)
             throw SyncFailedException("File descriptor out of sync with physical cursor.")
         return position
     }
 
     fun seek(position: Long, whence: Seek): Long {
-        _position = FileSystem.seekFile(_number, position, whence).toULong()
+        _position = file.path.store.seekFile(_number, position, whence).toULong()
         return _position.toLong()
     }
 
     override fun close(){
-        FileSystem.closeFile(_number)
+        file.path.store.closeFile(_number)
         _number = 0
     }
 

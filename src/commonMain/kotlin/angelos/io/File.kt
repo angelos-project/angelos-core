@@ -20,7 +20,7 @@ class File(path: RealPath) : FileObject(path) {
     val size: Long
         get() = _info.size
 
-    fun open(option: OpenOption): FileDescriptor = FileDescriptor(this, option, FileSystem.openFile(this.path.toString(), option.ordinal))
+    fun open(option: OpenOption): FileDescriptor = FileDescriptor(this, option, path.store.openFile(path.toString(), option.ordinal))
 
     enum class OpenOption(option: Int) {
         READ_ONLY(0),

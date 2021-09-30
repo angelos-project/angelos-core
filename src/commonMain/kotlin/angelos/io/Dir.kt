@@ -35,7 +35,7 @@ class Dir(path: RealPath) : FileObject(path), Iterable<FileObject> {
             return RealPath.getItem(dir.path.join(current.name), RealPath.getType(current.number))
         }
 
-        protected fun finalize(){
+        protected suspend fun finalize(){
             if(_dir != 0L) {
                 dir.path.store.closeDir(_dir)
             }

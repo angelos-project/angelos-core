@@ -41,7 +41,7 @@ abstract class Path internal constructor(val root: String, val path: PathList, v
             path.split(separator.toChar()) as PathList
 
         @JvmStatic
-        protected inline fun getElements(
+        internal inline fun getElements(
             path: String,
             separator: PathSeparator,
         ): PathElements = when {
