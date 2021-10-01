@@ -19,7 +19,7 @@ import angelos.nio.BufferOverflowException
 import angelos.nio.BufferUnderflowException
 import angelos.nio.ByteBuffer
 
-class FileDescriptor internal constructor(
+/* class FileDescriptor internal constructor(
     internal val file: File,
     val option: File.OpenOption,
     private var _number: Int,
@@ -69,4 +69,4 @@ class FileDescriptor internal constructor(
         SET, CUR, END
     }
 
-}
+}*/

@@ -14,7 +14,7 @@
  */
 package angelos.io
 
-class Link(path: RealPath) : FileObject(path) {
+/* class Link(path: RealPath) : FileObject(path) {
     private val _target: RealPath by lazy {
         RealPath.wrap(
             path.store.getLinkTarget(path.toString()),
@@ -27,4 +27,4 @@ class Link(path: RealPath) : FileObject(path) {
         get() = _target.toString()
 
     fun goToTarget(): FileObject = _target.getItem()
-}
+}*/

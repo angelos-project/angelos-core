@@ -14,10 +14,10 @@
  */
 package angelos.nio.file
 
-import angelos.io.File
+//import angelos.io.File
 import angelos.net.URI
 
-class Path : Comparable<Path>, Iterable<Path>, Watchable {
+/* class Path : Comparable<Path>, Iterable<Path>, Watchable {
     override fun compareTo(other: Path): Int {
         TODO("Not yet implemented")
     }
@@ -133,4 +133,4 @@ class Path : Comparable<Path>, Iterable<Path>, Watchable {
     fun toUri(): URI {
         TODO("Not yet implemented")
     }
-}
+} */

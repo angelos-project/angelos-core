@@ -14,10 +14,8 @@
  */
 package angelos.interop
 
-import angelos.io.Dir.FileEntry
-import angelos.io.FileDescriptor
+import angelos.io.FileSystem as RealFS
 import angelos.io.FileNotFoundException
-import angelos.io.FileObject
 import angelos.io.NotLinkException
 
 internal actual class FileSystem {
@@ -30,12 +28,12 @@ internal actual class FileSystem {
 
         actual inline fun tellFile(number: Int): Long = fs_lseek(number, 0, SeekDirective.CUR.whence)
 
-        actual inline fun seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): Long =
+        actual inline fun seekFile(number: Int, position: Long, whence: RealFS.Seek): Long =
             fs_lseek(
                 number, position, when (whence) {
-                    FileDescriptor.Seek.SET -> SeekDirective.SET.whence
-                    FileDescriptor.Seek.CUR -> SeekDirective.CUR.whence
-                    FileDescriptor.Seek.END -> SeekDirective.END.whence
+                    RealFS.Seek.SET -> SeekDirective.SET.whence
+                    RealFS.Seek.CUR -> SeekDirective.CUR.whence
+                    RealFS.Seek.END -> SeekDirective.END.whence
                 }
             )
 
@@ -56,7 +54,7 @@ internal actual class FileSystem {
             return type
         }
 
-        actual inline fun getFileInfo(path: String): FileObject.Info =
+        actual inline fun getFileInfo(path: String): RealFS.Info =
             fs_fileinfo(path) ?: throw FileNotFoundException("File not found.\n$path")
 
         actual inline fun getLinkTarget(path: String): String =
@@ -69,7 +67,7 @@ internal actual class FileSystem {
             return number
         }
 
-        actual inline fun readDir(dir: Long): FileEntry = fs_readdir(dir)
+        actual inline fun readDir(dir: Long): RealFS.FileEntry = fs_readdir(dir)
 
         actual inline fun closeDir(dir: Long): Boolean = fs_closedir(dir) == 0
 
@@ -124,7 +122,7 @@ internal actual class FileSystem {
         private external fun fs_filetype(path: String): Int
 
         @JvmStatic
-        private external fun fs_fileinfo(path: String): FileObject.Info?
+        private external fun fs_fileinfo(path: String): RealFS.Info?
 
         @JvmStatic
         private external fun fs_readlink(path: String): String?
@@ -136,7 +134,7 @@ internal actual class FileSystem {
         private external fun fs_opendir(path: String): Long
 
         @JvmStatic
-        private external fun fs_readdir(dir: Long): FileEntry
+        private external fun fs_readdir(dir: Long): RealFS.FileEntry
 
         @JvmStatic
         private external fun fs_closedir(dir: Long): Int

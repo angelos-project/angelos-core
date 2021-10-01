@@ -14,7 +14,7 @@
  */
 package angelos.io
 
-class FileTreeWalk(private val dir: Dir, val maxDepth: Int) : Sequence<FileObject> {
+/* class FileTreeWalk(private val dir: Dir, val maxDepth: Int) : Sequence<FileObject> {
     class TreeIterator(dir: Dir, val maxDepth: Int) : Iterator<FileObject> {
         private var _hierarchy: MutableList<Dir.DirIterator> = mutableListOf(dir.iterator())
 
@@ -38,4 +38,4 @@ class FileTreeWalk(private val dir: Dir, val maxDepth: Int) : Sequence<FileObjec
     override fun iterator(): TreeIterator {
         return TreeIterator(dir, maxDepth)
     }
-}
+}*/

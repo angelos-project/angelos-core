@@ -14,6 +14,7 @@
  */
 package angelos.io
 
+import angelos.io.FileSystem.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -63,16 +64,16 @@ class LinkTest {
     @Test
     fun getTarget() {
         assertExceptionThrown<NotLinkException>({
-            Link(drive.getPath(VirtualPath(tmpDir.toString()))).target},
+            (drive.getPath(VirtualPath(tmpDir.toString())).getItem() as Link).target},
             "Target property on non-link should trigger NotLinkException."
         )
         assertExceptionThrown<NotLinkException>({
-            Link(drive.getPath(VirtualPath(tmpFile.toString()))).target},
+            (drive.getPath(VirtualPath(tmpFile.toString())).getItem() as Link).target},
             "getItem method on missing file should trigger NotLinkException."
         )
-        assertEquals(Link(drive.getPath(VirtualPath(tmpLink.toString()))).target, tmpFile.toString())
+        assertEquals((drive.getPath(VirtualPath(tmpFile.toString())).getItem() as Link).target, tmpFile.toString())
         assertExceptionThrown<NotLinkException>({
-            Link(drive.getPath(VirtualPath(tmpMissing.toString()))).target},
+            (drive.getPath(VirtualPath(tmpMissing.toString())).getItem() as Link).target},
             "getItem method on missing file should trigger FileNotFoundException."
         )
     }
@@ -80,19 +81,19 @@ class LinkTest {
     @Test
     fun goToTarget() {
         assertExceptionThrown<NotLinkException>({
-            Link(drive.getPath(VirtualPath(tmpDir.toString()))).goToTarget()},
+            (drive.getPath(VirtualPath(tmpDir.toString())).getItem() as Link).goToTarget()},
             "goToTarget method to non-link should trigger NotLinkException."
         )
         assertExceptionThrown<NotLinkException>({
-            Link(drive.getPath(VirtualPath(tmpFile.toString()))).goToTarget()},
+            (drive.getPath(VirtualPath(tmpFile.toString())).getItem() as Link).goToTarget()},
             "goToTarget method to non-link file should trigger NotLinkException."
         )
         assertEquals(
-            Link(drive.getPath(VirtualPath(tmpLink.toString()))).goToTarget().path.toString(),
-            File(drive.getPath(VirtualPath(tmpFile.toString()))).path.toString()
+            (drive.getPath(VirtualPath(tmpLink.toString())).getItem() as Link).goToTarget().path.toString(),
+            (drive.getPath(VirtualPath(tmpFile.toString())).getItem() as File).path.toString()
         )
         assertExceptionThrown<NotLinkException>({
-            Link(drive.getPath(VirtualPath(tmpMissing.toString()))).goToTarget()},
+            (drive.getPath(VirtualPath(tmpMissing.toString())).getItem() as Link).goToTarget()},
             "goToTarget method to missing file should trigger FileNotFoundException."
         )
     }

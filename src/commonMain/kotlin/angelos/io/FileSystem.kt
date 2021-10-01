@@ -1,3 +1,17 @@
+/**
+ * Copyright (c) 2021 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+ *
+ * This software is available under the terms of the MIT license. Parts are licensed
+ * under different terms if stated. The legal terms are attached to the LICENSE file
+ * and are made available on:
+ *
+ *      https://opensource.org/licenses/MIT
+ *
+ * SPDX-License-Identifier: MIT
+ *
+ * Contributors:
+ *      Kristoffer Paulsson - initial implementation
+ */
 package angelos.io
 
 import angelos.nio.BufferOverflowException
@@ -10,6 +24,8 @@ import kotlinx.coroutines.sync.withLock
 
 abstract class FileSystem(val drive: String) {
     private val mutex = Mutex()
+
+    suspend fun getRoot(): Dir = getDirectory(getPath(VirtualPath(drive)))
 
     fun getPath(path: VirtualPath): RealPath {
         return RealPath(path.root, path.path, path.separator)
@@ -106,14 +122,20 @@ abstract class FileSystem(val drive: String) {
         val created: Long
             get() = _info.createdAt
 
-        val readable: Boolean
+        internal val readable: Boolean
             get() = checkReadable(_path.toString())
 
-        val writable: Boolean
+        suspend fun isReadable(): Boolean = mutex.withLock { readable }
+
+        internal val writable: Boolean
             get() = checkWritable(_path.toString())
 
-        val executable: Boolean
+        suspend fun isWritable(): Boolean = mutex.withLock { writable }
+
+        internal val executable: Boolean
             get() = checkExecutable(_path.toString())
+
+        suspend fun isExecutable(): Boolean = mutex.withLock { executable }
     }
 
     inner class Dir(path: RealPath) : FileObject(path), Iterable<FileObject> {
@@ -246,18 +268,9 @@ abstract class FileSystem(val drive: String) {
     inner class RealPath constructor(root: String, path: PathList, separator: PathSeparator) :
         Path(root, path, separator) {
 
-        fun wrap(path: String, separator: PathSeparator): FileSystem.RealPath {
+        fun wrap(path: String, separator: PathSeparator): RealPath {
             val elements = getElements(path, separator)
             return RealPath(elements.first, elements.second, elements.third)
-        }
-
-        private fun getType(): Type = getType(getFileType(this.toString()))
-
-        inline fun getItem(path: RealPath, type: Type): FileSystem.FileObject = when (type) {
-            Type.DIR -> Dir(path)
-            Type.LINK -> Link(path)
-            Type.FILE -> File(path)
-            else -> throw UnsupportedOperationException()
         }
 
         internal inline fun getType(type: Int): Type = when (type) {
@@ -267,11 +280,36 @@ abstract class FileSystem(val drive: String) {
             else -> Type.UNKNOWN
         }
 
-        fun getItem(): FileObject = getItem(this, getType())
-        fun exists(): Boolean = checkExists(this.toString())
-        fun isLink(): Boolean = getType() == Type.LINK
-        fun isFile(): Boolean = getType() == Type.FILE
-        fun isDir(): Boolean = getType() == Type.DIR
+        internal inline fun getType(): Type = getType(getFileType(this.toString()))
+
+        internal inline fun getItem(path: RealPath, type: Type): FileObject = when (type) {
+            Type.DIR -> Dir(path)
+            Type.LINK -> Link(path)
+            Type.FILE -> File(path)
+            else -> throw UnsupportedOperationException()
+        }
+
+        internal inline fun getItem(): FileObject = getItem(this, getType())
+
+        suspend fun getDir(): Dir = mutex.withLock {
+            if (getType() != Type.DIR)
+                throw UnexpectedFileObject("Expected object of type 'Dir' at: $this")
+            return getItem(this, Type.DIR) as Dir
+        }
+        suspend fun getLink(): Link = mutex.withLock {
+            if (getType() != Type.LINK)
+                throw UnexpectedFileObject("Expected object of type 'Link' at: $this")
+            return getItem(this, Type.LINK) as Link
+        }
+        suspend fun getFile(): File = mutex.withLock{
+            if (getType() != Type.FILE)
+                throw UnexpectedFileObject("Expected object of type 'File' at: $this")
+            return getItem(this, Type.DIR) as File
+        }
+        suspend fun exists(): Boolean = mutex.withLock { checkExists(this.toString()) }
+        suspend fun isLink(): Boolean = mutex.withLock { getType() == Type.LINK }
+        suspend fun isFile(): Boolean = mutex.withLock { getType() == Type.FILE }
+        suspend fun isDir(): Boolean = mutex.withLock { getType() == Type.DIR }
 
         override fun join(vararg elements: String): RealPath =
             RealPath(root, (path + elements) as PathList, separator)

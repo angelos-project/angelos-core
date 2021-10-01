@@ -14,7 +14,6 @@
  */
 package angelos.interop
 
-import angelos.io.FileDescriptor
 import angelos.io.FileNotFoundException
 import angelos.io.NotLinkException
 import org.junit.After
@@ -141,7 +140,7 @@ class FileSystemTest {
         assertTrue(FileSystem.writeFile(file, message, 0, size) == 13L)
 
         assertTrue(FileSystem.tellFile(file) == size)
-        assertTrue(FileSystem.seekFile(file, 0, FileDescriptor.Seek.SET) == 0L)
+        assertTrue(FileSystem.seekFile(file, 0, angelos.io.FileSystem.Seek.SET) == 0L)
 
         val loaded = ByteArray(size.toInt())
         assertTrue(FileSystem.readFile(file, loaded, 0, size) == 13L)

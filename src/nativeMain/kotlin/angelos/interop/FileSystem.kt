@@ -15,13 +15,14 @@
 package angelos.interop
 
 import angelos.io.*
+import angelos.io.FileSystem as RealFS
 import kotlinx.cinterop.*
 import platform.posix.*
 
 internal actual class FileSystem {
     actual companion object {
 
-        internal actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long {
+        actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long {
             array.usePinned {
                 return read(number, it.addressOf(index), count.toULong())
             }
@@ -35,11 +36,11 @@ internal actual class FileSystem {
 
         actual inline fun tellFile(number: Int): Long = lseek(number, 0, SEEK_CUR)
 
-        actual inline fun seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): Long {
+        actual inline fun seekFile(number: Int, position: Long, whence: RealFS.Seek): Long {
             val newPos: Long = lseek(number, position, when (whence) {
-                FileDescriptor.Seek.SET -> SEEK_SET
-                FileDescriptor.Seek.CUR -> SEEK_CUR
-                FileDescriptor.Seek.END -> SEEK_END
+                RealFS.Seek.SET -> SEEK_SET
+                RealFS.Seek.CUR -> SEEK_CUR
+                RealFS.Seek.END -> SEEK_END
             })
             if (newPos < 0)
                 throw IOException("Failed seeking in file.")
@@ -60,9 +61,9 @@ internal actual class FileSystem {
             else -> 0
         }
 
-        actual inline fun getFileInfo(path: String): FileObject.Info {
+        actual inline fun getFileInfo(path: String): RealFS.Info {
             val data = posixStat(path)
-            return FileObject.Info(
+            return RealFS.Info(
                 user = data.st_uid.toInt(),
                 group = data.st_gid.toInt(),
                 accessedAt = data.st_atimespec.tv_sec,
@@ -86,14 +87,14 @@ internal actual class FileSystem {
         actual inline fun openDir(path: String): Long =
             (opendir(path) ?: throw FileNotFoundException("File not found.\n$path")).toLong()
 
-        actual inline fun readDir(dir: Long): Dir.FileEntry {
+        actual inline fun readDir(dir: Long): RealFS.FileEntry {
             memScoped {
                 val dpPtr: CPointer<dirent>? = readdir(dir.toCPointer())
                 return if (dpPtr == null)
-                    Dir.FileEntry("", 0)
+                    RealFS.FileEntry("", 0)
                 else {
                     val dp = dpPtr.asStableRef<dirent>().get()
-                    Dir.FileEntry(dp.d_name.toString(), when (dp.d_type.toInt()) {
+                    RealFS.FileEntry(dp.d_name.toString(), when (dp.d_type.toInt()) {
                         DT_LNK -> 1
                         DT_DIR -> 2
                         DT_REG -> 3

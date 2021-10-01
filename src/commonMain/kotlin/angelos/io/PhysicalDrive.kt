@@ -15,37 +15,34 @@
 
 package angelos.io
 
-import angelos.nio.file.FileVault
-import angelos.interop.FileSystem
+import angelos.interop.FileSystem as LLFS
 import kotlin.jvm.JvmStatic
 
 @Suppress("OVERRIDE_BY_INLINE")
-class PhysicalDrive(drive: String) : FileVault(drive) {
-    override fun getRoot(): Dir = getDirectory(getPath(VirtualPath(drive)))
+class PhysicalDrive(drive: String) : FileSystem(drive) {
+    override fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long =
+        LLFS.readFile(number, array, index, count)
 
-    override inline fun _readFile(number: Int, array: ByteArray, index: Int, count: Long): Long =
-        FileSystem.readFile(number, array, index, count)
+    override fun writeFile(number: Int, array: ByteArray, index: Int, count: Long): Long =
+        LLFS.writeFile(number, array, index, count)
 
-    override inline fun _writeFile(number: Int, array: ByteArray, index: Int, count: Long): Long =
-        FileSystem.writeFile(number, array, index, count)
+    override fun tellFile(number: Int): Long = LLFS.tellFile(number)
+    override fun seekFile(number: Int, position: Long, whence: FileSystem.Seek): Long =
+        LLFS.seekFile(number, position, whence)
 
-    override inline fun _tellFile(number: Int): Long = FileSystem.tellFile(number)
-    override inline fun _seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): Long =
-        FileSystem.seekFile(number, position, whence)
+    override fun closeFile(number: Int): Boolean = LLFS.closeFile(number)
 
-    override inline fun _closeFile(number: Int): Boolean = FileSystem.closeFile(number)
-
-    override inline fun _checkReadable(path: String): Boolean = FileSystem.checkReadable(path)
-    override inline fun _checkWritable(path: String): Boolean = FileSystem.checkWritable(path)
-    override inline fun _checkExecutable(path: String): Boolean = FileSystem.checkExecutable(path)
-    override inline fun _checkExists(path: String): Boolean = FileSystem.checkExists(path)
-    override inline fun _getFileType(path: String): Int = FileSystem.getFileType(path)
-    override inline fun _getFileInfo(path: String): FileObject.Info = FileSystem.getFileInfo(path)
-    override inline fun _getLinkTarget(path: String): String = FileSystem.getLinkTarget(path)
-    override inline fun _openDir(path: String): Long = FileSystem.openDir(path)
-    override inline fun _readDir(dir: Long): Dir.FileEntry = FileSystem.readDir(dir)
-    override inline fun _closeDir(dir: Long): Boolean = FileSystem.closeDir(dir)
-    override inline fun _openFile(path: String, option: Int): Int = FileSystem.openFile(path, option)
+    override fun checkReadable(path: String): Boolean = LLFS.checkReadable(path)
+    override fun checkWritable(path: String): Boolean = LLFS.checkWritable(path)
+    override fun checkExecutable(path: String): Boolean = LLFS.checkExecutable(path)
+    override fun checkExists(path: String): Boolean = LLFS.checkExists(path)
+    override fun getFileType(path: String): Int = LLFS.getFileType(path)
+    override fun getFileInfo(path: String): Info = LLFS.getFileInfo(path)
+    override fun getLinkTarget(path: String): String = LLFS.getLinkTarget(path)
+    override fun openDir(path: String): Long = LLFS.openDir(path)
+    override fun readDir(dir: Long): FileEntry = LLFS.readDir(dir)
+    override fun closeDir(dir: Long): Boolean = LLFS.closeDir(dir)
+    override fun openFile(path: String, option: Int): Int = LLFS.openFile(path, option)
 
     enum class Drive(val root: String){
         UNIX("/"),

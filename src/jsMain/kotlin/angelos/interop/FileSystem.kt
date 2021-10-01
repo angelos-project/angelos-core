@@ -14,19 +14,17 @@
  */
 package angelos.interop
 
-import angelos.io.FileDescriptor
-import angelos.io.Dir.FileEntry
-import angelos.io.FileObject
+import angelos.io.FileSystem as RealFS
 
 internal actual class FileSystem {
     actual companion object {
         @ExperimentalUnsignedTypes
-        internal actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long {TODO("Not yet implemented")}
+        actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long {TODO("Not yet implemented")}
 
         @ExperimentalUnsignedTypes
         actual inline fun writeFile(number: Int, array: ByteArray, index: Int, count: Long): Long {TODO("Not yet implemented")}
         actual inline fun tellFile(number: Int): Long {TODO("Not yet implemented")}
-        actual inline fun seekFile(number: Int, position: Long, whence: FileDescriptor.Seek): Long {TODO("Not yet implemented")}
+        actual inline fun seekFile(number: Int, position: Long, whence: RealFS.Seek): Long {TODO("Not yet implemented")}
         actual inline fun closeFile(number: Int): Boolean {TODO("Not yet implemented")}
 
         actual inline fun checkReadable(path: String): Boolean {TODO("Not yet implemented")}
@@ -34,10 +32,10 @@ internal actual class FileSystem {
         actual inline fun checkExecutable(path: String): Boolean {TODO("Not yet implemented")}
         actual inline fun checkExists(path: String): Boolean {TODO("Not yet implemented")}
         actual inline fun getFileType(path: String): Int {TODO("Not yet implemented")}
-        actual inline fun getFileInfo(path: String): FileObject.Info {TODO("Not yet implemented")}
+        actual inline fun getFileInfo(path: String): RealFS.Info {TODO("Not yet implemented")}
         actual inline fun getLinkTarget(path: String): String {TODO("Not yet implemented")}
         actual inline fun openDir(path: String): Long {TODO("Not yet implemented")}
-        actual inline fun readDir(dir: Long): FileEntry {TODO("Not yet implemented")}
+        actual inline fun readDir(dir: Long): RealFS.FileEntry {TODO("Not yet implemented")}
         actual inline fun closeDir(dir: Long): Boolean {TODO("Not yet implemented")}
         actual inline fun openFile(path: String, option: Int): Int {TODO("Not yet implemented")}
 

@@ -18,7 +18,7 @@ import angelos.io.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-abstract class FileVault (val drive: String) {
+/* abstract class FileVault (val drive: String) {
     private val mutex = Mutex()
 
     abstract fun getRoot(): Dir
@@ -65,4 +65,4 @@ abstract class FileVault (val drive: String) {
     fun readDir(dir: Long): Dir.FileEntry = _readDir(dir)
     fun closeDir(dir: Long): Boolean = _closeDir(dir)
     fun openFile(path: String, option: Int): Int = _openFile(path, option)
-}
+} */

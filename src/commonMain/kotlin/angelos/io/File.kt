@@ -16,7 +16,7 @@ package angelos.io
 
 import angelos.interop.FileSystem
 
-class File(path: RealPath) : FileObject(path) {
+/*class File(path: RealPath) : FileObject(path) {
     val size: Long
         get() = _info.size
 
@@ -27,4 +27,4 @@ class File(path: RealPath) : FileObject(path) {
         WRITE_ONLY(1),
         READ_WRITE(2),
     }
-}
+}*/

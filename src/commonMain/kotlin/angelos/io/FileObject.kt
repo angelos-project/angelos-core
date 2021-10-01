@@ -14,7 +14,7 @@
  */
 package angelos.io
 
-open class FileObject (path: RealPath){
+/* open class FileObject (path: RealPath){
     private val name: String = path.path.last()
     private val suffix: String = name.substringAfter('.')
     private val _path: RealPath = path
@@ -66,5 +66,5 @@ open class FileObject (path: RealPath){
         val createdAt: Long,
         val size: Long,
     )
-}
+} */
 

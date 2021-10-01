@@ -14,6 +14,7 @@
  */
 package angelos.io
 
+import angelos.io.FileSystem.FileObject
 import org.junit.After
 import org.junit.Test
 
@@ -66,7 +67,7 @@ class FileObjectTest {
         // This method is tested implicitly.
     }
 
-    @Test
+    /* @Test
     fun getPath() {
         val rpDir = drive.getPath(VirtualPath(tmpDir.toString()))
         val rpFile = drive.getPath(VirtualPath(tmpFile.toString()))
@@ -76,7 +77,7 @@ class FileObjectTest {
         assertEquals(FileObject(rpFile).path, rpFile)
         assertEquals(FileObject(rpLink).path, rpLink)
         assertEquals(FileObject(rpMissing).path, rpMissing)
-    }
+    } */
 
     @Test
     fun getUser() {
@@ -144,7 +145,7 @@ class FileObjectTest {
         )
     }
 
-    @Test
+    /*@Test // Reimplemented in PhysicalDriveTest
     fun getReadable() {
         assertTrue(drive.getPath(VirtualPath(tmpDir.toString())).getItem().readable)
         assertTrue(drive.getPath(VirtualPath(tmpFile.toString())).getItem().readable)
@@ -155,7 +156,7 @@ class FileObjectTest {
         )
     }
 
-    @Test
+    @Test // Reimplemented in PhysicalDriveTest
     fun getWritable() {
         assertTrue(drive.getPath(VirtualPath(tmpDir.toString())).getItem().writable)
         assertTrue(drive.getPath(VirtualPath(tmpFile.toString())).getItem().writable)
@@ -166,7 +167,7 @@ class FileObjectTest {
         )
     }
 
-    @Test
+    @Test // Reimplemented in PhysicalDriveTest
     fun getExecutable() {
         assertTrue(drive.getPath(VirtualPath(tmpDir.toString())).getItem().executable)
         assertFalse(drive.getPath(VirtualPath(tmpFile.toString())).getItem().executable)
@@ -175,5 +176,5 @@ class FileObjectTest {
             drive.getPath(VirtualPath(tmpMissing.toString())).getItem().executable},
             "Created property on missing file should trigger FileNotFoundException."
         )
-    }
+    }*/
 }

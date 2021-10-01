@@ -14,9 +14,9 @@
  */
 package angelos.io
 
-import angelos.nio.file.FileVault
+//import angelos.nio.file.FileVault
 
-class RealPath internal constructor(root: String, path: PathList, separator: PathSeparator, fileSystem: FileVault) :
+/* class RealPath internal constructor(root: String, path: PathList, separator: PathSeparator, fileSystem: FileVault) :
     Path(root, path, separator) {
 
     val store: FileVault = fileSystem
@@ -56,4 +56,4 @@ class RealPath internal constructor(root: String, path: PathList, separator: Pat
         RealPath(root, (this.path + splitString(path, separator)) as PathList, separator, store)
 
     fun baseDir(): RealPath = RealPath(root, parent(), separator, store)
-}
+} */

@@ -14,11 +14,13 @@
  */
 package angelos.io
 
+import angelos.io.FileSystem.Dir
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-
-import org.junit.Assert.*
 import kotlin.test.assertContains
 
 class DirTest {
@@ -33,7 +35,8 @@ class DirTest {
         tmpDir = java.nio.file.Files.createTempDirectory("temporary")
         tmpFile = java.nio.file.Files.createTempFile(tmpDir, "test", ".tmp")
         tmpLink = java.nio.file.Files.createSymbolicLink(
-            java.nio.file.Paths.get(tmpDir.toString(), "link.tmp"), tmpFile)
+            java.nio.file.Paths.get(tmpDir.toString(), "link.tmp"), tmpFile
+        )
         tmpMissing = java.nio.file.Paths.get(tmpDir.toString(), "missing.tmp")
         drive = PhysicalDrive.createFileSystem(PhysicalDrive.Drive.UNIX)
     }
@@ -67,21 +70,21 @@ class DirTest {
     }
 
     @Test
-    fun walk() {
-        val files = mutableListOf<String>()
-        drive.getDirectory(drive.getPath(VirtualPath(tmpDir.toString()))).walk().forEach {
-            if(it !is Dir || (it is Dir && !it.skip))
-                files.add(it.path.toString())
-        }
-        assertContains(files, tmpFile.toString())
-        assertContains(files, tmpLink.toString())
+    fun walk() = runBlocking {
+            val files = mutableListOf<String>()
+            drive.getDirectory(drive.getPath(VirtualPath(tmpDir.toString()))).walk().forEach {
+                if (it !is Dir || (it is Dir && !it.skip))
+                    files.add(it.path.toString())
+            }
+            assertContains(files, tmpFile.toString())
+            assertContains(files, tmpLink.toString())
 
-        val files2 = mutableListOf<String>()
-        drive.getDirectory(drive.getPath(VirtualPath(tmpDir.toString()))).walk(1).forEach {
-            if(it !is Dir || (it is Dir && !it.skip))
-                files2.add(it.path.toString())
-        }
-        assertContains(files2, tmpFile.toString())
-        assertContains(files2, tmpLink.toString())
+            val files2 = mutableListOf<String>()
+            drive.getDirectory(drive.getPath(VirtualPath(tmpDir.toString()))).walk(1).forEach {
+                if (it !is Dir || (it is Dir && !it.skip))
+                    files2.add(it.path.toString())
+            }
+            assertContains(files2, tmpFile.toString())
+            assertContains(files2, tmpLink.toString())
     }
 }

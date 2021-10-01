@@ -142,7 +142,7 @@ static jobject fs_fileinfo(JNIEnv * env, jclass thisClass, jstring path){
         return NULL; // Return NULL if file not found
     }
 
-    jclass local_cls = (*env)->FindClass(env, "angelos/io/FileObject$Info");
+    jclass local_cls = (*env)->FindClass(env, "angelos/io/FileSystem$Info");
     if (local_cls == NULL) // Quit program if Java class can't be found
         exit(1);
 
@@ -209,7 +209,7 @@ static jlong fs_opendir(JNIEnv * env, jclass thisClass, jstring name){
 static jobject fs_readdir(JNIEnv * env, jclass thisClass, jlong dirp){
     struct dirent *entry = readdir((DIR *)dirp);
 
-    jclass local_cls = (*env)->FindClass(env, "angelos/io/Dir$FileEntry");
+    jclass local_cls = (*env)->FindClass(env, "angelos/io/FileSystem$FileEntry");
     if (local_cls == NULL) // Quit program if Java class can't be found
         exit(1);
 
@@ -271,10 +271,10 @@ static JNINativeMethod funcs[] = {
 	{ "fs_lseek", "(IJI)J", (void *)&fs_lseek },
 	{ "fs_access", "(Ljava/lang/String;I)I", (void *)&fs_access },
 	{ "fs_filetype", "(Ljava/lang/String;)I", (void *)&fs_filetype },
-	{ "fs_fileinfo", "(Ljava/lang/String;)Langelos/io/FileObject$Info;", (void *)&fs_fileinfo },
+	{ "fs_fileinfo", "(Ljava/lang/String;)Langelos/io/FileSystem$Info;", (void *)&fs_fileinfo },
 	{ "fs_readlink", "(Ljava/lang/String;)Ljava/lang/String;", (void *)&fs_readlink },
 	{ "fs_opendir", "(Ljava/lang/String;)J", (void *)&fs_opendir },
-	{ "fs_readdir", "(J)Langelos/io/Dir$FileEntry;", (void *)&fs_readdir },
+	{ "fs_readdir", "(J)Langelos/io/FileSystem$FileEntry;", (void *)&fs_readdir },
 	{ "fs_closedir", "(J)I", (void *)&fs_closedir },
 	{ "fs_open", "(Ljava/lang/String;I)I", (void *)&fs_open },
 };

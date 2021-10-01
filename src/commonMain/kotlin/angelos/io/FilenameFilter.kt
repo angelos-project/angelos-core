@@ -14,6 +14,6 @@
  */
 package angelos.io
 
-interface FilenameFilter {
+/*interface FilenameFilter {
     fun accept(dir: File, name: String): Boolean
-}
+}*/

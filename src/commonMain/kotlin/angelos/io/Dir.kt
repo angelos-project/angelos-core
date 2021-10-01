@@ -14,7 +14,7 @@
  */
 package angelos.io
 
-class Dir(path: RealPath) : FileObject(path), Iterable<FileObject> {
+/*class Dir(path: RealPath) : FileObject(path), Iterable<FileObject> {
     val skip = path.path.last() == "." || path.path.last() == ".."
 
     class DirIterator(private val dir: Dir): Iterator<FileObject>{
@@ -48,5 +48,5 @@ class Dir(path: RealPath) : FileObject(path), Iterable<FileObject> {
 
     fun walk(recursive: Boolean = true) = FileTreeWalk(this, Int.MAX_VALUE)
     fun walk(maxDepth: Int) = FileTreeWalk(this, maxDepth)
-}
+}*/
 

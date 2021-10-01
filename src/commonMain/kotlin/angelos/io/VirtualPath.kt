@@ -14,11 +14,11 @@
  */
 package angelos.io
 
-import angelos.nio.file.FileVault
+import angelos.io.FileSystem.RealPath
 
 class VirtualPath(path: String, separator: PathSeparator = PathSeparator.POSIX) : Path(path, separator) {
 
-    fun toRealPath(fileSystem: FileVault): RealPath = RealPath(root, path, separator, fileSystem)
+    //fun toRealPath(fileSystem: FileVault): RealPath = RealPath(root, path, separator, fileSystem)
 
     override fun join(vararg elements: String): VirtualPath =
         VirtualPath(joinStrings(elements.asList() as PathList), separator)
