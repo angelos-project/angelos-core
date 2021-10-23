@@ -75,28 +75,39 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun checkReadable() = runBlocking {
+    fun getUser() = runBlocking {
+        assertTrue(tmpDir().getDir().getUser() > 0)
+        assertTrue(tmpFile().getFile().getUser() > 0)
+        assertTrue(tmpLink().getLink().getUser() > 0)
+        assertExceptionThrown<FileNotFoundException>({
+            tmpMissing().getFile().getUser()},
+            "User property on missing file should trigger FileNotFoundException."
+        )
+    }
+
+    @Test
+    fun isReadable() = runBlocking {
         assertTrue(tmpDir().getDir().isReadable())
         assertTrue(tmpFile().getFile().isReadable())
         assertTrue(tmpLink().getLink().isReadable())
     }
 
     @Test
-    fun checkWritable() = runBlocking {
+    fun isWritable() = runBlocking {
         assertTrue(tmpDir().getDir().isWritable())
         assertTrue(tmpFile().getFile().isWritable())
         assertTrue(tmpLink().getLink().isWritable())
     }
 
     @Test
-    fun checkExecutable() = runBlocking {
+    fun isExecutable() = runBlocking {
         assertTrue(tmpDir().getDir().isExecutable())
         assertFalse(tmpFile().getFile().isExecutable())
         assertFalse(tmpLink().getLink().isExecutable())
     }
 
     @Test
-    fun checkExists() = runBlocking {
+    fun exists() = runBlocking {
         assertTrue(tmpDir().exists())
         assertTrue(tmpFile().exists())
         assertTrue(tmpLink().exists())
@@ -104,7 +115,18 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun getFileType() = runBlocking {
+    fun isDir() = runBlocking {
+        assertTrue(tmpDir().isDir())
+        assertFalse(tmpFile().isDir())
+        assertFalse(tmpLink().isDir())
+        assertExceptionThrown<FileNotFoundException>({
+            tmpMissing().isDir()},
+            "isDir method on missing file should trigger FileNotFoundException."
+        )
+    }
+
+    @Test
+    fun isLink() = runBlocking {
         assertFalse(tmpDir().isLink())
         assertFalse(tmpFile().isLink())
         assertTrue(tmpLink().isLink())
@@ -112,21 +134,16 @@ class PhysicalDriveTest {
             tmpMissing().isLink()},
             "isLink method on missing file should trigger FileNotFoundException."
         )
+    }
 
+    @Test
+    fun isFile() = runBlocking {
         assertFalse(tmpDir().isFile())
         assertTrue(tmpFile().isFile())
         assertFalse(tmpLink().isFile())
         assertExceptionThrown<FileNotFoundException>({
             tmpMissing().isFile()},
             "isFile method on missing file should trigger FileNotFoundException."
-        )
-
-        assertTrue(tmpDir().isDir())
-        assertFalse(tmpFile().isDir())
-        assertFalse(tmpLink().isDir())
-        assertExceptionThrown<FileNotFoundException>({
-            tmpMissing().isDir()},
-            "isDir method on missing file should trigger FileNotFoundException."
         )
     }
 

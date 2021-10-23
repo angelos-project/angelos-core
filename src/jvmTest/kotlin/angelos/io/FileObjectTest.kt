@@ -79,7 +79,7 @@ class FileObjectTest {
         assertEquals(FileObject(rpMissing).path, rpMissing)
     } */
 
-    @Test
+    /* @Test
     fun getUser() {
         assertTrue(drive.getPath(VirtualPath(tmpDir.toString())).getItem().user > 0)
         assertTrue(drive.getPath(VirtualPath(tmpFile.toString())).getItem().user > 0)
@@ -88,7 +88,7 @@ class FileObjectTest {
             drive.getPath(VirtualPath(tmpMissing.toString())).getItem().user},
             "User property on missing file should trigger FileNotFoundException."
         )
-    }
+    }*/
 
     @Test
     fun getGroup() {

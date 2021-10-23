@@ -104,23 +104,35 @@ abstract class FileSystem(val drive: String) {
         val path: RealPath
             get() = _path
 
-        val user: Int
+        internal val user: Int
             get() = _info.user
 
-        val group: Int
+        suspend fun getUser(): Int = mutex.withLock { user }
+
+        internal val group: Int
             get() = _info.group
 
-        val lastAccessed: Long
+        suspend fun getGroup(): Int = mutex.withLock { group }
+
+        internal val lastAccessed: Long
             get() = _info.accessedAt
 
-        val lastModified: Long
+        suspend fun getLastAccessed(): Long = mutex.withLock { lastAccessed }
+
+        internal val lastModified: Long
             get() = _info.modifiedAt
 
-        val changed: Long
+        suspend fun getLastModified(): Long = mutex.withLock { lastModified }
+
+        internal val changed: Long
             get() = _info.changedAt
 
-        val created: Long
+        suspend fun getChanged(): Long = mutex.withLock { changed }
+
+        internal val created: Long
             get() = _info.createdAt
+
+        suspend fun getCreated(): Long = mutex.withLock { created }
 
         internal val readable: Boolean
             get() = checkReadable(_path.toString())
