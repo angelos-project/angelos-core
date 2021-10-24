@@ -12,9 +12,10 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.io
+package angelos.io.channel
 
-import angelos.lang.AutoClosable
+import angelos.nio.Buffer
 
-interface Closable: AutoClosable {
+interface WritableByteChannel: Channel {
+    fun write(src: Buffer): Long
 }

@@ -12,9 +12,7 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.io
+package angelos.io.channel
 
-import angelos.lang.AutoClosable
-
-interface Closable: AutoClosable {
+interface AsyncChannel: Channel {
 }

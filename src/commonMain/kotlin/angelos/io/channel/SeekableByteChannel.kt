@@ -12,9 +12,11 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.io
+package angelos.io.channel
 
-import angelos.lang.AutoClosable
-
-interface Closable: AutoClosable {
+interface SeekableByteChannel: ByteChannel {
+    fun position(): Long
+    fun position(newPosition: Long): SeekableByteChannel
+    fun size(): Long
+    fun truncate(size: Long): SeekableByteChannel
 }

@@ -12,9 +12,11 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.io
+package angelos.io.channel
 
-import angelos.lang.AutoClosable
+import angelos.nio.Buffer
 
-interface Closable: AutoClosable {
+interface GatheringByteChannel: WritableByteChannel {
+    fun write(srcs: List<Buffer>)
+    fun write(srcs: List<Buffer>, offset: Long, length: Long)
 }

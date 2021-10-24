@@ -12,9 +12,11 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.io
+package angelos.io.channel
 
-import angelos.lang.AutoClosable
+import angelos.nio.Buffer
 
-interface Closable: AutoClosable {
+interface ScatteringByteChannel: ReadableByteChannel {
+    fun read(dsts: List<Buffer>): Long
+    fun read(dsts: List<Buffer>, offset: Long, length: Long): Long
 }

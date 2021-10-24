@@ -33,8 +33,6 @@ abstract class Path internal constructor(val root: String, val path: PathList, v
             throw IllegalArgumentException()
     }
 
-
-
     companion object {
         @JvmStatic
         protected inline fun splitString(path: String, separator: PathSeparator): PathList =

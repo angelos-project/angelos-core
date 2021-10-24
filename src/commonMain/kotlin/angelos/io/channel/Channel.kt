@@ -12,9 +12,10 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.io
+package angelos.io.channel
 
-import angelos.lang.AutoClosable
+import angelos.io.Closable
 
-interface Closable: AutoClosable {
+interface Channel: Closable {
+    fun isOpen(): Boolean
 }
