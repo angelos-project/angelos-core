@@ -216,15 +216,21 @@ abstract class FileSystem(val drive: String) {
             )
         }
 
-        val target: String
+        internal val target: String
             get() = _target.toString()
 
-        fun goToTarget(): FileObject = _target.getItem()
+        suspend fun getTarget(): String = mutex.withLock { target }
+
+        suspend fun goToDir(): Dir = mutex.withLock { _target.getDirI() }
+        suspend fun goToLink(): Link = mutex.withLock { _target.getLinkI() }
+        suspend fun goToFile(): File = mutex.withLock { _target.getFileI() }
     }
 
     inner class File(path: RealPath) : FileObject(path) {
-        val size: Long
+        internal val size: Long
             get() = _info.size
+
+        suspend fun getSize(): Long = mutex.withLock { size }
 
         fun open(option: OpenOption): FileDescriptor = FileDescriptor(this, option, openFile(_path.toString(), option.ordinal))
     }
@@ -303,21 +309,30 @@ abstract class FileSystem(val drive: String) {
 
         internal inline fun getItem(): FileObject = getItem(this, getType())
 
-        suspend fun getDir(): Dir = mutex.withLock {
+        internal inline fun getDirI(): Dir {
             if (getType() != Type.DIR)
                 throw UnexpectedFileObject("Expected object of type 'Dir' at: $this")
             return getItem(this, Type.DIR) as Dir
         }
-        suspend fun getLink(): Link = mutex.withLock {
+
+        suspend fun getDir(): Dir = mutex.withLock { getDirI() }
+
+        internal inline fun getLinkI(): Link {
             if (getType() != Type.LINK)
                 throw UnexpectedFileObject("Expected object of type 'Link' at: $this")
             return getItem(this, Type.LINK) as Link
         }
-        suspend fun getFile(): File = mutex.withLock{
+
+        suspend fun getLink(): Link = mutex.withLock { getLinkI() }
+
+        internal inline fun getFileI(): File {
             if (getType() != Type.FILE)
                 throw UnexpectedFileObject("Expected object of type 'File' at: $this")
-            return getItem(this, Type.DIR) as File
+            return getItem(this, Type.FILE) as File
         }
+
+        suspend fun getFile(): File = mutex.withLock{ getFileI() }
+
         suspend fun exists(): Boolean = mutex.withLock { checkExists(this.toString()) }
         suspend fun isLink(): Boolean = mutex.withLock { getType() == Type.LINK }
         suspend fun isFile(): Boolean = mutex.withLock { getType() == Type.FILE }
