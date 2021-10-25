@@ -50,6 +50,9 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
         this.position = min(position.absoluteValue.toInt(), _limit)
     }
 
+    abstract fun toArray(): ByteArray
+    abstract fun toPtr(): Long
+
     fun rewind() = 0.also { position = it }
     fun allowance(): Long = (_capacity - _limit).toLong()
 
@@ -201,7 +204,7 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
     @ExperimentalUnsignedTypes
     protected inner class ByteBufferOperations {
 
-        private val _array: ByteArray = ByteArray(capacity)
+        internal val _array: ByteArray = ByteArray(capacity)
         private val _view: UByteArray = _array.asUByteArray()
 
         internal inline fun getChar(): Char = when (_reverse) {

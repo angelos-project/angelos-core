@@ -15,6 +15,9 @@
 package angelos.nio
 
 expect class ByteDirectBuffer(capacity: Long, limit: Long, position: Long) : Buffer {
+    override fun toArray(): ByteArray
+    override fun toPtr(): Long
+
     override fun _getChar(): Char
     override fun _putChar(value: Char)
     override fun _getShort(): Short

@@ -16,15 +16,25 @@ package angelos.interop
 
 import angelos.io.FileSystem as RealFS
 import angelos.io.FileNotFoundException
+import angelos.io.IOException
 import angelos.io.NotLinkException
+import angelos.nio.Buffer
+import angelos.nio.ByteDirectBuffer
+import angelos.nio.ByteHeapBuffer
 
 internal actual class FileSystem {
     actual companion object {
-        actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long =
-            fs_read(number, array, index, count)
+        actual inline fun readFile(number: Int, dst: Buffer, index: Int, count: Long): Long = when (dst) {
+            is ByteHeapBuffer -> fs_read(number, dst.toArray(), index, count)
+            is ByteDirectBuffer -> fs_pread(number, dst.toPtr(), index, count, dst.limit.toLong())
+            else -> throw IOException("Unsupported buffer subtype.")
+        }
 
-        actual inline fun writeFile(number: Int, array: ByteArray, index: Int, count: Long): Long =
-            fs_write(number, array, index, count)
+        actual inline fun writeFile(number: Int, src: Buffer, index: Int, count: Long): Long = when (src) {
+            is ByteHeapBuffer -> fs_write(number, src.toArray(), index, count)
+            is ByteDirectBuffer -> fs_pwrite(number, src.toPtr(), index, count, src.limit.toLong())
+            else -> throw IOException("Unsupported buffer subtype.")
+        }
 
         actual inline fun tellFile(number: Int): Long = fs_lseek(number, 0, SeekDirective.CUR.whence)
 
@@ -107,7 +117,13 @@ internal actual class FileSystem {
         private external fun fs_read(number: Int, array: ByteArray, index: Int, count: Long): Long
 
         @JvmStatic
+        private external fun fs_pread(number: Int, ptr: Long, index: Int, count: Long, size: Long): Long
+
+        @JvmStatic
         private external fun fs_write(number: Int, array: ByteArray, index: Int, count: Long): Long
+
+        @JvmStatic
+        private external fun fs_pwrite(number: Int, ptr: Long, index: Int, count: Long, size: Long): Long
 
         @JvmStatic
         private external fun fs_lseek(number: Int, offset: Long, whence: Int): Long

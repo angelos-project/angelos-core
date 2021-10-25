@@ -19,6 +19,9 @@ package angelos.nio
 class ByteHeapBuffer(capacity: Long, limit: Long, position: Long) : Buffer(capacity, limit, position) {
     private val _inner = ByteBufferOperations()
 
+    override fun toArray(): ByteArray = _inner._array
+    override fun toPtr(): Long = throw UnsupportedOperationException()
+
     override inline fun _getChar(): Char = _inner.getChar()
     override inline fun _putChar(value: Char) = _inner.putChar(value)
     override inline fun _getShort(): Short = _inner.getShort()

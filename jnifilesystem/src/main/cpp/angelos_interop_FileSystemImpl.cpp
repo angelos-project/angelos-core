@@ -51,9 +51,22 @@ static jlong fs_read(JNIEnv * env, jclass thisClass, jint fd, jbyteArray output,
 
     ssize_t length = read((int)fd, buf, (size_t)count);
 
-    (*env)->ReleaseByteArrayElements(env, output, buf, 0);
+    (*env)->ReleaseByteArrayElements(env, output, (void*)buf, 0);
 
     return length;
+}
+
+/*
+ * Class:     angelos_interop_FileSystem
+ * Method:    fs_pread
+ * Signature: (I[JIJJ)J
+ */
+static jlong fs_pread(JNIEnv * env, jclass thisClass, jint fd, jlong output, jint index, jlong count, jlong size){
+    void* buf = (void*)output+index;
+    if (size < (index + count))
+        count = size;
+
+    return read((int)fd, buf, (size_t)count);
 }
 
 /*
@@ -69,6 +82,19 @@ static jlong fs_write(JNIEnv * env, jclass thisClass, jint fd, jbyteArray input,
 
     free(buf);
     return length;
+}
+
+/*
+ * Class:     angelos_interop_FileSystem
+ * Method:    fs_pwrite
+ * Signature: (I[BIJJ)J
+ */
+static jlong fs_pwrite(JNIEnv * env, jclass thisClass, jint fd, jlong input, jint index, jlong count, jlong size){
+    void* buf = (void*)input+index;
+    if (size < (index + count))
+        count = size;
+
+    return write((int)fd, buf, (size_t)count);
 }
 
 /*
@@ -267,7 +293,9 @@ static jint fs_open(JNIEnv * env, jclass thisClass, jstring path, jint perm){
 static JNINativeMethod funcs[] = {
 	{ "fs_close", "(I)I", (void *)&fs_close },
 	{ "fs_read", "(I[BIJ)J", (void *)&fs_read },
+	{ "fs_pread", "(I[BIJJ)J", (void *)&fs_pread },
 	{ "fs_write", "(I[BIJ)J", (void *)&fs_write },
+	{ "fs_pwrite", "(I[BIJJ)J", (void *)&fs_pwrite },
 	{ "fs_lseek", "(IJI)J", (void *)&fs_lseek },
 	{ "fs_access", "(Ljava/lang/String;I)I", (void *)&fs_access },
 	{ "fs_filetype", "(Ljava/lang/String;)I", (void *)&fs_filetype },

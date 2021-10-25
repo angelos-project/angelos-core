@@ -21,6 +21,9 @@ actual class ByteDirectBuffer actual constructor(capacity: Long, limit: Long, po
 
     private val _inner = ByteBufferOperations()
 
+    actual override fun toArray(): ByteArray = _inner._array
+    actual override fun toPtr(): Long = throw UnsupportedOperationException()
+
     actual override inline fun _getChar(): Char = _inner.getChar()
     actual override inline fun _putChar(value: Char) = _inner.putChar(value)
     actual override inline fun _getShort(): Short = _inner.getShort()

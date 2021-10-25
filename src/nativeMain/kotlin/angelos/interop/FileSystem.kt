@@ -14,6 +14,7 @@
  */
 package angelos.interop
 
+import angelos.nio.Buffer
 import angelos.io.*
 import angelos.io.FileSystem as RealFS
 import kotlinx.cinterop.*
@@ -22,16 +23,12 @@ import platform.posix.*
 internal actual class FileSystem {
     actual companion object {
 
-        actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long {
-            array.usePinned {
-                return read(number, it.addressOf(index), count.toULong())
-            }
+        actual inline fun readFile(number: Int, dst: Buffer, index: Int, count: Long): Long = dst.toArray().usePinned {
+            read(number, it.addressOf(index), count.toULong())
         }
 
-        actual inline fun writeFile(number: Int, array: ByteArray, index: Int, count: Long): Long {
-            array.usePinned {
-                return write(number, it.addressOf(index), count.toULong())
-            }
+        actual inline fun writeFile(number: Int, src: Buffer, index: Int, count: Long): Long = src.toArray().usePinned {
+            write(number, it.addressOf(index), count.toULong())
         }
 
         actual inline fun tellFile(number: Int): Long = lseek(number, 0, SEEK_CUR)

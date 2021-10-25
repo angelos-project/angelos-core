@@ -15,11 +15,12 @@
 package angelos.interop
 
 import angelos.io.FileSystem as RealFS
+import angelos.nio.Buffer
 
 internal expect class FileSystem {
     companion object {
-        inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long
-        inline fun writeFile(number: Int, array: ByteArray, index: Int, count: Long): Long
+        inline fun readFile(number: Int, dst: Buffer, index: Int, count: Long): Long
+        inline fun writeFile(number: Int, src: Buffer, index: Int, count: Long): Long
         inline fun tellFile(number: Int): Long
         inline fun seekFile(number: Int, position: Long, whence: RealFS.Seek): Long
         inline fun closeFile(number: Int): Boolean

@@ -20,6 +20,9 @@ actual class ByteDirectBuffer actual constructor(capacity: Long, limit: Long, po
     Buffer(capacity, limit, position) {
     private val _arrayAddress: Long = BufferHelper.allocateMemory(capacity)
 
+    actual override fun toArray(): ByteArray = throw UnsupportedOperationException()
+    actual override fun toPtr(): Long = _arrayAddress
+
     private fun calculateAddress(): Long = _arrayAddress + _position
 
     actual override fun _getChar(): Char = when (_reverse) {

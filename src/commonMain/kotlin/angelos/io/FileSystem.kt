@@ -14,6 +14,7 @@
  */
 package angelos.io
 
+import angelos.io.file.channel.FileChannel
 import angelos.nio.BufferOverflowException
 import angelos.nio.BufferUnderflowException
 import angelos.nio.ByteBuffer
@@ -232,24 +233,22 @@ abstract class FileSystem(val drive: String) {
 
         suspend fun getSize(): Long = mutex.withLock { size }
 
-        fun open(option: OpenOption): FileDescriptor = FileDescriptor(this, option, openFile(_path.toString(), option.ordinal))
+        suspend fun open(option: OpenOption): FileDescriptor = mutex.withLock { FileDescriptor(this, option) }
     }
 
     @ExperimentalUnsignedTypes
     inner class FileDescriptor internal constructor(
-        internal val file: File,
-        val option: OpenOption,
-        private var _number: Int,
-    ) : Closable {
-        private var _position: ULong = 0u
+        val file: File,
+        option: OpenOption
+    ) : FileChannel(option) {
+        private var _number: Int = openFile(file.path.toString(), option.ordinal)
 
-        val position: Long
-            get() = _position.toLong()
+        override fun read(dst: ByteArray, position: Int, count: Long): Long = readFile(_number, dst, position, count)
+        override fun write(src: ByteArray, position: Int, count: Long): Long = readFile(_number, src, position, count)
+        override fun tell(): Long = tellFile(_number)
+        override fun seek(newPosition: Long): Long = seekFile(_number, newPosition, Seek.SET)
 
-        val number: Int
-            get() = _number
-
-        fun read(buffer: ByteBuffer, count: Long) {
+        /* fun read(buffer: ByteBuffer, count: Long) {
             if (buffer.remaining() < count)
                 throw BufferUnderflowException()
             if(readFile(_number, buffer.array(), buffer.position, count) != count)
@@ -265,22 +264,10 @@ abstract class FileSystem(val drive: String) {
             _position += count.toULong()
         }
 
-        fun tell(): Long{
-            val position = tellFile(_number)
-            if (position.toULong() != _position)
-                throw SyncFailedException("File descriptor out of sync with physical cursor.")
-            return position
-        }
-
-        fun seek(position: Long, whence: Seek): Long {
-            _position = seekFile(_number, position, whence).toULong()
-            return _position.toLong()
-        }
-
         override fun close(){
             closeFile(_number)
             _number = 0
-        }
+        }*/
     }
 
     inner class RealPath constructor(root: String, path: PathList, separator: PathSeparator) :
