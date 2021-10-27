@@ -12,11 +12,12 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.io.channel
+package angelos.interop
 
-import angelos.nio.Buffer
+import kotlin.native.Platform as NativePlatform
 
-interface ScatteringByteChannel: ReadableByteChannel {
-    fun read(dsts: List<Buffer>): Long
-    fun read(dsts: List<Buffer>, offset: Int, length: Int): Long
+internal actual class Platform {
+    actual companion object {
+        actual inline fun isLittleEndian(): Boolean = NativePlatform.isLittleEndian
+    }
 }

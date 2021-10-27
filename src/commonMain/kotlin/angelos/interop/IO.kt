@@ -14,15 +14,15 @@
  */
 package angelos.interop
 
-import angelos.io.FileSystem as RealFS
+import angelos.io.FileSystem
 import angelos.nio.Buffer
 
-internal expect class FileSystem {
+internal expect class IO {
     companion object {
         inline fun readFile(number: Int, dst: Buffer, index: Int, count: Long): Long
         inline fun writeFile(number: Int, src: Buffer, index: Int, count: Long): Long
         inline fun tellFile(number: Int): Long
-        inline fun seekFile(number: Int, position: Long, whence: RealFS.Seek): Long
+        inline fun seekFile(number: Int, position: Long, whence: FileSystem.Seek): Long
         inline fun closeFile(number: Int): Boolean
 
         inline fun checkReadable(path: String): Boolean
@@ -30,10 +30,10 @@ internal expect class FileSystem {
         inline fun checkExecutable(path: String): Boolean
         inline fun checkExists(path: String): Boolean
         inline fun getFileType(path: String): Int
-        inline fun getFileInfo(path: String): RealFS.Info
+        inline fun getFileInfo(path: String): FileSystem.Info
         inline fun getLinkTarget(path: String): String
         inline fun openDir(path: String): Long
-        inline fun readDir(dir: Long): RealFS.FileEntry
+        inline fun readDir(dir: Long): FileSystem.FileEntry
         inline fun closeDir(dir: Long): Boolean
         inline fun openFile(path: String, option: Int): Int
     }

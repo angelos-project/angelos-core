@@ -23,13 +23,38 @@ import angelos.io.channel.SeekableByteChannel
 import angelos.nio.Buffer
 
 abstract class FileChannel(val option: FileSystem.OpenOption): SeekableByteChannel, GatheringByteChannel, ScatteringByteChannel {
-    private var _position: ULong = 0u
-    private var _open: Boolean = true
 
-    protected abstract fun read(dst: ByteArray, position: Int, count: Long): Long
-    protected abstract fun write(src: ByteArray, position: Int, count: Long): Long
-    protected abstract fun tell(): Long
-    protected abstract fun seek(newPosition: Long): Long
+    private var _open: Boolean = true
+    private var _size: ULong = 0u
+
+    private var _pos: ULong = 0u
+    private var pos: Long
+        get() = _pos.toLong()
+        set(value) {
+            _pos = value.toULong()
+            if (_pos > _size)
+                _size = _pos
+        }
+
+    protected abstract fun readFd(dst: Buffer, position: Int, count: Long): Long
+    protected abstract fun writeFd(src: Buffer, position: Int, count: Long): Long
+    protected abstract fun tellFd(): Long
+    protected abstract fun seekFd(newPosition: Long): Long
+    protected abstract fun closeFd(): Boolean
+
+    override val size: Long
+        get() = _size.toLong()
+
+    override var position: Long
+        get() {
+            val position = tellFd()
+            if (position.toULong() != _pos)
+                throw SyncFailedException("File descriptor out of sync with physical cursor.")
+            return position
+        }
+        set(value) {
+            _pos = seekFd(value).toULong()
+        }
 
     fun lock() {
         TODO()
@@ -44,47 +69,36 @@ abstract class FileChannel(val option: FileSystem.OpenOption): SeekableByteChann
     }*/
 
     override fun read(dst: Buffer): Long {
-        val pos = dst.position
-        val count = dst.limit - pos
-        if(read(dst.array(), pos, count) != count)
-            throw IOException("Couldn't read $count bytes from file.")
-        _position += count.toULong()
+        val length = dst.allowance()
+        if(readFd(dst, dst.position, length) != length)
+            throw throw IOException("Couldn't read $length bytes from file.")
+        pos += length
+        return length
     }
 
-    override fun read(dsts: List<Buffer>): Long {
-        TODO("Not yet implemented")
+    override fun read(dsts: List<Buffer>, offset: Int, length: Int): Long {
+        var count: Long = 0
+        dsts.subList(offset, length).asSequence().forEach { count += read(it) }
+        return count
     }
 
-    override fun read(dsts: List<Buffer>, offset: Long, length: Long): Long {
-        TODO("Not yet implemented")
-    }
-
-    override fun write(srcs: List<Buffer>) {
-        TODO("Not yet implemented")
-    }
-
-    override fun write(srcs: List<Buffer>, offset: Long, length: Long) {
-        TODO("Not yet implemented")
-    }
+    override fun read(dsts: List<Buffer>): Long = read(dsts, 0, dsts.size)
 
     override fun write(src: Buffer): Long {
+        val length = src.allowance()
+        if(writeFd(src, src.position, length) != length)
+            throw IOException("Couldn't write $length bytes to file.")
+        pos += length
+        return length
     }
 
-    override fun position(): Long {
-        val position = tell()
-        if (position.toULong() != _position)
-            throw SyncFailedException("File descriptor out of sync with physical cursor.")
-        return position
+    override fun write(srcs: List<Buffer>, offset: Int, length: Int): Long {
+        var count: Long = 0
+        srcs.subList(offset, length).asSequence().forEach { count += write(it) }
+        return count
     }
 
-    override fun position(newPosition: Long): SeekableByteChannel {
-        _position = seek(newPosition).toULong()
-        return this
-    }
-
-    override fun size(): Long {
-        TODO("Not yet implemented")
-    }
+    override fun write(srcs: List<Buffer>): Long = write(srcs, 0, srcs.size)
 
     override fun truncate(size: Long): SeekableByteChannel {
         TODO("Not yet implemented")
@@ -95,7 +109,13 @@ abstract class FileChannel(val option: FileSystem.OpenOption): SeekableByteChann
     }
 
     override fun close() {
-        TODO("Not yet implemented")
+        if(_open)
+            if(closeFd())
+                _open = false
+    }
+
+    protected fun finalize() {
+        close()
     }
 
 }

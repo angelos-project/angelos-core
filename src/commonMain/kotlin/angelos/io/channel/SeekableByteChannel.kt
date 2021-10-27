@@ -15,8 +15,8 @@
 package angelos.io.channel
 
 interface SeekableByteChannel: ByteChannel {
-    fun position(): Long
-    fun position(newPosition: Long): SeekableByteChannel
-    fun size(): Long
+    val size: Long
+    var position: Long
+
     fun truncate(size: Long): SeekableByteChannel
 }

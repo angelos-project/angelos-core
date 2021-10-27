@@ -15,9 +15,9 @@
 package angelos.io
 
 import angelos.io.file.channel.FileChannel
+import angelos.nio.Buffer
 import angelos.nio.BufferOverflowException
 import angelos.nio.BufferUnderflowException
-import angelos.nio.ByteBuffer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex
@@ -46,8 +46,8 @@ abstract class FileSystem(val drive: String) {
         }
     }
 
-    protected abstract fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long
-    protected abstract fun writeFile(number: Int, array: ByteArray, index: Int, count: Long): Long
+    protected abstract fun readFile(number: Int, dst: Buffer, index: Int, count: Long): Long
+    protected abstract fun writeFile(number: Int, src: Buffer, index: Int, count: Long): Long
     protected abstract fun tellFile(number: Int): Long
     protected abstract fun seekFile(number: Int, position: Long, whence: Seek): Long
     protected abstract fun closeFile(number: Int): Boolean
@@ -243,10 +243,11 @@ abstract class FileSystem(val drive: String) {
     ) : FileChannel(option) {
         private var _number: Int = openFile(file.path.toString(), option.ordinal)
 
-        override fun read(dst: ByteArray, position: Int, count: Long): Long = readFile(_number, dst, position, count)
-        override fun write(src: ByteArray, position: Int, count: Long): Long = readFile(_number, src, position, count)
-        override fun tell(): Long = tellFile(_number)
-        override fun seek(newPosition: Long): Long = seekFile(_number, newPosition, Seek.SET)
+        override fun readFd(dst: Buffer, position: Int, count: Long): Long = readFile(_number, dst, position, count)
+        override fun writeFd(src: Buffer, position: Int, count: Long): Long = readFile(_number, src, position, count)
+        override fun tellFd(): Long = tellFile(_number)
+        override fun seekFd(newPosition: Long): Long = seekFile(_number, newPosition, Seek.SET)
+        override fun closeFd(): Boolean = closeFile(_number)
 
         /* fun read(buffer: ByteBuffer, count: Long) {
             if (buffer.remaining() < count)

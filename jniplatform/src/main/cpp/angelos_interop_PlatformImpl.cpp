@@ -14,16 +14,16 @@
  */
 #include <jni.h>
 
-#ifndef _Included_angelos_interop_Endian
-#define _Included_angelos_interop_Endian
+#ifndef _Included_angelos_interop_Platform
+#define _Included_angelos_interop_Platform
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-static const char *JNIT_CLASS = "angelos/interop/Endian";
+static const char *JNIT_CLASS = "angelos/interop/Platform";
 
 /*
- * Class:     angelos_interop_Endian
+ * Class:     angelos_interop_Platform
  * Method:    endian
  * Signature: ()Z
  */

@@ -16,7 +16,7 @@ package angelos.interop
 
 import angelos.io.FileSystem as RealFS
 
-internal actual class FileSystem {
+internal actual class IO {
     actual companion object {
         @ExperimentalUnsignedTypes
         actual inline fun readFile(number: Int, array: ByteArray, index: Int, count: Long): Long {TODO("Not yet implemented")}

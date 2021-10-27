@@ -21,16 +21,16 @@
 #include <inttypes.h>
 #include <dirent.h>
 
-#ifndef _Included_angelos_interop_FileSystem
-#define _Included_angelos_interop_FileSystem
+#ifndef _Included_angelos_interop_IO
+#define _Included_angelos_interop_IO
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-static const char *JNIT_CLASS = "angelos/interop/FileSystem";
+static const char *JNIT_CLASS = "angelos/interop/IO";
 
 /*
- * Class:     angelos_interop_FileSystem
+ * Class:     angelos_interop_IO
  * Method:    fs_close
  * Signature: (I)I
  */
@@ -39,7 +39,7 @@ static jint fs_close(JNIEnv * env, jclass thisClass, jint fd){
 }
 
 /*
- * Class:     angelos_interop_FileSystem
+ * Class:     angelos_interop_IO
  * Method:    fs_read
  * Signature: (I[BIJ)J
  */
@@ -57,7 +57,7 @@ static jlong fs_read(JNIEnv * env, jclass thisClass, jint fd, jbyteArray output,
 }
 
 /*
- * Class:     angelos_interop_FileSystem
+ * Class:     angelos_interop_IO
  * Method:    fs_pread
  * Signature: (I[JIJJ)J
  */
@@ -70,7 +70,7 @@ static jlong fs_pread(JNIEnv * env, jclass thisClass, jint fd, jlong output, jin
 }
 
 /*
- * Class:     angelos_interop_FileSystem
+ * Class:     angelos_interop_IO
  * Method:    fs_write
  * Signature: (I[BIJ)J
  */
@@ -85,7 +85,7 @@ static jlong fs_write(JNIEnv * env, jclass thisClass, jint fd, jbyteArray input,
 }
 
 /*
- * Class:     angelos_interop_FileSystem
+ * Class:     angelos_interop_IO
  * Method:    fs_pwrite
  * Signature: (I[BIJJ)J
  */
@@ -98,7 +98,7 @@ static jlong fs_pwrite(JNIEnv * env, jclass thisClass, jint fd, jlong input, jin
 }
 
 /*
- * Class:     angelos_interop_FileSystem
+ * Class:     angelos_interop_IO
  * Method:    fs_lseek
  * Signature: (IJI)J
  */
@@ -107,7 +107,7 @@ static jlong fs_lseek(JNIEnv * env, jclass thisClass, jint fd, jlong offset, jin
 }
 
 /*
- * Class:     angelos_interop_FileSystem
+ * Class:     angelos_interop_IO
  * Method:    fs_access
  * Signature: (Ljava/lang/String;I)I
  */
@@ -119,7 +119,7 @@ static jint fs_access(JNIEnv * env, jclass thisClass, jstring path, jint amode){
 }
 
 /*
- * Class:     angelos_interop_FileSystem
+ * Class:     angelos_interop_IO
  * Method:    fs_filetype
  * Signature: (Ljava/lang/String;)I
  */
@@ -153,7 +153,7 @@ static jint fs_filetype(JNIEnv * env, jclass thisClass, jstring path){
 }
 
 /*
- * Class:     angelos_interop_FileSystem
+ * Class:     angelos_interop_IO
  * Method:    fs_fileinfo
  * Signature: (Ljava/lang/String;)Langelos/io/FileObject/Info;
  */
@@ -193,7 +193,7 @@ static jobject fs_fileinfo(JNIEnv * env, jclass thisClass, jstring path){
 }
 
 /*
- * Class:     angelos_interop_FileSystem
+ * Class:     angelos_interop_IO
  * Method:    fs_readlink
  * Signature: (Ljava/lang/String;)Ljava/lang/String;
  */
@@ -216,7 +216,7 @@ static jstring fs_readlink(JNIEnv * env, jclass thisClass, jstring path){
 }
 
 /*
- * Class:     angelos_interop_FileSystem
+ * Class:     angelos_interop_IO
  * Method:    fs_opendir
  * Signature: (Ljava/lang/String;)J
  */
@@ -228,7 +228,7 @@ static jlong fs_opendir(JNIEnv * env, jclass thisClass, jstring name){
 }
 
 /*
- * Class:     angelos_interop_FileSystem
+ * Class:     angelos_interop_IO
  * Method:    fs_readdir
  * Signature: (J)Langelos/io/Dir$FileEntry;
  */
@@ -270,7 +270,7 @@ static jobject fs_readdir(JNIEnv * env, jclass thisClass, jlong dirp){
 }
 
 /*
- * Class:     angelos_interop_FileSystem
+ * Class:     angelos_interop_IO
  * Method:    fs_closedir
  * Signature: (J)I
  */
@@ -279,7 +279,7 @@ static jint fs_closedir(JNIEnv * env, jclass thisClass, jlong dirp){
 }
 
 /*
- * Class:     angelos_interop_FileSystem
+ * Class:     angelos_interop_IO
  * Method:    fs_open
  * Signature: (Ljava/lang/String;I)I
  */

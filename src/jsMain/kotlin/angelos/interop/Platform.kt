@@ -14,9 +14,9 @@
  */
 package angelos.interop
 
-internal actual class Endian {
+internal actual class Platform {
     actual companion object {
-        actual inline fun checkNativeOrder(): Boolean {
+        actual inline fun isLittleEndian(): Boolean {
             TODO("Not yet implemented")
         }
     }

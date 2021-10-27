@@ -19,8 +19,9 @@ kotlin {
             systemProperty(
                 "java.library.path",
                 listOf(
-                    file("${project(":jniendian").buildDir}/lib/main/debug").absolutePath,
-                    file("${project(":jnifilesystem").buildDir}/lib/main/debug").absolutePath,
+                    file("${project(":jniplatform").buildDir}/lib/main/debug").absolutePath,
+                    file("${project(":jniproc").buildDir}/lib/main/debug").absolutePath,
+                    file("${project(":jniio").buildDir}/lib/main/debug").absolutePath,
                 ).joinToString(":") + ":" + System.getProperty("java.library.path")
             )
         }
@@ -66,8 +67,9 @@ kotlin {
 }
 
 tasks.withType(AbstractCompile::class) {
-    dependsOn(":jniendian:assemble")
-    dependsOn(":jnifilesystem:assemble")
+    dependsOn(":jniplatform:assemble")
+    dependsOn(":jniproc:assemble")
+    dependsOn(":jniio:assemble")
 }
 
 // Generate C++ native header file.

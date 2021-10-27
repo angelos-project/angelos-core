@@ -14,7 +14,7 @@
  */
 package angelos.nio
 
-import angelos.interop.Endian
+import angelos.interop.Platform
 
 
 enum class ByteOrder(val order: Boolean) {
@@ -22,7 +22,7 @@ enum class ByteOrder(val order: Boolean) {
     LITTLE_ENDIAN(false);
 
     companion object {
-        fun nativeOrder(): ByteOrder = if (Endian.checkNativeOrder()) LITTLE_ENDIAN else BIG_ENDIAN
+        fun nativeOrder(): ByteOrder = if (Platform.isLittleEndian()) LITTLE_ENDIAN else BIG_ENDIAN
     }
 
     override fun toString(): String {

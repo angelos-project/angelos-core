@@ -14,15 +14,8 @@
  */
 package angelos.interop
 
-internal actual class Endian {
-    actual companion object {
-        actual inline fun checkNativeOrder(): Boolean = endian()
-
-        @JvmStatic
-        private external fun endian(): Boolean
-
-        init {
-            System.loadLibrary("jniendian")
-        }
+internal expect class Platform {
+    companion object {
+        inline fun isLittleEndian(): Boolean
     }
 }

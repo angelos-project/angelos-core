@@ -14,11 +14,6 @@
  */
 package angelos.io
 
-import angelos.interop.FileSystem
-import angelos.nio.BufferOverflowException
-import angelos.nio.BufferUnderflowException
-import angelos.nio.ByteBuffer
-
 /* class FileDescriptor internal constructor(
     internal val file: File,
     val option: File.OpenOption,

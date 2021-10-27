@@ -61,43 +61,43 @@ class FileSystemTest {
 
     @Test
     fun checkExists() {
-        assertTrue(FileSystem.checkExists(tmpDir.toString()))
-        assertTrue(FileSystem.checkExists(tmpFile.toString()))
-        assertTrue(FileSystem.checkExists(tmpLink.toString()))
-        assertFalse(FileSystem.checkExists(tmpMissing.toString()))
+        assertTrue(IO.checkExists(tmpDir.toString()))
+        assertTrue(IO.checkExists(tmpFile.toString()))
+        assertTrue(IO.checkExists(tmpLink.toString()))
+        assertFalse(IO.checkExists(tmpMissing.toString()))
     }
 
     @Test
     fun checkReadable() {
-        assertTrue(FileSystem.checkReadable(tmpDir.toString()))
-        assertTrue(FileSystem.checkReadable(tmpFile.toString()))
-        assertTrue(FileSystem.checkReadable(tmpLink.toString()))
-        assertFalse(FileSystem.checkReadable(tmpMissing.toString()))
+        assertTrue(IO.checkReadable(tmpDir.toString()))
+        assertTrue(IO.checkReadable(tmpFile.toString()))
+        assertTrue(IO.checkReadable(tmpLink.toString()))
+        assertFalse(IO.checkReadable(tmpMissing.toString()))
     }
 
     @Test
     fun checkWritable() {
-        assertTrue(FileSystem.checkWritable(tmpDir.toString()))
-        assertTrue(FileSystem.checkWritable(tmpFile.toString()))
-        assertTrue(FileSystem.checkWritable(tmpLink.toString()))
-        assertFalse(FileSystem.checkWritable(tmpMissing.toString()))
+        assertTrue(IO.checkWritable(tmpDir.toString()))
+        assertTrue(IO.checkWritable(tmpFile.toString()))
+        assertTrue(IO.checkWritable(tmpLink.toString()))
+        assertFalse(IO.checkWritable(tmpMissing.toString()))
     }
 
     @Test
     fun checkExecutable() {
-        assertTrue(FileSystem.checkExecutable(tmpDir.toString()))
-        assertFalse(FileSystem.checkExecutable(tmpFile.toString()))
-        assertFalse(FileSystem.checkExecutable(tmpLink.toString()))
-        assertFalse(FileSystem.checkExecutable(tmpMissing.toString()))
+        assertTrue(IO.checkExecutable(tmpDir.toString()))
+        assertFalse(IO.checkExecutable(tmpFile.toString()))
+        assertFalse(IO.checkExecutable(tmpLink.toString()))
+        assertFalse(IO.checkExecutable(tmpMissing.toString()))
     }
 
     @Test
     fun testDirectory(){
-        val dir = FileSystem.openDir(tmpDir.toString())
-        assertEquals(FileSystem.readDir(dir).name, ".")
-        assertEquals(FileSystem.readDir(dir).name, "..")
-        assertTrue(FileSystem.readDir(dir).name.endsWith(".tmp"))
-        FileSystem.closeDir(dir)
+        val dir = IO.openDir(tmpDir.toString())
+        assertEquals(IO.readDir(dir).name, ".")
+        assertEquals(IO.readDir(dir).name, "..")
+        assertTrue(IO.readDir(dir).name.endsWith(".tmp"))
+        IO.closeDir(dir)
     }
 
     @Test
@@ -105,9 +105,9 @@ class FileSystemTest {
         val message = "Hello, world!"
         val size = message.toByteArray().size.toLong()
 
-        val file = FileSystem.openFile(tmpFile.toString(), 3)
-        assertTrue(FileSystem.writeFile(file, message.toByteArray(), 0, size) == size)
-        assertTrue(FileSystem.closeFile(file))
+        val file = IO.openFile(tmpFile.toString(), 3)
+        assertTrue(IO.writeFile(file, message.toByteArray(), 0, size) == size)
+        assertTrue(IO.closeFile(file))
 
         assertEquals(java.nio.file.Files.newBufferedReader(tmpFile).readLine(), message)
     }
@@ -122,9 +122,9 @@ class FileSystemTest {
         writer.write(message)
         writer.close()
 
-        val file = FileSystem.openFile(tmpFile.toString(), 3)
-        assertTrue(FileSystem.readFile(file, loaded, 0, size) == size)
-        assertTrue(FileSystem.closeFile(file))
+        val file = IO.openFile(tmpFile.toString(), 3)
+        assertTrue(IO.readFile(file, loaded, 0, size) == size)
+        assertTrue(IO.closeFile(file))
 
         assertEquals(loaded.contentToString(), message.toByteArray().contentToString())
     }
@@ -133,50 +133,50 @@ class FileSystemTest {
     fun testFile() {
         val message = "Hello, world!".toByteArray()
         val size = message.size.toLong()
-        val file = FileSystem.openFile(tmpFile.toString(), 3)
+        val file = IO.openFile(tmpFile.toString(), 3)
         assertNotEquals(file, 0)
 
-        assertTrue(FileSystem.tellFile(file) == 0L)
-        assertTrue(FileSystem.writeFile(file, message, 0, size) == 13L)
+        assertTrue(IO.tellFile(file) == 0L)
+        assertTrue(IO.writeFile(file, message, 0, size) == 13L)
 
-        assertTrue(FileSystem.tellFile(file) == size)
-        assertTrue(FileSystem.seekFile(file, 0, angelos.io.FileSystem.Seek.SET) == 0L)
+        assertTrue(IO.tellFile(file) == size)
+        assertTrue(IO.seekFile(file, 0, angelos.io.FileSystem.Seek.SET) == 0L)
 
         val loaded = ByteArray(size.toInt())
-        assertTrue(FileSystem.readFile(file, loaded, 0, size) == 13L)
+        assertTrue(IO.readFile(file, loaded, 0, size) == 13L)
         assertEquals(message.contentToString(), loaded.contentToString())
 
-        assertTrue(FileSystem.closeFile(file))
-        assertFalse(FileSystem.closeFile(file))
+        assertTrue(IO.closeFile(file))
+        assertFalse(IO.closeFile(file))
     }
 
     @Test
     fun testReadLink(){
-        assertEquals(FileSystem.getLinkTarget(tmpLink.toString()), tmpFile.toString())
+        assertEquals(IO.getLinkTarget(tmpLink.toString()), tmpFile.toString())
 
         assertExceptionThrown<NotLinkException>(
-            {FileSystem.getLinkTarget(tmpMissing.toString())},
+            {IO.getLinkTarget(tmpMissing.toString())},
             "Missing file should raise FileNotFoundException"
         )
     }
 
     @Test
     fun testFileType(){
-        assertEquals(FileSystem.getFileType(tmpLink.toString()), 1)
-        assertEquals(FileSystem.getFileType(tmpDir.toString()), 2)
-        assertEquals(FileSystem.getFileType(tmpFile.toString()), 3)
+        assertEquals(IO.getFileType(tmpLink.toString()), 1)
+        assertEquals(IO.getFileType(tmpDir.toString()), 2)
+        assertEquals(IO.getFileType(tmpFile.toString()), 3)
         assertExceptionThrown<FileNotFoundException>(
-            {FileSystem.getFileType(tmpMissing.toString())},
+            {IO.getFileType(tmpMissing.toString())},
             "Missing file should raise FileNotFoundException"
         )
     }
 
     @Test
     fun testFileInfo(){
-        val fileInfo = FileSystem.getFileInfo(tmpFile.toString())
+        val fileInfo = IO.getFileInfo(tmpFile.toString())
         assertTrue(fileInfo.createdAt > 0)
         assertExceptionThrown<FileNotFoundException>(
-            {FileSystem.getFileInfo(tmpMissing.toString())},
+            {IO.getFileInfo(tmpMissing.toString())},
             "Missing file should raise FileNotFoundException"
         )
     }
