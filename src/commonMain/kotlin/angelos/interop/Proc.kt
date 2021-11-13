@@ -20,5 +20,10 @@ package angelos.interop
  * https://kotlinlang.org/docs/mapping-function-pointers-from-c.html#c-function-pointers-in-kotlin
  */
 
-class Interrupts {
+expect class Proc {
+    companion object{
+        fun registerInterrupt(signum: Int)
+
+        fun interrupt(signum: Int)
+    }
 }
