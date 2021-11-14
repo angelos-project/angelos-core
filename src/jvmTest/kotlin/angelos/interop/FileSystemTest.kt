@@ -16,6 +16,7 @@ package angelos.interop
 
 import angelos.io.FileNotFoundException
 import angelos.io.NotLinkException
+import angelos.nio.ByteHeapBuffer
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -102,21 +103,22 @@ class FileSystemTest {
 
     @Test
     fun testWrite(){
-        val message = "Hello, world!"
-        val size = message.toByteArray().size.toLong()
+        val message = ByteHeapBuffer(13, 13, 0);
+        "Hello, world!".toByteArray().copyInto(message.toArray())
+        val size = "Hello, world!".toByteArray().size.toLong()
 
         val file = IO.openFile(tmpFile.toString(), 3)
-        assertTrue(IO.writeFile(file, message.toByteArray(), 0, size) == size)
+        assertTrue(IO.writeFile(file, message, 0, size) == size)
         assertTrue(IO.closeFile(file))
 
-        assertEquals(java.nio.file.Files.newBufferedReader(tmpFile).readLine(), message)
+        assertEquals(java.nio.file.Files.newBufferedReader(tmpFile).readLine().toByteArray().contentToString(), message.toArray().contentToString())
     }
 
     @Test
     fun testRead(){
         val message = "Hello, world!"
         val size = message.toByteArray().size.toLong()
-        var loaded = ByteArray(size.toInt())
+        var loaded = ByteHeapBuffer(size.toLong(), size.toLong(), 0)
 
         val writer = java.nio.file.Files.newBufferedWriter(tmpFile)
         writer.write(message)
@@ -126,13 +128,14 @@ class FileSystemTest {
         assertTrue(IO.readFile(file, loaded, 0, size) == size)
         assertTrue(IO.closeFile(file))
 
-        assertEquals(loaded.contentToString(), message.toByteArray().contentToString())
+        assertEquals(loaded.toArray().contentToString(), message.toByteArray().contentToString())
     }
 
     @Test
     fun testFile() {
-        val message = "Hello, world!".toByteArray()
-        val size = message.size.toLong()
+        val message = ByteHeapBuffer(13, 13, 0);
+        "Hello, world!".toByteArray().copyInto(message.toArray())
+        val size = "Hello, world!".toByteArray().size.toLong()
         val file = IO.openFile(tmpFile.toString(), 3)
         assertNotEquals(file, 0)
 
@@ -142,9 +145,9 @@ class FileSystemTest {
         assertTrue(IO.tellFile(file) == size)
         assertTrue(IO.seekFile(file, 0, angelos.io.FileSystem.Seek.SET) == 0L)
 
-        val loaded = ByteArray(size.toInt())
+        val loaded = ByteHeapBuffer(size.toLong(), size.toLong(), 0)
         assertTrue(IO.readFile(file, loaded, 0, size) == 13L)
-        assertEquals(message.contentToString(), loaded.contentToString())
+        assertEquals(message.toArray().contentToString(), loaded.toArray().contentToString())
 
         assertTrue(IO.closeFile(file))
         assertFalse(IO.closeFile(file))

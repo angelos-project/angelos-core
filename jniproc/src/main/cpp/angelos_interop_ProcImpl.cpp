@@ -54,7 +54,7 @@ void callback(int signum)
  * Signature: (I)Z
  */
 static jboolean pr_signal(JNIEnv * env, jclass thisClass, jint signum){
-    if (callback_env != NULL)
+    if (callback_env == NULL)
         callback_env = env;
     else if (callback_env != env)
         exit(1);

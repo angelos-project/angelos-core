@@ -16,6 +16,15 @@ package angelos.nio
 
 actual class ByteDirectBuffer actual constructor(capacity: Long, limit: Long, position: Long) :
     Buffer(capacity, limit, position) {
+
+    actual override fun toArray(): ByteArray {
+        TODO("Not yet implemented")
+    }
+
+    actual override fun toPtr(): Long {
+        TODO("Not yet implemented")
+    }
+
     actual override fun _getChar(): Char {
         TODO("Not yet implemented")
     }

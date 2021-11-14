@@ -1,25 +1,23 @@
 package angelos.interop
 
+import angelos.io.signal.Signal
+
 /**
  * How to call Kotlin from outside.
  * https://www.iitk.ac.in/esc101/05Aug/tutorial/native1.1/implementing/method.html
  */
 
-actual class Proc {
-    actual companion object {
-        actual fun registerInterrupt(signum: Int) {
-            pr_signal(signum)
-        }
+actual fun registerInterrupt(signum: Int) {
+    Proc.pr_signal(signum)
+}
 
-        actual fun interrupt(signum: Int) {
-        }
-
+class Proc {
+     companion object {
         @JvmStatic
-        private external fun pr_signal(signum: Int): Boolean
+        external fun pr_signal(signum: Int): Boolean
 
         init {
             System.loadLibrary("jniproc")
         }
-
     }
 }

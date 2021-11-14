@@ -14,16 +14,20 @@
  */
 package angelos.interop
 
+import angelos.io.signal.Signal
+
 /**
  * How to call Kotlin from outside.
  * https://www.iitk.ac.in/esc101/05Aug/tutorial/native1.1/implementing/method.html
  * https://kotlinlang.org/docs/mapping-function-pointers-from-c.html#c-function-pointers-in-kotlin
  */
 
-expect class Proc {
-    companion object{
-        fun registerInterrupt(signum: Int)
+expect fun registerInterrupt(signum: Int)
 
-        fun interrupt(signum: Int)
+class Proc {
+    companion object{
+        internal var sigHandler: Signal? = null
+
+        fun interrupt(signum: Int) { sigHandler?.handler(signum) }
     }
 }

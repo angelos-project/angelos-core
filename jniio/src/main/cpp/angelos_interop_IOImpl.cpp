@@ -59,7 +59,7 @@ static jlong fs_read(JNIEnv * env, jclass thisClass, jint fd, jbyteArray output,
 /*
  * Class:     angelos_interop_IO
  * Method:    fs_pread
- * Signature: (I[JIJJ)J
+ * Signature: (IJIJJ)J
  */
 static jlong fs_pread(JNIEnv * env, jclass thisClass, jint fd, jlong output, jint index, jlong count, jlong size){
     void* buf = (void*)output+index;
@@ -87,7 +87,7 @@ static jlong fs_write(JNIEnv * env, jclass thisClass, jint fd, jbyteArray input,
 /*
  * Class:     angelos_interop_IO
  * Method:    fs_pwrite
- * Signature: (I[BIJJ)J
+ * Signature: (IJIJJ)J
  */
 static jlong fs_pwrite(JNIEnv * env, jclass thisClass, jint fd, jlong input, jint index, jlong count, jlong size){
     void* buf = (void*)input+index;
@@ -293,9 +293,9 @@ static jint fs_open(JNIEnv * env, jclass thisClass, jstring path, jint perm){
 static JNINativeMethod funcs[] = {
 	{ "fs_close", "(I)I", (void *)&fs_close },
 	{ "fs_read", "(I[BIJ)J", (void *)&fs_read },
-	{ "fs_pread", "(I[BIJJ)J", (void *)&fs_pread },
+	{ "fs_pread", "(IJIJJ)J", (void *)&fs_pread },
 	{ "fs_write", "(I[BIJ)J", (void *)&fs_write },
-	{ "fs_pwrite", "(I[BIJJ)J", (void *)&fs_pwrite },
+	{ "fs_pwrite", "(IJIJJ)J", (void *)&fs_pwrite },
 	{ "fs_lseek", "(IJI)J", (void *)&fs_lseek },
 	{ "fs_access", "(Ljava/lang/String;I)I", (void *)&fs_access },
 	{ "fs_filetype", "(Ljava/lang/String;)I", (void *)&fs_filetype },

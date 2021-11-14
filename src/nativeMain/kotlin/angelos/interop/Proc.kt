@@ -8,11 +8,4 @@ import platform.posix.signal
  * https://kotlinlang.org/docs/mapping-function-pointers-from-c.html#c-function-pointers-in-kotlin
  */
 
-actual class Proc {
-    actual companion object{
-        actual fun registerInterrupt(signum: Int) { signal(signum, staticCFunction<Int, Unit> { interrupt(it) }) }
-
-        actual fun interrupt(signum: Int) {
-        }
-    }
-}
+actual fun registerInterrupt(signum: Int) { signal(signum, staticCFunction<Int, Unit> { Proc.interrupt(it) }) }
