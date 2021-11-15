@@ -1,10 +1,26 @@
+/**
+ * Copyright (c) 2021 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+ *
+ * This software is available under the terms of the MIT license. Parts are licensed
+ * under different terms if stated. The legal terms are attached to the LICENSE file
+ * and are made available on:
+ *
+ *      https://opensource.org/licenses/MIT
+ *
+ * SPDX-License-Identifier: MIT
+ *
+ * Contributors:
+ *      Kristoffer Paulsson - initial implementation
+ */
 package angelos.io.signal
 
+import angelos.interop.AbstractProc
 import angelos.interop.Proc
 
 class Signal internal constructor(
-    val handlers: MutableList<SignalHandler> = mutableListOf(),
-    val signals: MutableList<Int> = mutableListOf()
+    private val handlers: MutableList<SignalHandler> = mutableListOf(),
+    private val signals: MutableList<Int> = mutableListOf(),
+    private val map: HashMap<Int, SignalHandler> = HashMap()
 ){
     enum class Num(val signum: Int){
         SIGABRT(8), // P1990, Core, Abort signal from abort(3)
@@ -42,21 +58,30 @@ class Signal internal constructor(
     }
 
     init {
-        Proc.sigHandler = this
+        AbstractProc.sigHandler = this
     }
 
-    fun handler(signum: Int) {
-
-    }
+    fun handler(signum: Int) = map[signum]?.send(signum)
 
     private fun add(handler: SignalHandler){
+        if (handler in handlers)
+            throw IllegalArgumentException("Handler already added.")
+        val used = handler.signals.intersect(signals)
+        if (used.isNotEmpty())
+            throw IllegalArgumentException("Handler signals already used by different handler.")
 
+        handlers.add(handler)
+        handler.signals.forEach {
+            Proc.registerInterrupt(it)
+            signals.add(it)
+            map[it] = handler
+        }
     }
 
     companion object{
-        val instance = Signal()
+        private val instance = Signal()
 
-        fun register(handler: SignalHandler){
+        fun register(handler: SignalHandler) {
             instance.add(handler)
         }
     }

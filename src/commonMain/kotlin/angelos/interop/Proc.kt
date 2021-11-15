@@ -22,12 +22,21 @@ import angelos.io.signal.Signal
  * https://kotlinlang.org/docs/mapping-function-pointers-from-c.html#c-function-pointers-in-kotlin
  */
 
-expect fun registerInterrupt(signum: Int)
 
-class Proc {
+abstract class AbstractProc{
     companion object{
-        internal var sigHandler: Signal? = null
+        @Suppress("VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL")
+        internal lateinit var sigHandler: Signal
+        fun interrupt(signum: Int) {
+            sigHandler.handler(signum)
+        }
+    }
+}
 
-        fun interrupt(signum: Int) { sigHandler?.handler(signum) }
+
+expect class Proc: AbstractProc {
+    companion object{
+
+        fun registerInterrupt(signum: Int)
     }
 }

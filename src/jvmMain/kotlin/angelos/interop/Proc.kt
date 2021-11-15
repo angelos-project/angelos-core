@@ -1,23 +1,36 @@
+/**
+ * Copyright (c) 2021 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+ *
+ * This software is available under the terms of the MIT license. Parts are licensed
+ * under different terms if stated. The legal terms are attached to the LICENSE file
+ * and are made available on:
+ *
+ *      https://opensource.org/licenses/MIT
+ *
+ * SPDX-License-Identifier: MIT
+ *
+ * Contributors:
+ *      Kristoffer Paulsson - initial implementation
+ */
 package angelos.interop
-
-import angelos.io.signal.Signal
 
 /**
  * How to call Kotlin from outside.
  * https://www.iitk.ac.in/esc101/05Aug/tutorial/native1.1/implementing/method.html
  */
 
-actual fun registerInterrupt(signum: Int) {
-    Proc.pr_signal(signum)
-}
+actual class Proc: AbstractProc() {
+     actual companion object {
 
-class Proc {
-     companion object {
-        @JvmStatic
-        external fun pr_signal(signum: Int): Boolean
+         actual fun registerInterrupt(signum: Int) {
+             pr_signal(signum)
+         }
 
-        init {
-            System.loadLibrary("jniproc")
-        }
-    }
+         @JvmStatic
+         external fun pr_signal(signum: Int): Boolean
+
+         init {
+             System.loadLibrary("jniproc")
+         }
+     }
 }
