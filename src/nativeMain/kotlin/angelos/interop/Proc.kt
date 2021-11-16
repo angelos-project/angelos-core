@@ -14,8 +14,8 @@
  */
 package angelos.interop
 
-import kotlinx.cinterop.staticCFunction
-import platform.posix.signal
+import kotlinx.cinterop.*
+import platform.posix.*
 
 /**
  * How to call Kotlin from outside.
@@ -24,9 +24,40 @@ import platform.posix.signal
 
 actual class Proc: AbstractProc () {
     actual companion object {
+        private val sigHandlerPtr = staticCFunction<Int, CPointer<__siginfo>?, COpaquePointer?, Unit> {
+            signum, info, context -> memScoped {
+                val sigs = alloc<sigset_tVar>()
+                val sigsRef = sigs.ptr as CValuesRef<sigset_tVar>
+
+                sigemptyset(sigsRef)
+                pthread_sigmask(0, null, sigsRef)
+                if (sigismember(sigsRef, SIGIO) > 0) {
+                    interrupt(signum)
+                    sigaddset(sigsRef, SIGIO);
+                    pthread_sigmask(SIG_UNBLOCK, sigsRef, null);
+                }
+                free(sigs.ptr)
+            }
+        }
+        private val sigActionData: sigaction
+
+        private fun posixSigAction(): sigaction = memScoped{
+            val data = alloc<sigaction>()
+            data.sa_flags = SA_SIGINFO or SA_RESTART or SA_NODEFER
+            data.__sigaction_u.__sa_sigaction = sigHandlerPtr
+            sigfillset(data.sa_mask as CValuesRef<sigset_tVar>)
+            sigdelset(data.sa_mask as CValuesRef<sigset_tVar>, SIGIO)
+            return data
+        }
+
+        init {
+            sigActionData = posixSigAction()
+            if(sigaction(SIGIO, sigActionData.ptr as CValuesRef<sigaction>, null) > 0)
+                throw UnsupportedOperationException("Failed to register signal handler.")
+        }
 
         actual fun registerInterrupt(signum: Int) {
-            signal(signum, staticCFunction<Int, Unit> { interrupt(it) })
+            sigaction(signum, sigActionData.ptr as CValuesRef<sigaction>, null)
         }
     }
 }

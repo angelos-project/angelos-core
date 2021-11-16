@@ -14,12 +14,8 @@
  */
 #include <jni.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <inttypes.h>
-#include <dirent.h>
+#include <stdio.h>
+#include <signal.h>
 
 #ifndef _Included_angelos_interop_IO
 #define _Included_angelos_interop_IO
@@ -30,21 +26,34 @@ extern "C" {
 static const char *JNIT_CLASS = "angelos/interop/Proc";
 
 
-static JNIEnv * callback_env = NULL;
+JNIEnv * callback_env = NULL;
+struct sigaction cb_action;
 
 
-void callback(int signum)
+void sig_handler(int signum, siginfo_t *info, void *context)
 {
-    jclass local_cls = (*callback_env)->FindClass(callback_env, "angelos/interop/Proc$Companion");
-    if (local_cls == NULL) // Quit program if Java class can't be found
-        exit(1);
+    // Blocking incoming signals
+    sigset_t sigs;
+    sigemptyset(&sigs);
+    pthread_sigmask(0, NULL, &sigs);
 
-    jclass global_cls = (*callback_env)->NewGlobalRef(callback_env, local_cls);
-    jmethodID cls_callback = (*callback_env)->GetMethodID(callback_env, global_cls, "interrupt", "(I)V");
-    if (cls_callback == NULL) // Quit program if Java class constructor can't be found
-        exit(1);
+    if (sigismember(&sigs, SIGIO)) {
+        // Doing JNI interrupt stuff
+        jclass local_cls = (*callback_env)->FindClass(callback_env, "angelos/interop/Proc$Companion");
+        if (local_cls == NULL) // Quit program if Java class can't be found
+            exit(1);
 
-    (*callback_env)->CallStaticVoidMethod(callback_env, global_cls, cls_callback, signum);
+        jclass global_cls = (*callback_env)->NewGlobalRef(callback_env, local_cls);
+        jmethodID cls_callback = (*callback_env)->GetMethodID(callback_env, global_cls, "interrupt", "(I)V");
+        if (cls_callback == NULL) // Quit program if Java class constructor can't be found
+            exit(1);
+
+        (*callback_env)->CallStaticVoidMethod(callback_env, global_cls, cls_callback, signum);
+
+        // Unblocking incoming signals
+        sigaddset(&sigs, SIGIO);
+        pthread_sigmask(SIG_UNBLOCK, &sigs, NULL);
+    }
 }
 
 
@@ -59,10 +68,7 @@ static jboolean pr_signal(JNIEnv * env, jclass thisClass, jint signum){
     else if (callback_env != env)
         exit(1);
 
-    signal((int)signum, &callback);
-    //void ( *signal(int signum, void (*handler)(int)) ) (int);
-
-    return JNI_TRUE;
+    return sigaction(signum, &cb_action, NULL) ? JNI_FALSE : JNI_TRUE;
 }
 
 
@@ -90,6 +96,18 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
 	res = (*env)->RegisterNatives(env, cls, funcs, sizeof(funcs)/sizeof(*funcs));
 	if (res != 0)
 		return -1;
+
+	// INITIALIZING SIGNAL HANDLER
+	cb_action.sa_flags = SA_SIGINFO | SA_RESTART | SA_NODEFER;
+    cb_action.sa_sigaction = sig_handler;
+    sigfillset(&cb_action.sa_mask);
+    sigdelset(&cb_action.sa_mask, SIGIO);
+
+    if (sigaction(SIGIO, &cb_action, NULL)) {
+        printf("Sigaction failed\n");
+        exit(1);
+    }
+	// SIGNAL HANDLER OVER
 
 	return CURRENT_JNI;
 }

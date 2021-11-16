@@ -63,9 +63,10 @@ class Signal internal constructor(
 
     fun handler(signum: Int) = map[signum]?.send(signum)
 
-    private fun add(handler: SignalHandler){
+    private fun add(handler: SignalHandler) {
         if (handler in handlers)
             throw IllegalArgumentException("Handler already added.")
+
         val used = handler.signals.intersect(signals)
         if (used.isNotEmpty())
             throw IllegalArgumentException("Handler signals already used by different handler.")
@@ -78,7 +79,7 @@ class Signal internal constructor(
         }
     }
 
-    companion object{
+    companion object {
         private val instance = Signal()
 
         fun register(handler: SignalHandler) {
