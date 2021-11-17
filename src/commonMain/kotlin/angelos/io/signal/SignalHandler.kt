@@ -22,3 +22,5 @@ class SignalHandler internal constructor(
 ) {
     fun send(signum: Int) = suspend { queue.send(signum) }
 }
+
+// http://www.qnx.com/developers/docs/qnx_4.25_docs/tcpip50/prog_guide/sock_ipc_tut.html

@@ -13,6 +13,7 @@
  *      Kristoffer Paulsson - initial implementation
  */
 #include <jni.h>
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -21,6 +22,12 @@
 #include <inttypes.h>
 #include <dirent.h>
 
+#include <sys/socket.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+
+#include <string.h>
+
 #ifndef _Included_angelos_interop_IO
 #define _Included_angelos_interop_IO
 #ifdef __cplusplus
@@ -28,6 +35,10 @@ extern "C" {
 #endif
 
 static const char *JNIT_CLASS = "angelos/interop/IO";
+
+
+/* ==== ==== ==== ==== FILESYSTEM ==== ==== ==== ==== */
+
 
 /*
  * Class:     angelos_interop_IO
@@ -290,6 +301,82 @@ static jint fs_open(JNIEnv * env, jclass thisClass, jstring path, jint perm){
     return (jint)fd;
 }
 
+
+/* ==== ==== ==== ==== NETWORK ==== ==== ==== ==== */
+
+
+/*
+ * Class:     angelos_interop_IO
+ * Method:    net_socket
+ * Signature: (III)I
+ */
+static jint net_socket(JNIEnv * env, jclass thisClass, jint domain, jint type, jint protocol){
+    return (jint)socket(domain, type, protocol);
+}
+
+
+/*
+ * Class:     angelos_interop_IO
+ * Method:    net_connect
+ * Signature: (IISLjava/lang/String;I)I
+ */
+static jint net_connect(JNIEnv * env, jclass thisClass, jint sockfd, jint domain, jshort port, jstring host){
+    struct sockaddr_in server;
+
+    server.sin_family = domain;
+    server.sin_port = port;
+
+    const char *address = (*env)->GetStringUTFChars(env, host, NULL);
+
+    if(inet_pton(domain, address, &server.sin_addr.s_addr) != 1){
+        struct hostent *hp = gethostbyname(address);
+        if(hp == 0){
+            return -1;
+        }
+        memcpy(&server.sin_addr, hp->h_addr, hp->h_length);
+        free(hp);
+    }
+
+    (*env)->ReleaseStringUTFChars(env, host, address);
+    return (jint)connect(sockfd, &server, sizeof(server));
+}
+
+
+/*
+ * Class:     angelos_interop_IO
+ * Method:    net_gethostbyname
+ * Signature: (Ljava/lang/String;I)I
+ */
+
+
+/*
+ * Class:     angelos_interop_IO
+ * Method:    net_bind
+ * Signature: (Ljava/lang/String;I)I
+ */
+
+
+/*
+ * Class:     angelos_interop_IO
+ * Method:    net_getsockname
+ * Signature: (Ljava/lang/String;I)I
+ */
+
+
+/*
+ * Class:     angelos_interop_IO
+ * Method:    net_listen
+ * Signature: (Ljava/lang/String;I)I
+ */
+
+
+/*
+ * Class:     angelos_interop_IO
+ * Method:    net_accept
+ * Signature: (Ljava/lang/String;I)I
+ */
+
+
 static JNINativeMethod funcs[] = {
 	{ "fs_close", "(I)I", (void *)&fs_close },
 	{ "fs_read", "(I[BIJ)J", (void *)&fs_read },
@@ -305,6 +392,9 @@ static JNINativeMethod funcs[] = {
 	{ "fs_readdir", "(J)Langelos/io/FileSystem$FileEntry;", (void *)&fs_readdir },
 	{ "fs_closedir", "(J)I", (void *)&fs_closedir },
 	{ "fs_open", "(Ljava/lang/String;I)I", (void *)&fs_open },
+
+	{ "net_socket", "(III)I", (void *)&net_socket },
+	{ "net_connect", "(IISLjava/lang/String;I)I", (void *)&net_connect },
 };
 
 #define CURRENT_JNI JNI_VERSION_1_6
