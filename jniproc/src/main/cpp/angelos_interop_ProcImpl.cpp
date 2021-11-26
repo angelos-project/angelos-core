@@ -16,6 +16,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
+#include <string.h>
+#include <errno.h>
 
 #ifndef _Included_angelos_interop_IO
 #define _Included_angelos_interop_IO
@@ -72,8 +74,27 @@ static jboolean pr_signal(JNIEnv * env, jclass thisClass, jint signum){
 }
 
 
+/*
+ * Class:     angelos_interop_Proc
+ * Method:    pr_error
+ * Signature: ()Ljava/lang/String;
+ */
+static jstring pr_error(JNIEnv * env, jclass thisClass){
+    if (errno == 0)
+        return NULL;
+
+    unsigned char* target = strerror(errno);
+    jstring target_str = (*env)->NewStringUTF(env,target);
+    free(target);
+    errno = 0;
+
+    return target_str;
+}
+
+
 static JNINativeMethod funcs[] = {
 	{ "pr_signal", "(I)Z", (void *)&pr_signal },
+	{ "pr_error", "()Ljava/lang/String;", (void *)&pr_error },
 };
 
 #define CURRENT_JNI JNI_VERSION_1_6

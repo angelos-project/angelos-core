@@ -15,6 +15,7 @@
 package angelos.interop
 
 import angelos.io.FileSystem
+import angelos.io.net.Socket
 import angelos.nio.Buffer
 
 internal expect class IO {
@@ -36,5 +37,13 @@ internal expect class IO {
         inline fun readDir(dir: Long): FileSystem.FileEntry
         inline fun closeDir(dir: Long): Boolean
         inline fun openFile(path: String, option: Int): Int
+
+        inline fun serverOpen(domain: Socket.Family, type: Socket.Type, protocol: Int): Int
+        inline fun serverListen(sock: Int, host: String, port: Short, domain: Socket.Family, conn: Int): Int
+        inline fun serverHandle()
+        inline fun serverClose()
+
+        inline fun clientOpen()
+        inline fun clientClose()
     }
 }

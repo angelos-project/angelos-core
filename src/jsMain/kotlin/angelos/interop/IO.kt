@@ -14,6 +14,7 @@
  */
 package angelos.interop
 
+import angelos.io.net.Socket
 import angelos.nio.Buffer
 import angelos.io.FileSystem as RealFS
 
@@ -39,6 +40,13 @@ internal actual class IO {
         actual inline fun readDir(dir: Long): RealFS.FileEntry {TODO("Not yet implemented")}
         actual inline fun closeDir(dir: Long): Boolean {TODO("Not yet implemented")}
         actual inline fun openFile(path: String, option: Int): Int {TODO("Not yet implemented")}
+
+        actual inline fun serverOpen(domain: Socket.Family, type: Socket.Type, protocol: Int): Int {TODO("Not yet implemented")}
+        actual inline fun serverListen(sock: Int, host: String, port: Short, domain: Socket.Family, conn: Int): Int {TODO("Not yet implemented")}
+        actual inline fun serverHandle() {TODO("Not yet implemented")}
+        actual inline fun serverClose() {TODO("Not yet implemented")}
+        actual inline fun clientOpen() {TODO("Not yet implemented")}
+        actual inline fun clientClose() {TODO("Not yet implemented")}
 
     }
 }

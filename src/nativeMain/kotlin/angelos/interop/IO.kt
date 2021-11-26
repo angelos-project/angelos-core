@@ -17,6 +17,7 @@ package angelos.interop
 import angelos.nio.Buffer
 import angelos.io.*
 import angelos.io.FileSystem
+import angelos.io.net.Socket
 import kotlinx.cinterop.*
 import platform.posix.*
 
@@ -114,6 +115,26 @@ internal actual class IO {
             if (stat64(path, buffer.ptr) != 0)
                 throw FileNotFoundException("File not found.\n$path")
             return buffer
+        }
+
+        actual inline fun serverOpen(domain: Socket.Family, type: Socket.Type, protocol: Int): Int {
+            TODO("Not yet implemented")
+        }
+
+        actual inline fun serverListen(sock: Int, host: String, port: Short, domain: Socket.Family, conn: Int): Int {
+            TODO("Not yet implemented")
+        }
+
+        actual inline fun serverHandle() {
+        }
+
+        actual inline fun serverClose() {
+        }
+
+        actual inline fun clientOpen() {
+        }
+
+        actual inline fun clientClose() {
         }
     }
 }

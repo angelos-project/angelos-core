@@ -29,6 +29,11 @@ actual class Proc: AbstractProc() {
          @JvmStatic
          external fun pr_signal(signum: Int): Boolean
 
+         actual fun getErrorString(): String = pr_error() ?: ""
+
+         @JvmStatic
+         external fun pr_error(): String?
+
          init {
              System.loadLibrary("jniproc")
          }

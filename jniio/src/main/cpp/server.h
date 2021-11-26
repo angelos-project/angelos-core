@@ -12,16 +12,28 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.io.signal
+#include <sys/socket.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <netinet/in.h>
+#include <errno.h>
 
-import kotlinx.coroutines.channels.Channel
 
-open class SignalHandler internal constructor(
-    val signals: List<Int>,
-    private val queue: Channel<Int> = Channel()
-) {
-    fun send(signum: Int) = suspend { queue.send(signum) }
+#ifndef _Included_angelos_interop_IO_server
+#define _Included_angelos_interop_IO_server
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+#define MAXBUFLEN 100
+
+
+int server_open(int domain, int type, int protocol);
+int server_listen(int sockfd, const char * host, short port, int domain, int max_conn);
+
+
+#ifdef __cplusplus
 }
-
-// http://www.qnx.com/developers/docs/qnx_4.25_docs/tcpip50/prog_guide/sock_ipc_tut.html
-// http://www.cs.tau.ac.il/~eddiea/samples/Signal-Driven/udp-signal-driven-server.c
+#endif
+#endif

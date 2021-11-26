@@ -21,5 +21,9 @@ actual class Proc: AbstractProc() {
             TODO("Not yet implemented")
         }
 
+        actual fun getErrorString(): String {
+            TODO("Not yet implemented")
+        }
+
     }
 }

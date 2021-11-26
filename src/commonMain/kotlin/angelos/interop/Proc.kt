@@ -38,5 +38,7 @@ expect class Proc: AbstractProc {
     companion object{
 
         fun registerInterrupt(signum: Int)
+
+        fun getErrorString(): String
     }
 }

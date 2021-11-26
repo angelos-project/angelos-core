@@ -18,6 +18,7 @@ import angelos.io.FileSystem
 import angelos.io.FileNotFoundException
 import angelos.io.IOException
 import angelos.io.NotLinkException
+import angelos.io.net.Socket
 import angelos.nio.Buffer
 import angelos.nio.ByteDirectBuffer
 import angelos.nio.ByteHeapBuffer
@@ -158,5 +159,30 @@ internal actual class IO {
         init {
             System.loadLibrary("jniio")
         }
+
+        actual inline fun serverOpen(domain: Socket.Family, type: Socket.Type, protocol: Int): Int = server_open(domain.ordinal, type.ordinal, protocol)
+
+        actual inline fun serverListen(sock: Int, host: String, port: Short, domain: Socket.Family, conn: Int): Int = server_listen(sock, host, port, domain.ordinal, conn)
+
+        actual inline fun serverHandle() {
+            TODO("Not yet implemented")
+        }
+
+        actual inline fun serverClose() {
+            TODO("Not yet implemented")
+        }
+
+        actual inline fun clientOpen() {
+            TODO("Not yet implemented")
+        }
+
+        actual inline fun clientClose() {
+            TODO("Not yet implemented")
+        }
+
+        @JvmStatic
+        private external fun server_open(domain: Int, type: Int, protocol: Int): Int
+
+        private external fun server_listen(sockfd: Int, host: String, port: Short, domain: Int, max_conn: Int): Int
     }
 }

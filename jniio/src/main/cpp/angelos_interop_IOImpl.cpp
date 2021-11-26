@@ -28,6 +28,8 @@
 
 #include <string.h>
 
+#include "server.h"
+
 #ifndef _Included_angelos_interop_IO
 #define _Included_angelos_interop_IO
 #ifdef __cplusplus
@@ -302,6 +304,43 @@ static jint fs_open(JNIEnv * env, jclass thisClass, jstring path, jint perm){
 }
 
 
+/* ==== ==== ==== ==== SERVER ==== ==== ==== ==== */
+
+
+/*
+ * Class:     angelos_interop_IO
+ * Method:    server_open
+ * Signature: (III)I
+ */
+static jint server1_open(JNIEnv * env, jclass thisClass, jint domain, jint type, jint protocol){
+    return server_open(domain, type, protocol);
+}
+
+
+/*
+ * Class:     angelos_interop_IO
+ * Method:    server_listen
+ * Signature: (ILjava/lang/String;sI)I
+ */
+static jint server1_listen(JNIEnv * env, jclass thisClass, jint sockfd, jstring host, jshort port, int domain, jint max_conn){
+    const char *name = (*env)->GetStringUTFChars(env, host, NULL);
+    int err = server_listen(sockfd, name, port, domain, max_conn);
+    (*env)->ReleaseStringUTFChars(env, host, name);
+    return err;
+}
+
+
+static jint server_close(JNIEnv * env, jclass thisClass){
+}
+
+
+static jint server_handle(JNIEnv * env, jclass thisClass){
+}
+
+
+/* ==== ==== ==== ==== CLIENT ==== ==== ==== ==== */
+
+
 /* ==== ==== ==== ==== NETWORK ==== ==== ==== ==== */
 
 
@@ -318,9 +357,9 @@ static jint net_socket(JNIEnv * env, jclass thisClass, jint domain, jint type, j
 /*
  * Class:     angelos_interop_IO
  * Method:    net_connect
- * Signature: (IISLjava/lang/String;I)I
+ * Signature: (ILjava/lang/String;SI)I
  */
-static jint net_connect(JNIEnv * env, jclass thisClass, jint sockfd, jint domain, jshort port, jstring host){
+static jint net_connect(JNIEnv * env, jclass thisClass, jint sockfd, jstring host, jshort port, jint domain){
     struct sockaddr_in server;
 
     server.sin_family = domain;
@@ -393,8 +432,8 @@ static JNINativeMethod funcs[] = {
 	{ "fs_closedir", "(J)I", (void *)&fs_closedir },
 	{ "fs_open", "(Ljava/lang/String;I)I", (void *)&fs_open },
 
-	{ "net_socket", "(III)I", (void *)&net_socket },
-	{ "net_connect", "(IISLjava/lang/String;I)I", (void *)&net_connect },
+	{ "server_open", "(III)I", (void *)&server1_open },
+	{ "server_listen", "(ILjava/lang/String;SI)I", (void *)&server1_listen },
 };
 
 #define CURRENT_JNI JNI_VERSION_1_6

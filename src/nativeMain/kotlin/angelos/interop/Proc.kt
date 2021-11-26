@@ -59,5 +59,14 @@ actual class Proc: AbstractProc () {
         actual fun registerInterrupt(signum: Int) {
             sigaction(signum, sigActionData.ptr as CValuesRef<sigaction>, null)
         }
+
+        actual fun getErrorString(): String {
+            if (errno == 0)
+                return ""
+
+            val message = strerror(errno).toString()
+            // errno = 0
+            return message
+        }
     }
 }
