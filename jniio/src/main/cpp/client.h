@@ -12,30 +12,26 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-#include <sys/socket.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <netinet/in.h>
-#include <errno.h>
-
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <netdb.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 
-#ifndef _Included_angelos_interop_IO_server
-#define _Included_angelos_interop_IO_server
+#ifndef _Included_angelos_interop_IO_client
+#define _Included_angelos_interop_IO_client
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 
-#define MAXBUFLEN 100
-
-
-int server_open(int domain, int type, int protocol);
-int server_listen(int sockfd, const char * host, short port, int domain, int max_conn);
+int client_connect(const char * host, short port, int domain, int type, int protocol);
+int client_close(int sockfd);
 
 
 #ifdef __cplusplus

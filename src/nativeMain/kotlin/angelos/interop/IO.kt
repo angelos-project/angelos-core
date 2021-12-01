@@ -131,7 +131,8 @@ internal actual class IO {
         actual inline fun serverClose() {
         }
 
-        actual inline fun clientOpen() {
+        actual inline fun clientOpen(host: String, port: Short, domain: Socket.Family, type: Socket.Type, protocol: Int): Int {
+            TODO("Not yet implemented")
         }
 
         actual inline fun clientClose() {

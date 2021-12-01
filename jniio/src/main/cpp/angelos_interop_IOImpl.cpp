@@ -28,6 +28,7 @@
 
 #include <string.h>
 
+#include "client.h"
 #include "server.h"
 
 #ifndef _Included_angelos_interop_IO
@@ -341,79 +342,20 @@ static jint server_handle(JNIEnv * env, jclass thisClass){
 /* ==== ==== ==== ==== CLIENT ==== ==== ==== ==== */
 
 
+/*
+ * Class:     angelos_interop_IO
+ * Method:    client_connect
+ * Signature: (Ljava/lang/String;sIII)I
+ */
+static jint client1_connect(JNIEnv * env, jclass thisClass, jstring host, jshort port, jint domain, jint type, jint protocol){
+    const char *name = (*env)->GetStringUTFChars(env, host, NULL);
+    int err = client_connect(name, port, domain, type, protocol);
+    (*env)->ReleaseStringUTFChars(env, host, name);
+    return err;
+}
+
+
 /* ==== ==== ==== ==== NETWORK ==== ==== ==== ==== */
-
-
-/*
- * Class:     angelos_interop_IO
- * Method:    net_socket
- * Signature: (III)I
- */
-static jint net_socket(JNIEnv * env, jclass thisClass, jint domain, jint type, jint protocol){
-    return (jint)socket(domain, type, protocol);
-}
-
-
-/*
- * Class:     angelos_interop_IO
- * Method:    net_connect
- * Signature: (ILjava/lang/String;SI)I
- */
-static jint net_connect(JNIEnv * env, jclass thisClass, jint sockfd, jstring host, jshort port, jint domain){
-    struct sockaddr_in server;
-
-    server.sin_family = domain;
-    server.sin_port = port;
-
-    const char *address = (*env)->GetStringUTFChars(env, host, NULL);
-
-    if(inet_pton(domain, address, &server.sin_addr.s_addr) != 1){
-        struct hostent *hp = gethostbyname(address);
-        if(hp == 0){
-            return -1;
-        }
-        memcpy(&server.sin_addr, hp->h_addr, hp->h_length);
-        free(hp);
-    }
-
-    (*env)->ReleaseStringUTFChars(env, host, address);
-    return (jint)connect(sockfd, &server, sizeof(server));
-}
-
-
-/*
- * Class:     angelos_interop_IO
- * Method:    net_gethostbyname
- * Signature: (Ljava/lang/String;I)I
- */
-
-
-/*
- * Class:     angelos_interop_IO
- * Method:    net_bind
- * Signature: (Ljava/lang/String;I)I
- */
-
-
-/*
- * Class:     angelos_interop_IO
- * Method:    net_getsockname
- * Signature: (Ljava/lang/String;I)I
- */
-
-
-/*
- * Class:     angelos_interop_IO
- * Method:    net_listen
- * Signature: (Ljava/lang/String;I)I
- */
-
-
-/*
- * Class:     angelos_interop_IO
- * Method:    net_accept
- * Signature: (Ljava/lang/String;I)I
- */
 
 
 static JNINativeMethod funcs[] = {
@@ -433,7 +375,8 @@ static JNINativeMethod funcs[] = {
 	{ "fs_open", "(Ljava/lang/String;I)I", (void *)&fs_open },
 
 	{ "server_open", "(III)I", (void *)&server1_open },
-	{ "server_listen", "(ILjava/lang/String;SI)I", (void *)&server1_listen },
+	{ "server_listen", "(ILjava/lang/String;SII)I", (void *)&server1_listen },
+	{ "client_connect", "(Ljava/lang/String;SIII)I", (void *)&client1_connect },
 };
 
 #define CURRENT_JNI JNI_VERSION_1_6

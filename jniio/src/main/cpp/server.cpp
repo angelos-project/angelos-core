@@ -31,8 +31,17 @@ int server_open(int domain, int type, int protocol) {
 int server_listen(int sockfd, const char * host, short port, int domain, int max_conn) {
     struct sockaddr_in server;
     server.sin_family = domain;
-    server.sin_addr.s_addr = INADDR_ANY;
-    server.sin_port = 0;
+    server.sin_port = htons(port);
+
+
+    if(inet_pton(domain, host, &server.sin_addr.s_addr) != 1){
+        struct hostent *hp = gethostbyname(host);
+        if(hp == 0){
+            return -1;
+        }
+        memcpy(&server.sin_addr, hp->h_addr, hp->h_length);
+        free(hp);
+    }
 
     if (bind(sockfd, (struct sockaddr *)&server, sizeof(server)))
         return errno;

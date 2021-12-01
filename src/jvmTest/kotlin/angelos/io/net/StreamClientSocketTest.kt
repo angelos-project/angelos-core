@@ -16,33 +16,17 @@ package angelos.io.net
 
 import org.junit.Test
 
-import org.junit.Assert.*
-
-class StreamServerSocketTest {
+class StreamClientSocketTest {
 
     @Test
-    fun getHost() {
-    }
-
-    @Test
-    fun getPort() {
-    }
-
-    @Test
-    fun open() {
-        val socket = StreamServerSocket("127.0.0.1", 80)
-        socket.open()
-    }
-
-    @Test
-    fun listen() {
-    }
-
-    @Test
-    fun handle() {
+    fun connect() {
+        val socket = StreamClientSocket("127.0.0.1", 80)
+        socket.connect()
+        println(socket.sock)
     }
 
     @Test
     fun close() {
+
     }
 }

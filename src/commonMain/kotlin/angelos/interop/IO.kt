@@ -43,7 +43,7 @@ internal expect class IO {
         inline fun serverHandle()
         inline fun serverClose()
 
-        inline fun clientOpen()
+        inline fun clientOpen(host: String, port: Short, domain: Socket.Family, type: Socket.Type, protocol: Int): Int
         inline fun clientClose()
     }
 }

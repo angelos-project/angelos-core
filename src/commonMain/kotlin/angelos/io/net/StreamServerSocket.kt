@@ -16,7 +16,6 @@ package angelos.io.net
 
 import angelos.interop.IO
 import angelos.io.IOException
-import angelos.io.signal.Signal
 import kotlinx.coroutines.sync.withLock
 
 class StreamServerSocket(host: String, port: Short) : ServerSocket(host, port) {
@@ -24,14 +23,14 @@ class StreamServerSocket(host: String, port: Short) : ServerSocket(host, port) {
     override fun open() {
         suspend {
             globalMutex.withLock {
-                sock = IO.serverOpen(Family.INET, Type.STREAM, 0)
-                if (sock == -1)
+                _sock = IO.serverOpen(Family.INET, Type.STREAM, 0)
+                if (_sock == -1)
                     throw IOException("Failed to open a new socket and subscribe signals to process.")
 
                 startup()
                 open(this)
 
-                val err = IO.serverListen(sock, host, port, Family.INET, 10)
+                val err = IO.serverListen(_sock, host, port, Family.INET, 10)
                 if (err != 0)
                     throw IOException("Failed to bind and listen on socket with port $port.")
             }

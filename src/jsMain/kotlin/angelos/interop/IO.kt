@@ -45,7 +45,7 @@ internal actual class IO {
         actual inline fun serverListen(sock: Int, host: String, port: Short, domain: Socket.Family, conn: Int): Int {TODO("Not yet implemented")}
         actual inline fun serverHandle() {TODO("Not yet implemented")}
         actual inline fun serverClose() {TODO("Not yet implemented")}
-        actual inline fun clientOpen() {TODO("Not yet implemented")}
+        actual inline fun clientOpen(host: String, port: Short, domain: Socket.Family, type: Socket.Type, protocol: Int): Int {TODO("Not yet implemented")}
         actual inline fun clientClose() {TODO("Not yet implemented")}
 
     }

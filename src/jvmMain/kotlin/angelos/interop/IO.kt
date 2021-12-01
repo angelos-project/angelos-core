@@ -156,13 +156,10 @@ internal actual class IO {
         @JvmStatic
         private external fun fs_closedir(dir: Long): Int
 
-        init {
-            System.loadLibrary("jniio")
-        }
 
-        actual inline fun serverOpen(domain: Socket.Family, type: Socket.Type, protocol: Int): Int = server_open(domain.ordinal, type.ordinal, protocol)
+        actual inline fun serverOpen(domain: Socket.Family, type: Socket.Type, protocol: Int): Int = server_open(domain.family, type.type, protocol)
 
-        actual inline fun serverListen(sock: Int, host: String, port: Short, domain: Socket.Family, conn: Int): Int = server_listen(sock, host, port, domain.ordinal, conn)
+        actual inline fun serverListen(sock: Int, host: String, port: Short, domain: Socket.Family, conn: Int): Int = server_listen(sock, host, port, domain.family, conn)
 
         actual inline fun serverHandle() {
             TODO("Not yet implemented")
@@ -172,9 +169,7 @@ internal actual class IO {
             TODO("Not yet implemented")
         }
 
-        actual inline fun clientOpen() {
-            TODO("Not yet implemented")
-        }
+        actual inline fun clientOpen(host: String, port: Short, domain: Socket.Family, type: Socket.Type, protocol: Int): Int = client_connect(host, port, domain.family, type.type, protocol)
 
         actual inline fun clientClose() {
             TODO("Not yet implemented")
@@ -183,6 +178,14 @@ internal actual class IO {
         @JvmStatic
         private external fun server_open(domain: Int, type: Int, protocol: Int): Int
 
+        @JvmStatic
         private external fun server_listen(sockfd: Int, host: String, port: Short, domain: Int, max_conn: Int): Int
+
+        @JvmStatic
+        private external fun client_connect(host: String, port: Short, domain: Int, type: Int, protocol: Int): Int
+
+        init {
+            System.loadLibrary("jniio")
+        }
     }
 }

@@ -22,20 +22,22 @@ import kotlin.jvm.JvmStatic
 import kotlin.properties.Delegates
 
 open class Socket(val host: String, val port: Short) {
-    protected var sock: Int = 0
+    protected var _sock: Int = 0
+    val sock: Int
+        get() = _sock
 
     init {
     }
 
     protected fun isPortAvailable(port: Short) = port in ports
 
-    enum class Family (family: Int) {
+    enum class Family (val family: Int) {
         UNIX(1),
         INET(2),
         INET6(10),
     }
 
-    enum class Type(type: Int) {
+    enum class Type(val type: Int) {
         STREAM(1),
         DATAGRAM(2),
     }
@@ -64,11 +66,11 @@ open class Socket(val host: String, val port: Short) {
         protected fun open(socket: Socket) {
             if (socket.port in ports)
                 throw IOException("Port $socket.port is already reserved.")
-            if (socket.sock in sockets)
+            if (socket._sock in sockets)
                 throw IOException("Socket $socket.sock is already in use.")
 
             ports[socket.port] = socket
-            sockets[socket.sock] = socket
+            sockets[socket._sock] = socket
         }
 
         @JvmStatic
