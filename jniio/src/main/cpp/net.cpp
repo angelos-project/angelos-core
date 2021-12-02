@@ -12,15 +12,4 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.interop
-
-actual class Proc: AbstractProc() {
-    actual companion object {
-        actual var errNum: Int = 0
-        actual var errMsg: String = ""
-
-        actual fun getError(): SystemError { TODO("Not yet implemented") }
-
-        actual fun registerInterrupt(signum: Int) { TODO("Not yet implemented") }
-    }
-}
+#include "net.h"

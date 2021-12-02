@@ -26,3 +26,4 @@ open class SignalHandler internal constructor(
 // http://www.qnx.com/developers/docs/qnx_4.25_docs/tcpip50/prog_guide/sock_ipc_tut.html
 // http://www.cs.tau.ac.il/~eddiea/samples/Signal-Driven/udp-signal-driven-server.c
 // https://www.softprayog.in/programming/network-socket-programming-using-tcp-in-c
+// https://gist.github.com/richiejp/1590344

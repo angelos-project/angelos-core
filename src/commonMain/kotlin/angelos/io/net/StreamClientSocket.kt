@@ -15,19 +15,16 @@
 package angelos.io.net
 
 import angelos.interop.IO
+import angelos.interop.Proc
 import angelos.io.IOException
 import kotlinx.coroutines.sync.withLock
 
 class StreamClientSocket(host: String, port: Short) : ClientSocket(host, port) {
-    fun connect() {
-        //suspend {
-        //    globalMutex.withLock {
-                _sock = IO.clientOpen(host, port, Family.INET, Type.STREAM, 0)
-                if (_sock == -1)
-                    throw IOException("Failed to open a new socket and connect to server.")
-       //     }
-       // }
-    }
+    fun connect() = suspend {globalMutex.withLock {
+        _sock = raise(IO.clientOpen(host, port, Family.INET, Type.STREAM, 0))
+        startup()
+        open(this)
+    }}
 
     fun close() {
         TODO("Not yet implemented")

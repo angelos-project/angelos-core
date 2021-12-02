@@ -25,6 +25,16 @@
 extern "C" {
 #endif
 
+
+void set_error(JNIEnv * env) {
+    jclass proc = (*env)->FindClass(env, "angelos/interop/Proc$Companion");
+    jfieldID err_num = (*env)->GetStaticFieldID(env, proc, "errNum", "I");
+    jfieldID err_msg = (*env)->GetStaticFieldID(env, proc, "errMsg", "Ljava/lang/String;");
+    (*env)->SetStaticIntField(env, proc, err_num, errno);
+    (*env)->SetStaticIntField(env, proc, err_msg, (*env)->NewStringUTF(env, strerror(errno)));
+}
+
+
 static const char *JNIT_CLASS = "angelos/interop/Proc";
 
 
@@ -79,7 +89,7 @@ static jboolean pr_signal(JNIEnv * env, jclass thisClass, jint signum){
  * Method:    pr_error
  * Signature: ()Ljava/lang/String;
  */
-static jstring pr_error(JNIEnv * env, jclass thisClass){
+/*static jstring pr_error(JNIEnv * env, jclass thisClass){
     if (errno == 0)
         return NULL;
 
@@ -89,12 +99,12 @@ static jstring pr_error(JNIEnv * env, jclass thisClass){
     errno = 0;
 
     return target_str;
-}
+}*/
 
 
 static JNINativeMethod funcs[] = {
 	{ "pr_signal", "(I)Z", (void *)&pr_signal },
-	{ "pr_error", "()Ljava/lang/String;", (void *)&pr_error },
+	//{ "pr_error", "()Ljava/lang/String;", (void *)&pr_error },
 };
 
 #define CURRENT_JNI JNI_VERSION_1_6

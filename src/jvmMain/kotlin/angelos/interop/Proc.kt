@@ -21,6 +21,15 @@ package angelos.interop
 
 actual class Proc: AbstractProc() {
      actual companion object {
+         actual var errNum: Int = 0
+         actual var errMsg: String = ""
+
+         actual fun getError(): SystemError {
+             val err = SystemError(errNum, errMsg)
+             errNum = 0
+             errMsg = ""
+             return err
+         }
 
          actual fun registerInterrupt(signum: Int) {
              pr_signal(signum)
@@ -28,11 +37,6 @@ actual class Proc: AbstractProc() {
 
          @JvmStatic
          external fun pr_signal(signum: Int): Boolean
-
-         actual fun getErrorString(): String = pr_error() ?: ""
-
-         @JvmStatic
-         external fun pr_error(): String?
 
          init {
              System.loadLibrary("jniproc")

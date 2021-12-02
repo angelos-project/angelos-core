@@ -1,5 +1,6 @@
 plugins {
-    kotlin("multiplatform") version "1.5.31"
+    kotlin("multiplatform") version "1.6.0"
+    //kotlin("multiplatform") version "1.5.31"
 }
 
 group = "angelos.nio"

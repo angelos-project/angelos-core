@@ -30,12 +30,14 @@
 
 #include "client.h"
 #include "server.h"
+#include "err.h"
 
 #ifndef _Included_angelos_interop_IO
 #define _Included_angelos_interop_IO
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 static const char *JNIT_CLASS = "angelos/interop/IO";
 
@@ -48,7 +50,7 @@ static const char *JNIT_CLASS = "angelos/interop/IO";
  * Method:    fs_close
  * Signature: (I)I
  */
-static jint fs_close(JNIEnv * env, jclass thisClass, jint fd){
+static jint fs_close(JNIEnv * env, jclass thisClass, jint fd) {
     return (jint)close((int)fd);
 }
 
@@ -57,7 +59,7 @@ static jint fs_close(JNIEnv * env, jclass thisClass, jint fd){
  * Method:    fs_read
  * Signature: (I[BIJ)J
  */
-static jlong fs_read(JNIEnv * env, jclass thisClass, jint fd, jbyteArray output, jint index, jlong count){
+static jlong fs_read(JNIEnv * env, jclass thisClass, jint fd, jbyteArray output, jint index, jlong count) {
     jsize size = (*env)->GetArrayLength(env, output);
     unsigned char* buf = (*env)->GetByteArrayElements(env, output, NULL);
     if (size < count)
@@ -75,7 +77,7 @@ static jlong fs_read(JNIEnv * env, jclass thisClass, jint fd, jbyteArray output,
  * Method:    fs_pread
  * Signature: (IJIJJ)J
  */
-static jlong fs_pread(JNIEnv * env, jclass thisClass, jint fd, jlong output, jint index, jlong count, jlong size){
+static jlong fs_pread(JNIEnv * env, jclass thisClass, jint fd, jlong output, jint index, jlong count, jlong size) {
     void* buf = (void*)output+index;
     if (size < (index + count))
         count = size;
@@ -88,7 +90,7 @@ static jlong fs_pread(JNIEnv * env, jclass thisClass, jint fd, jlong output, jin
  * Method:    fs_write
  * Signature: (I[BIJ)J
  */
-static jlong fs_write(JNIEnv * env, jclass thisClass, jint fd, jbyteArray input, jint index, jlong count){
+static jlong fs_write(JNIEnv * env, jclass thisClass, jint fd, jbyteArray input, jint index, jlong count) {
     unsigned char* buf = malloc((int)count);
 
     (*env)->GetByteArrayRegion(env, input, index, count, (jbyte*)buf);
@@ -103,7 +105,7 @@ static jlong fs_write(JNIEnv * env, jclass thisClass, jint fd, jbyteArray input,
  * Method:    fs_pwrite
  * Signature: (IJIJJ)J
  */
-static jlong fs_pwrite(JNIEnv * env, jclass thisClass, jint fd, jlong input, jint index, jlong count, jlong size){
+static jlong fs_pwrite(JNIEnv * env, jclass thisClass, jint fd, jlong input, jint index, jlong count, jlong size) {
     void* buf = (void*)input+index;
     if (size < (index + count))
         count = size;
@@ -116,7 +118,7 @@ static jlong fs_pwrite(JNIEnv * env, jclass thisClass, jint fd, jlong input, jin
  * Method:    fs_lseek
  * Signature: (IJI)J
  */
-static jlong fs_lseek(JNIEnv * env, jclass thisClass, jint fd, jlong offset, jint whence){
+static jlong fs_lseek(JNIEnv * env, jclass thisClass, jint fd, jlong offset, jint whence) {
     return (jlong)lseek((int)fd, (off_t)offset, (int)whence);
 }
 
@@ -125,7 +127,7 @@ static jlong fs_lseek(JNIEnv * env, jclass thisClass, jint fd, jlong offset, jin
  * Method:    fs_access
  * Signature: (Ljava/lang/String;I)I
  */
-static jint fs_access(JNIEnv * env, jclass thisClass, jstring path, jint amode){
+static jint fs_access(JNIEnv * env, jclass thisClass, jstring path, jint amode) {
     const char *buf = (*env)->GetStringUTFChars(env, path, NULL);
     int result = access(buf, (int)amode);
     (*env)->ReleaseStringUTFChars(env, path, buf);
@@ -137,7 +139,7 @@ static jint fs_access(JNIEnv * env, jclass thisClass, jstring path, jint amode){
  * Method:    fs_filetype
  * Signature: (Ljava/lang/String;)I
  */
-static jint fs_filetype(JNIEnv * env, jclass thisClass, jstring path){
+static jint fs_filetype(JNIEnv * env, jclass thisClass, jstring path) {
     const char *path_buf = (*env)->GetStringUTFChars(env, path, NULL);
     struct stat* file_stat = malloc(sizeof(struct stat));
     int success = lstat(path_buf, file_stat);
@@ -171,7 +173,7 @@ static jint fs_filetype(JNIEnv * env, jclass thisClass, jstring path){
  * Method:    fs_fileinfo
  * Signature: (Ljava/lang/String;)Langelos/io/FileObject/Info;
  */
-static jobject fs_fileinfo(JNIEnv * env, jclass thisClass, jstring path){
+static jobject fs_fileinfo(JNIEnv * env, jclass thisClass, jstring path) {
     const char *path_buf = (*env)->GetStringUTFChars(env, path, NULL);
     struct stat* file_stat = malloc(sizeof(struct stat));
     int success = stat(path_buf, file_stat);
@@ -211,7 +213,7 @@ static jobject fs_fileinfo(JNIEnv * env, jclass thisClass, jstring path){
  * Method:    fs_readlink
  * Signature: (Ljava/lang/String;)Ljava/lang/String;
  */
-static jstring fs_readlink(JNIEnv * env, jclass thisClass, jstring path){
+static jstring fs_readlink(JNIEnv * env, jclass thisClass, jstring path) {
     const char *link = (*env)->GetStringUTFChars(env, path, NULL);
     unsigned char* target = malloc(4096);
 
@@ -234,7 +236,7 @@ static jstring fs_readlink(JNIEnv * env, jclass thisClass, jstring path){
  * Method:    fs_opendir
  * Signature: (Ljava/lang/String;)J
  */
-static jlong fs_opendir(JNIEnv * env, jclass thisClass, jstring name){
+static jlong fs_opendir(JNIEnv * env, jclass thisClass, jstring name) {
     const char *link = (*env)->GetStringUTFChars(env, name, NULL);
     intptr_t dir = (intptr_t)opendir(link);
     (*env)->ReleaseStringUTFChars(env, name, link);
@@ -246,7 +248,7 @@ static jlong fs_opendir(JNIEnv * env, jclass thisClass, jstring name){
  * Method:    fs_readdir
  * Signature: (J)Langelos/io/Dir$FileEntry;
  */
-static jobject fs_readdir(JNIEnv * env, jclass thisClass, jlong dirp){
+static jobject fs_readdir(JNIEnv * env, jclass thisClass, jlong dirp) {
     struct dirent *entry = readdir((DIR *)dirp);
 
     jclass local_cls = (*env)->FindClass(env, "angelos/io/FileSystem$FileEntry");
@@ -288,7 +290,7 @@ static jobject fs_readdir(JNIEnv * env, jclass thisClass, jlong dirp){
  * Method:    fs_closedir
  * Signature: (J)I
  */
-static jint fs_closedir(JNIEnv * env, jclass thisClass, jlong dirp){
+static jint fs_closedir(JNIEnv * env, jclass thisClass, jlong dirp) {
     return (jint)closedir((DIR *)dirp);
 }
 
@@ -297,7 +299,7 @@ static jint fs_closedir(JNIEnv * env, jclass thisClass, jlong dirp){
  * Method:    fs_open
  * Signature: (Ljava/lang/String;I)I
  */
-static jint fs_open(JNIEnv * env, jclass thisClass, jstring path, jint perm){
+static jint fs_open(JNIEnv * env, jclass thisClass, jstring path, jint perm) {
     const char *buf = (*env)->GetStringUTFChars(env, path, NULL);
     int fd = open(buf, O_CREAT | O_NONBLOCK | (int)perm);
     (*env)->ReleaseStringUTFChars(env, path, buf);
@@ -313,7 +315,7 @@ static jint fs_open(JNIEnv * env, jclass thisClass, jstring path, jint perm){
  * Method:    server_open
  * Signature: (III)I
  */
-static jint server1_open(JNIEnv * env, jclass thisClass, jint domain, jint type, jint protocol){
+static jint server1_open(JNIEnv * env, jclass thisClass, jint domain, jint type, jint protocol) {
     return server_open(domain, type, protocol);
 }
 
@@ -323,7 +325,7 @@ static jint server1_open(JNIEnv * env, jclass thisClass, jint domain, jint type,
  * Method:    server_listen
  * Signature: (ILjava/lang/String;sI)I
  */
-static jint server1_listen(JNIEnv * env, jclass thisClass, jint sockfd, jstring host, jshort port, int domain, jint max_conn){
+static jint server1_listen(JNIEnv * env, jclass thisClass, jint sockfd, jstring host, jshort port, int domain, jint max_conn) {
     const char *name = (*env)->GetStringUTFChars(env, host, NULL);
     int err = server_listen(sockfd, name, port, domain, max_conn);
     (*env)->ReleaseStringUTFChars(env, host, name);
@@ -331,11 +333,11 @@ static jint server1_listen(JNIEnv * env, jclass thisClass, jint sockfd, jstring 
 }
 
 
-static jint server_close(JNIEnv * env, jclass thisClass){
+static jint server_close(JNIEnv * env, jclass thisClass) {
 }
 
 
-static jint server_handle(JNIEnv * env, jclass thisClass){
+static jint server_handle(JNIEnv * env, jclass thisClass) {
 }
 
 
@@ -347,11 +349,12 @@ static jint server_handle(JNIEnv * env, jclass thisClass){
  * Method:    client_connect
  * Signature: (Ljava/lang/String;sIII)I
  */
-static jint client1_connect(JNIEnv * env, jclass thisClass, jstring host, jshort port, jint domain, jint type, jint protocol){
+static jint client1_connect(JNIEnv * env, jclass thisClass, jstring host, jshort port, jint domain, jint type, jint protocol) {
     const char *name = (*env)->GetStringUTFChars(env, host, NULL);
-    int err = client_connect(name, port, domain, type, protocol);
+    int sockfd = client_connect(name, port, domain, type, protocol);
     (*env)->ReleaseStringUTFChars(env, host, name);
-    return err;
+    SET_ERROR(env, sockfd)
+    return sockfd;
 }
 
 
@@ -381,8 +384,7 @@ static JNINativeMethod funcs[] = {
 
 #define CURRENT_JNI JNI_VERSION_1_6
 
-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
-{
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved) {
 	JNIEnv *env;
 	jclass  cls;
 	jint    res;
@@ -403,8 +405,8 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
 	return CURRENT_JNI;
 }
 
-JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void *reserved)
-{
+
+JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void *reserved) {
 	JNIEnv *env;
 	jclass  cls;
 

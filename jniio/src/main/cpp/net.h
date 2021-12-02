@@ -12,18 +12,9 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <netdb.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <unistd.h>
 
-
-#ifndef _Included_angelos_interop_IO_client
-#define _Included_angelos_interop_IO_client
+#ifndef _Included_angelos_interop_IO_net
+#define _Included_angelos_interop_IO_net
 #ifdef __cplusplus
 extern "C" {
 #endif

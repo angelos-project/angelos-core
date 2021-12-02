@@ -12,42 +12,38 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-#include <stdio.h> // debugging
 #include "client.h"
+#include "err.h"
+#include "net.h"
 
 int client_connect(const char * host, short port, int domain, int type, int protocol){
     int sockfd, conn;
     struct hostent *he;
     struct sockaddr_in them; /* connector's address information */
 
+    CLEAR_ERROR()
+
     he = gethostbyname(host);
-    if (he == NULL) {
-        herror("client_connect-gethostbyname");
+    if (he == NULL)
         return -1;
-    }
 
     sockfd = socket(domain, type, protocol);
-    if (sockfd == -1) {
-        perror("client_connect-socket");
+    if (sockfd == -1)
         return -1;
-    }
 
     them.sin_family = domain;
     them.sin_port = port;
     them.sin_addr = *((struct in_addr *) he->h_addr);
     bzero(&(them.sin_zero), 8);
 
-    conn = connect(sockfd, (struct sockaddr *)&them, sizeof(struct sockaddr));
-    if (conn == -1) {
-        printf("%s\n", strerror(errno));
-        perror("client_connect-connect");
+    conn = connect(sockfd, (struct sockaddr *)&them, sizeof(them)); // [Errno 61]
+    if (conn == -1)
         return -1;
-    }
 
     return sockfd;
 }
 
 
-int client_close(int sockfd){
+int client_close(int sockfd) {
 
 }

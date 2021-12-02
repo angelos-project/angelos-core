@@ -14,15 +14,15 @@
  */
 package angelos.io.net
 
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
 
 class StreamClientSocketTest {
 
     @Test
-    fun connect() {
-        val socket = StreamClientSocket("127.0.0.1", 80)
+    fun connect() = runBlocking {
+        val socket = StreamClientSocket("localhost", 80)
         socket.connect()
-        println(socket.sock)
     }
 
     @Test

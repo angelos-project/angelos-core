@@ -13,9 +13,11 @@
  *      Kristoffer Paulsson - initial implementation
  */
 #include "server.h"
+#include "err.h"
 
 
 int server_open(int domain, int type, int protocol) {
+    CLEAR_ERROR()
     int sockfd = socket(domain, type, protocol);
 
     if (fcntl(sockfd,F_SETOWN, getpid()))
@@ -33,6 +35,7 @@ int server_listen(int sockfd, const char * host, short port, int domain, int max
     server.sin_family = domain;
     server.sin_port = htons(port);
 
+    CLEAR_ERROR()
 
     if(inet_pton(domain, host, &server.sin_addr.s_addr) != 1){
         struct hostent *hp = gethostbyname(host);
@@ -66,6 +69,8 @@ int server_handle(int sockfd, const char * buffer) {
 	unsigned int addr_len;
 	struct sockaddr_in 	their_addr;	/* connector's address information	*/
 
+	CLEAR_ERROR()
+
     return recvfrom(sockfd, (void *)buffer, MAXBUFLEN, 0, (struct sockaddr *)&their_addr, &addr_len);
 }
 
@@ -75,6 +80,8 @@ int server_connection_handler(int signal) {
     int sockfd = 0;
     fd_set ready;
     struct timeval to;
+
+    CLEAR_ERROR()
 
     FD_ZERO(&ready);
     FD_SET(sockfd, &ready);

@@ -22,8 +22,14 @@ import platform.posix.*
  * https://kotlinlang.org/docs/mapping-function-pointers-from-c.html#c-function-pointers-in-kotlin
  */
 
+@Suppress("VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL")
 actual class Proc: AbstractProc () {
     actual companion object {
+        actual var errNum: Int = 0
+        actual var errMsg: String = ""
+
+        actual fun getError(): SystemError { TODO("Not yet implemented") }
+
         private val sigHandlerPtr = staticCFunction<Int, CPointer<__siginfo>?, COpaquePointer?, Unit> {
             signum, info, context -> memScoped {
                 val sigs = alloc<sigset_tVar>()
@@ -58,15 +64,6 @@ actual class Proc: AbstractProc () {
 
         actual fun registerInterrupt(signum: Int) {
             sigaction(signum, sigActionData.ptr as CValuesRef<sigaction>, null)
-        }
-
-        actual fun getErrorString(): String {
-            if (errno == 0)
-                return ""
-
-            val message = strerror(errno).toString()
-            // errno = 0
-            return message
         }
     }
 }

@@ -14,6 +14,7 @@
  */
 package angelos.io.net
 
+import angelos.interop.Proc
 import angelos.io.IOException
 import angelos.io.signal.Signal
 import kotlinx.coroutines.channels.Channel
@@ -42,6 +43,14 @@ open class Socket(val host: String, val port: Short) {
         DATAGRAM(2),
     }
 
+    protected inline fun raise(value: Int): Int {
+        if (value == -1)
+            return value
+
+        val err = Proc.getError()
+        throw IOException("[Errno ${err.first}] ${err.second} at ${host}:${port}")
+    }
+
     companion object{
         private var running: Boolean by Delegates.observable(false) { _, _, _ -> }
         private val queue = Channel<Int>()
@@ -65,9 +74,9 @@ open class Socket(val host: String, val port: Short) {
         @JvmStatic
         protected fun open(socket: Socket) {
             if (socket.port in ports)
-                throw IOException("Port $socket.port is already reserved.")
+                throw IOException("Port ${socket.port} is already reserved.")
             if (socket._sock in sockets)
-                throw IOException("Socket $socket.sock is already in use.")
+                throw IOException("Socket ${socket.sock} is already in use.")
 
             ports[socket.port] = socket
             sockets[socket._sock] = socket

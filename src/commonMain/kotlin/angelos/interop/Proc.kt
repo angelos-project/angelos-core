@@ -15,6 +15,7 @@
 package angelos.interop
 
 import angelos.io.signal.Signal
+import kotlin.jvm.JvmStatic
 
 /**
  * How to call Kotlin from outside.
@@ -22,23 +23,28 @@ import angelos.io.signal.Signal
  * https://kotlinlang.org/docs/mapping-function-pointers-from-c.html#c-function-pointers-in-kotlin
  */
 
+typealias SystemError = Pair<Int, String>
 
 abstract class AbstractProc{
+    @Suppress("VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL")
     companion object{
-        @Suppress("VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL")
         internal lateinit var sigHandler: Signal
+
         fun interrupt(signum: Int) {
             sigHandler.handler(signum)
         }
+
     }
 }
 
 
 expect class Proc: AbstractProc {
+    @Suppress("VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL")
     companion object{
+        var errNum: Int
+        var errMsg: String
 
+        fun getError(): SystemError
         fun registerInterrupt(signum: Int)
-
-        fun getErrorString(): String
     }
 }
