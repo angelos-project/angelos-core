@@ -1,6 +1,6 @@
 plugins {
     kotlin("multiplatform") version "1.6.0"
-    //kotlin("multiplatform") version "1.5.31"
+    //kotlin("multiplatform") version "1.5.32"
 }
 
 group = "angelos.nio"
@@ -20,9 +20,9 @@ kotlin {
             systemProperty(
                 "java.library.path",
                 listOf(
-                    file("${project(":jniplatform").buildDir}/lib/main/debug").absolutePath,
-                    file("${project(":jniproc").buildDir}/lib/main/debug").absolutePath,
-                    file("${project(":jniio").buildDir}/lib/main/debug").absolutePath,
+                    file("${project(":jni:platform").buildDir}/lib/main/debug").absolutePath,
+                    file("${project(":jni:proc").buildDir}/lib/main/debug").absolutePath,
+                    file("${project(":jni:io").buildDir}/lib/main/debug").absolutePath,
                 ).joinToString(":") + ":" + System.getProperty("java.library.path")
             )
         }
@@ -58,6 +58,7 @@ kotlin {
         val jvmTest by getting {
             dependencies {
                 implementation("junit:junit:4.13.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
             }
         }
         val jsMain by getting
@@ -68,9 +69,9 @@ kotlin {
 }
 
 tasks.withType(AbstractCompile::class) {
-    dependsOn(":jniplatform:assemble")
-    dependsOn(":jniproc:assemble")
-    dependsOn(":jniio:assemble")
+    dependsOn(":jni:platform:assemble")
+    dependsOn(":jni:proc:assemble")
+    dependsOn(":jni:io:assemble")
 }
 
 // Generate C++ native header file.

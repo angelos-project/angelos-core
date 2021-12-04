@@ -185,7 +185,7 @@ internal actual class IO {
         private external fun client_connect(host: String, port: Short, domain: Int, type: Int, protocol: Int): Int
 
         init {
-            System.loadLibrary("jniio")
+            System.loadLibrary("io")
         }
     }
 }

@@ -14,19 +14,35 @@
  */
 package angelos.io.net
 
+import angelos.io.IOException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
 
+@ExperimentalCoroutinesApi
 class StreamClientSocketTest {
 
     @Test
-    fun connect() = runBlocking {
+    fun run() = runBlockingTest {
+        val host = "localhost"
+        val port = 8080.toShort()
+        val server = StreamServerSocket(host, port)
+        val client = StreamClientSocket(host, port)
+        //server.open()
+        //delay(1000)
+        //client.connect()
+    }
+
+    @Test
+    fun connect() = runBlockingTest {
         val socket = StreamClientSocket("localhost", 80)
         socket.connect()
     }
 
     @Test
     fun close() {
-
+        println("Hello")
     }
 }

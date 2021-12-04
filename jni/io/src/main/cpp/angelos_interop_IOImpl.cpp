@@ -316,7 +316,9 @@ static jint fs_open(JNIEnv * env, jclass thisClass, jstring path, jint perm) {
  * Signature: (III)I
  */
 static jint server1_open(JNIEnv * env, jclass thisClass, jint domain, jint type, jint protocol) {
-    return server_open(domain, type, protocol);
+    int err =  server_open(domain, type, protocol);
+    SET_ERROR(env, err)
+    return err;
 }
 
 
@@ -329,6 +331,7 @@ static jint server1_listen(JNIEnv * env, jclass thisClass, jint sockfd, jstring 
     const char *name = (*env)->GetStringUTFChars(env, host, NULL);
     int err = server_listen(sockfd, name, port, domain, max_conn);
     (*env)->ReleaseStringUTFChars(env, host, name);
+    SET_ERROR(env, err)
     return err;
 }
 

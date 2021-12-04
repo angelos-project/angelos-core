@@ -14,6 +14,7 @@
  */
 package angelos.io.net
 
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -29,9 +30,10 @@ class StreamServerSocketTest {
     }
 
     @Test
-    fun open() {
+    fun open() = runBlockingTest {
         val socket = StreamServerSocket("127.0.0.1", 80)
         socket.open()
+        println(socket.sock)
     }
 
     @Test

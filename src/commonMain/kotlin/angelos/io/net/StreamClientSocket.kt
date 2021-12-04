@@ -15,16 +15,14 @@
 package angelos.io.net
 
 import angelos.interop.IO
-import angelos.interop.Proc
-import angelos.io.IOException
 import kotlinx.coroutines.sync.withLock
 
 class StreamClientSocket(host: String, port: Short) : ClientSocket(host, port) {
-    fun connect() = suspend {globalMutex.withLock {
+    suspend fun connect() = globalMutex.withLock {
         _sock = raise(IO.clientOpen(host, port, Family.INET, Type.STREAM, 0))
         startup()
-        open(this)
-    }}
+        add()
+    }
 
     fun close() {
         TODO("Not yet implemented")

@@ -30,6 +30,16 @@ open class Socket(val host: String, val port: Short) {
     init {
     }
 
+    protected fun add() {
+        if (port in ports)
+            throw IOException("Port ${port} is already reserved.")
+        if (_sock in sockets)
+            throw IOException("Socket ${sock} is already in use.")
+
+        ports[port] = this
+        sockets[_sock] = this
+    }
+
     protected fun isPortAvailable(port: Short) = port in ports
 
     enum class Family (val family: Int) {
@@ -44,7 +54,7 @@ open class Socket(val host: String, val port: Short) {
     }
 
     protected inline fun raise(value: Int): Int {
-        if (value == -1)
+        if (value != -1)
             return value
 
         val err = Proc.getError()
@@ -69,17 +79,6 @@ open class Socket(val host: String, val port: Short) {
                 running = true
                 Signal.register(sigHandler)
             }
-        }
-
-        @JvmStatic
-        protected fun open(socket: Socket) {
-            if (socket.port in ports)
-                throw IOException("Port ${socket.port} is already reserved.")
-            if (socket._sock in sockets)
-                throw IOException("Socket ${socket.sock} is already in use.")
-
-            ports[socket.port] = socket
-            sockets[socket._sock] = socket
         }
 
         @JvmStatic

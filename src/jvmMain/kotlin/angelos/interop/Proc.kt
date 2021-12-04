@@ -39,7 +39,7 @@ actual class Proc: AbstractProc() {
          external fun pr_signal(signum: Int): Boolean
 
          init {
-             System.loadLibrary("jniproc")
+             System.loadLibrary("proc")
          }
      }
 }

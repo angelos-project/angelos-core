@@ -15,7 +15,7 @@
 package angelos.io.net
 
 abstract class ServerSocket(host: String, port: Short) : Socket(host, port) {
-    abstract fun open()
+    abstract suspend fun open()
     abstract fun listen()
     abstract fun handle()
     abstract fun close()

@@ -14,15 +14,17 @@
  */
 package angelos.io
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
 import org.junit.Assert.*
 
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import kotlin.test.assertContains
 
+@ExperimentalCoroutinesApi
 class PhysicalDriveTest {
     lateinit var _tmpDir: java.nio.file.Path
     lateinit var _tmpFile: java.nio.file.Path
@@ -70,27 +72,27 @@ class PhysicalDriveTest {
     fun tmpMissing() = tmpDir().join("missing.tmp")
 
     @Test
-    fun readFile() = runBlocking {
+    fun readFile() = runBlockingTest {
     }
 
     @Test
-    fun writeFile() = runBlocking {
+    fun writeFile() = runBlockingTest {
     }
 
     @Test
-    fun tellFile() = runBlocking {
+    fun tellFile() = runBlockingTest {
     }
 
     @Test
-    fun seekFile() = runBlocking {
+    fun seekFile() = runBlockingTest {
     }
 
     @Test
-    fun closeFile() = runBlocking {
+    fun closeFile() = runBlockingTest {
     }
 
     @Test
-    fun getUser() = runBlocking {
+    fun getUser() = runBlockingTest {
         assertTrue(tmpDir().getDir().getUser() > 0)
         assertTrue(tmpFile().getFile().getUser() > 0)
         assertTrue(tmpLink().getLink().getUser() > 0)
@@ -101,7 +103,7 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun getGroup() = runBlocking {
+    fun getGroup() = runBlockingTest {
         assertTrue(tmpDir().getDir().getGroup() > 0)
         assertTrue(tmpFile().getFile().getGroup() > 0)
         assertTrue(tmpLink().getLink().getGroup() > 0)
@@ -112,7 +114,7 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun getLastAccessed() = runBlocking {
+    fun getLastAccessed() = runBlockingTest {
         assertTrue(tmpDir().getDir().getLastAccessed() > 0)
         assertTrue(tmpFile().getFile().getLastAccessed() > 0)
         assertTrue(tmpLink().getLink().getLastAccessed() > 0)
@@ -123,7 +125,7 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun getLastModified() = runBlocking {
+    fun getLastModified() = runBlockingTest {
         assertTrue(tmpDir().getDir().getLastModified() > 0)
         assertTrue(tmpFile().getFile().getLastModified() > 0)
         assertTrue(tmpLink().getLink().getLastModified() > 0)
@@ -134,7 +136,7 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun getChanged() = runBlocking {
+    fun getChanged() = runBlockingTest {
         assertTrue(tmpDir().getDir().getChanged() > 0)
         assertTrue(tmpFile().getFile().getChanged() > 0)
         assertTrue(tmpLink().getLink().getChanged() > 0)
@@ -145,7 +147,7 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun getCreated() = runBlocking {
+    fun getCreated() = runBlockingTest {
         assertTrue(tmpDir().getDir().getCreated() > 0)
         assertTrue(tmpFile().getFile().getCreated() > 0)
         assertTrue(tmpLink().getLink().getCreated() > 0)
@@ -156,28 +158,28 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun isReadable() = runBlocking {
+    fun isReadable() = runBlockingTest {
         assertTrue(tmpDir().getDir().isReadable())
         assertTrue(tmpFile().getFile().isReadable())
         assertTrue(tmpLink().getLink().isReadable())
     }
 
     @Test
-    fun isWritable() = runBlocking {
+    fun isWritable() = runBlockingTest {
         assertTrue(tmpDir().getDir().isWritable())
         assertTrue(tmpFile().getFile().isWritable())
         assertTrue(tmpLink().getLink().isWritable())
     }
 
     @Test
-    fun isExecutable() = runBlocking {
+    fun isExecutable() = runBlockingTest {
         assertTrue(tmpDir().getDir().isExecutable())
         assertFalse(tmpFile().getFile().isExecutable())
         assertFalse(tmpLink().getLink().isExecutable())
     }
 
     @Test
-    fun exists() = runBlocking {
+    fun exists() = runBlockingTest {
         assertTrue(tmpDir().exists())
         assertTrue(tmpFile().exists())
         assertTrue(tmpLink().exists())
@@ -185,7 +187,7 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun isDir() = runBlocking {
+    fun isDir() = runBlockingTest {
         assertTrue(tmpDir().isDir())
         assertFalse(tmpFile().isDir())
         assertFalse(tmpLink().isDir())
@@ -196,7 +198,7 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun isLink() = runBlocking {
+    fun isLink() = runBlockingTest {
         assertFalse(tmpDir().isLink())
         assertFalse(tmpFile().isLink())
         assertTrue(tmpLink().isLink())
@@ -207,7 +209,7 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun isFile() = runBlocking {
+    fun isFile() = runBlockingTest {
         assertFalse(tmpDir().isFile())
         assertTrue(tmpFile().isFile())
         assertFalse(tmpLink().isFile())
@@ -218,16 +220,16 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun getFileInfo() = runBlocking {
+    fun getFileInfo() = runBlockingTest {
     }
 
     @Test
-    fun getTarget() = runBlocking {
+    fun getTarget() = runBlockingTest {
         assertEquals(tmpLink().getLink().getTarget(), tmpFile().toString())
     }
 
     @Test
-    fun goToDir() = runBlocking {
+    fun goToDir() = runBlockingTest {
         assertExceptionThrown<UnexpectedFileObject>({
             tmpLink().getLink().goToDir()},
             "goToDir method to different type."
@@ -235,7 +237,7 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun goToLink() = runBlocking {
+    fun goToLink() = runBlockingTest {
         assertExceptionThrown<UnexpectedFileObject>({
             tmpLink().getLink().goToLink()},
             "goToLink method to different type."
@@ -243,7 +245,7 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun goToFile() = runBlocking {
+    fun goToFile() = runBlockingTest {
         assertEquals(
             tmpLink().getLink().goToFile().path.toString(),
             tmpFile().getFile().path.toString()
@@ -251,7 +253,7 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun getSize() = runBlocking {
+    fun getSize() = runBlockingTest {
         assertTrue(tmpFile().getFile().getSize() == 0L)
         assertExceptionThrown<FileNotFoundException>({
             tmpMissing().getFile().getSize()},
@@ -260,7 +262,7 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun open() = runBlocking {
+    fun open() = runBlockingTest {
         assertTrue(tmpFile().getFile().open(FileSystem.OpenOption.READ_WRITE) is FileSystem.FileDescriptor)
         assertExceptionThrown<FileNotFoundException>({
             tmpMissing().getFile().open(FileSystem.OpenOption.READ_WRITE)},
@@ -269,7 +271,7 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun getDir() = runBlocking {
+    fun getDir() = runBlockingTest {
         assertTrue(tmpDir().getDir() is FileSystem.Dir)
         assertExceptionThrown<UnexpectedFileObject>({
             tmpLink().getDir()},
@@ -286,7 +288,7 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun getLink() = runBlocking {
+    fun getLink() = runBlockingTest {
         assertExceptionThrown<UnexpectedFileObject>({
             tmpDir().getLink()},
             "getDir method on wrong filetype should trigger UnexpectedFileObject."
@@ -303,7 +305,7 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun getFile() = runBlocking {
+    fun getFile() = runBlockingTest {
         assertExceptionThrown<UnexpectedFileObject>({
             tmpDir().getFile()},
             "getDir method on wrong filetype should trigger UnexpectedFileObject."
@@ -320,23 +322,23 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun openDir() = runBlocking {
+    fun openDir() = runBlockingTest {
     }
 
     @Test
-    fun readDir() = runBlocking {
+    fun readDir() = runBlockingTest {
     }
 
     @Test
-    fun closeDir() = runBlocking {
+    fun closeDir() = runBlockingTest {
     }
 
     @Test
-    fun openFile() = runBlocking {
+    fun openFile() = runBlockingTest {
     }
 
     @Test
-    fun walk() = runBlocking {
+    fun walk() = runBlockingTest {
         val files = mutableListOf<String>()
         tmpDir().getDir().walk().forEach {
             if (it !is FileSystem.Dir || (it is FileSystem.Dir && !it.skip))
@@ -355,7 +357,7 @@ class PhysicalDriveTest {
     }
 
     @Test
-    fun createFileSystem() = runBlocking {
+    fun createFileSystem() = runBlockingTest {
         // Creates a file system instance that is a limited edition object.
         // Tested implicitly in setUp().
     }

@@ -27,3 +27,7 @@ library {
         }
     }
 }
+
+dependencies {
+    implementation(project(":jni:base"))
+}

@@ -11,9 +11,11 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/jniio" />
-            <option value="$PROJECT_DIR$/jniplatform" />
-            <option value="$PROJECT_DIR$/jniproc" />
+            <option value="$PROJECT_DIR$/jni" />
+            <option value="$PROJECT_DIR$/jni/base" />
+            <option value="$PROJECT_DIR$/jni/io" />
+            <option value="$PROJECT_DIR$/jni/platform" />
+            <option value="$PROJECT_DIR$/jni/proc" />
           </set>
         </option>
       </GradleProjectSettings>

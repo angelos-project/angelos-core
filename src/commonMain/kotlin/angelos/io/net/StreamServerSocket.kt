@@ -20,21 +20,11 @@ import kotlinx.coroutines.sync.withLock
 
 class StreamServerSocket(host: String, port: Short) : ServerSocket(host, port) {
 
-    override fun open() {
-        suspend {
-            globalMutex.withLock {
-                _sock = IO.serverOpen(Family.INET, Type.STREAM, 0)
-                if (_sock == -1)
-                    throw IOException("Failed to open a new socket and subscribe signals to process.")
-
-                startup()
-                open(this)
-
-                val err = IO.serverListen(_sock, host, port, Family.INET, 10)
-                if (err != 0)
-                    throw IOException("Failed to bind and listen on socket with port $port.")
-            }
-        }
+    override suspend fun open(): Unit = globalMutex.withLock {
+        _sock = raise(IO.serverOpen(Family.INET, Type.STREAM, 0))
+        startup()
+        add()
+        raise(IO.serverListen(_sock, host, port, Family.INET, 10))
     }
 
     override fun listen() {
