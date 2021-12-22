@@ -16,6 +16,9 @@
             <option value="$PROJECT_DIR$/jni/io" />
             <option value="$PROJECT_DIR$/jni/platform" />
             <option value="$PROJECT_DIR$/jni/proc" />
+            <option value="$PROJECT_DIR$/lib" />
+            <option value="$PROJECT_DIR$/test" />
+            <option value="$PROJECT_DIR$/test/net" />
           </set>
         </option>
       </GradleProjectSettings>

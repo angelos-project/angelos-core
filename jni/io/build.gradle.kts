@@ -1,11 +1,16 @@
 val javaHome = System.getenv("JAVA_HOME")
 
 plugins {
+    base
     `cpp-library`
 }
 
 library {
     binaries.configureEach {
+        base{
+            archivesName.set("jniIo")
+            distsDirectory.set(layout.buildDirectory.dir("lib/main/release/"))
+        }
         val compileTask = compileTask.get()
         compileTask.includes.from("$javaHome/include")
 
