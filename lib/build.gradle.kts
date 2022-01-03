@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version "1.6.0"
+    kotlin("multiplatform") version "1.6.10"
 }
 
 repositories {
@@ -8,12 +8,15 @@ repositories {
 
 kotlin {
     jvm {
+        apply(plugin = "java")
+        /**
+         * JNI libraries subprojects are defined for the Kotlin/JVM.
+         */
         val jniProcPath = "${project(":jni:proc").buildDir}/lib/main/release/stripped"
         val jniPlatformPath = "${project(":jni:platform").buildDir}/lib/main/release/stripped"
         val jniIoPath = "${project(":jni:io").buildDir}/lib/main/release/stripped"
 
-        val processResources = compilations["main"].processResourcesTaskName
-        (tasks[processResources] as ProcessResources).apply {
+        val copyJni by tasks.creating(Sync::class) {
             dependsOn(":jni:platform:assemble")
             dependsOn(":jni:proc:assemble")
             dependsOn(":jni:io:assemble")
@@ -22,12 +25,41 @@ kotlin {
             from(jniPlatformPath)
             from(jniIoPath)
             into("$buildDir/classes/kotlin/jvm/main")
+
+            preserve{
+                include("angelos/**")
+                include("META-INF/**")
+            }
+        }
+
+        /** Libraries subprojects are added as resources. */
+        val processResources = compilations["main"].processResourcesTaskName
+        (tasks[processResources] as ProcessResources).apply {
+            /*dependsOn(":jni:platform:assemble")
+            dependsOn(":jni:proc:assemble")
+            dependsOn(":jni:io:assemble")
+
+            from(jniProcPath)
+            from(jniPlatformPath)
+            from(jniIoPath)
+            into("$buildDir/classes/kotlin/jvm/main")*/
+            dependsOn(copyJni)
+            //outputs.dirs(file("$buildDir/classes/kotlin/jvm/main"))
+        }
+        configure<SourceSetContainer>{
+            named("main"){
+                //listOf("$buildDir/classes/kotlin/jvm/main")
+                runtimeClasspath.forEach { println(it) }
+            }
         }
         compilations.all {
-            kotlinOptions.jvmTarget = "1.8"
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
         }
         testRuns["test"].executionTask.configure {
             useJUnit()
+            /** Libraries are added to the classpath for testing purposes. */
             systemProperty(
                 "java.library.path",
                 listOf(
@@ -67,9 +99,6 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                /*project(":jni:platform")
-                project(":jni:proc")
-                project(":jni:io")*/
             }
         }
         val jvmTest by getting {
@@ -83,22 +112,4 @@ kotlin {
         val nativeMain by getting
         val nativeTest by getting
     }
-
-    /*val angelosCoreJar by configurations.creating {
-        isCanBeConsumed = true
-        isCanBeResolved = false
-        extendsFrom(configurations["implementation"], configurations["runtimeOnly"])
-        //extendsFrom(configurations["jvmMain"])
-    }
-
-    artifacts {
-        add("angelosCoreJar", angelosCoreJar)
-    }*/
-
-    /* configurations {
-        kotlinNativeCompilerPluginClasspath {
-            this.
-        }
-    }*/
 }
-
