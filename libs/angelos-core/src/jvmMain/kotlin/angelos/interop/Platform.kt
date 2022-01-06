@@ -22,7 +22,7 @@ internal actual class Platform {
         private external fun endian(): Boolean
 
         init {
-            System.loadLibrary("platform")
+            System.loadLibrary("jni-platform")
         }
     }
 }

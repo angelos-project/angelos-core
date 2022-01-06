@@ -12,14 +12,14 @@ kotlin {
         /**
          * JNI libraries subprojects are defined for the Kotlin/JVM.
          */
-        val jniProcPath = "${project(":jni:proc").buildDir}/lib/main/release/stripped"
-        val jniPlatformPath = "${project(":jni:platform").buildDir}/lib/main/release/stripped"
-        val jniIoPath = "${project(":jni:io").buildDir}/lib/main/release/stripped"
+        val jniProcPath = "${project(":jni-proc").buildDir}/lib/main/release/stripped"
+        val jniPlatformPath = "${project(":jni-platform").buildDir}/lib/main/release/stripped"
+        val jniIoPath = "${project(":jni-io").buildDir}/lib/main/release/stripped"
 
         val copyJni by tasks.creating(Sync::class) {
-            dependsOn(":jni:platform:assemble")
-            dependsOn(":jni:proc:assemble")
-            dependsOn(":jni:io:assemble")
+            dependsOn(":jni-platform:assemble")
+            dependsOn(":jni-proc:assemble")
+            dependsOn(":jni-io:assemble")
 
             from(jniProcPath)
             from(jniPlatformPath)

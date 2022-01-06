@@ -1,10 +1,30 @@
-include(":jni:base")
-include(":jni:platform") // Shared library returning platform specific information.
-include(":jni:proc") // Shared library for process interrupts.
-include(":jni:io") // Shared library for IO file systems and sockets.
+rootProject.name = "angelos"
 
-include(":lib")
+/**
+ * Interoperability libraries for cinterop and JNI.
+ */
 
-include(":test:net") // Test rig
+include("base")
+project(":base").projectDir = File("iops/base")
 
-rootProject.name = "angelos-core"
+include("jni-io")
+project(":jni-io").projectDir = File("iops/jni-io")
+
+include("jni-platform")
+project(":jni-platform").projectDir = File("iops/jni-platform")
+
+include("jni-proc")
+project(":jni-proc").projectDir = File("iops/jni-proc")
+
+/**
+ * Libraries mainly for commonMain.
+ */
+
+include("angelos-core")
+project(":angelos-core").projectDir = File("libs/angelos-core")
+
+/**
+ * Application projects using the libraries.
+ */
+
+include("")

@@ -34,5 +34,5 @@ library {
 }
 
 dependencies {
-    implementation(project(":jni:base"))
+    implementation(project(":base"))
 }
