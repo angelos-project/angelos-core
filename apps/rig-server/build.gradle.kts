@@ -5,25 +5,28 @@ plugins {
     application
 }
 
+group = "rig-server"
+version = "1.0-SNAPSHOT"
+
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
+    //testImplementation(kotlin("test"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
-    implementation(project(":lib"))
+    implementation(project(":angelos-core"))
 }
 
-tasks.test {
+/*tasks.test {
     useJUnit()
-}
+}*/
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
 
 application {
-    mainClass.set("ServerKt")
-    mainClass.set("ClientKt")
+    mainClass.set("MainKt")
 }

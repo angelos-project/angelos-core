@@ -4,7 +4,8 @@ plugins {
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
-group = "angelos.nio"
-version = "1.0-SNAPSHOT"
+group = "angelos"
+version = "0.0.1"

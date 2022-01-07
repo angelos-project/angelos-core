@@ -1,5 +1,13 @@
 rootProject.name = "angelos"
 
+dependencyResolutionManagement {
+    // https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:centralized-repository-declaration
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+}
+
 /**
  * Interoperability libraries for cinterop and JNI.
  */
@@ -23,8 +31,15 @@ project(":jni-proc").projectDir = File("iops/jni-proc")
 include("angelos-core")
 project(":angelos-core").projectDir = File("libs/angelos-core")
 
+include("angelos-nacl")
+project(":angelos-nacl").projectDir = File("libs/angelos-nacl")
+
 /**
  * Application projects using the libraries.
  */
 
-include("")
+include("rig-server")
+project(":rig-server").projectDir = File("apps/rig-server")
+
+include("rig-client")
+project(":rig-client").projectDir = File("apps/rig-client")

@@ -2,13 +2,17 @@ plugins {
     kotlin("multiplatform") version "1.6.10"
 }
 
+group = "org.angelos-core"
+version = "0.0.1"
+
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 kotlin {
     jvm {
-        apply(plugin = "java")
+        //apply(plugin = "java")
         /**
          * JNI libraries subprojects are defined for the Kotlin/JVM.
          */
@@ -35,23 +39,16 @@ kotlin {
         /** Libraries subprojects are added as resources. */
         val processResources = compilations["main"].processResourcesTaskName
         (tasks[processResources] as ProcessResources).apply {
-            /*dependsOn(":jni:platform:assemble")
-            dependsOn(":jni:proc:assemble")
-            dependsOn(":jni:io:assemble")
-
-            from(jniProcPath)
-            from(jniPlatformPath)
-            from(jniIoPath)
-            into("$buildDir/classes/kotlin/jvm/main")*/
+            //into("$buildDir/classes/kotlin/jvm/main")
             dependsOn(copyJni)
             //outputs.dirs(file("$buildDir/classes/kotlin/jvm/main"))
         }
-        configure<SourceSetContainer>{
+        /* configure<SourceSetContainer>{
             named("main"){
                 //listOf("$buildDir/classes/kotlin/jvm/main")
                 runtimeClasspath.forEach { println(it) }
             }
-        }
+        }*/
         compilations.all {
             kotlinOptions {
                 jvmTarget = "1.8"
