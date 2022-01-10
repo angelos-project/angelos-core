@@ -1,4 +1,4 @@
-plugins {
+/*plugins {
     base
     `cpp-library`
 }
@@ -71,3 +71,29 @@ artifacts {
 }*/
 
 // https://github.com/gradle/native-samples/blob/master/cpp/prebuilt-binaries/build.gradle
+ */
+
+plugins {
+    id("angelos-jni-library")
+    //`angelos-jni-library`
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    jniImplementation(project(":base"))
+    testImplementation("junit:junit:4.12")
+}
+
+library {
+    binaries.configureEach {
+        val compileTask = compileTask.get()
+        when(toolChain) {
+            is VisualCpp -> compileTask.compilerArgs.addAll(listOf("/TC"))
+            is Clang, is GccCompatibleToolChain -> compileTask.compilerArgs.addAll(listOf("-x", "c"))
+        }
+    }
+}

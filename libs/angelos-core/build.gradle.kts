@@ -2,7 +2,10 @@ plugins {
     kotlin("multiplatform") version "1.6.10"
 }
 
-group = "org.angelos-core"
+// Implement JNI according to:
+// https://github.com/eskatos/jni-library-sample
+
+group = "angelos-core"
 version = "0.0.1"
 
 repositories {
@@ -12,59 +15,12 @@ repositories {
 
 kotlin {
     jvm {
-        //apply(plugin = "java")
-        /**
-         * JNI libraries subprojects are defined for the Kotlin/JVM.
-         */
-        val jniProcPath = "${project(":jni-proc").buildDir}/lib/main/release/stripped"
-        val jniPlatformPath = "${project(":jni-platform").buildDir}/lib/main/release/stripped"
-        val jniIoPath = "${project(":jni-io").buildDir}/lib/main/release/stripped"
-
-        val copyJni by tasks.creating(Sync::class) {
-            dependsOn(":jni-platform:assemble")
-            dependsOn(":jni-proc:assemble")
-            dependsOn(":jni-io:assemble")
-
-            from(jniProcPath)
-            from(jniPlatformPath)
-            from(jniIoPath)
-            into("$buildDir/classes/kotlin/jvm/main")
-
-            preserve{
-                include("angelos/**")
-                include("META-INF/**")
-            }
-        }
-
-        /** Libraries subprojects are added as resources. */
-        val processResources = compilations["main"].processResourcesTaskName
-        (tasks[processResources] as ProcessResources).apply {
-            //into("$buildDir/classes/kotlin/jvm/main")
-            dependsOn(copyJni)
-            //outputs.dirs(file("$buildDir/classes/kotlin/jvm/main"))
-        }
-        /* configure<SourceSetContainer>{
-            named("main"){
-                //listOf("$buildDir/classes/kotlin/jvm/main")
-                runtimeClasspath.forEach { println(it) }
-            }
-        }*/
         compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
+            kotlinOptions.jvmTarget = "1.8"
         }
+        withJava()
         testRuns["test"].executionTask.configure {
-            useJUnit()
-            /** Libraries are added to the classpath for testing purposes. */
-            systemProperty(
-                "java.library.path",
-                listOf(
-                    rootDir.resolve(jniProcPath).absolutePath,
-                    rootDir.resolve(jniPlatformPath).absolutePath,
-                    rootDir.resolve(jniIoPath).absolutePath,
-                ).joinToString(":") + ":" + System.getProperty("java.library.path")
-            )
+            useJUnitPlatform()
         }
     }
     js(IR) {
@@ -96,6 +52,9 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
+                //runtimeOnly(project(":jni-proc"))
+                //runtimeOnly(project(":jni-platform"))
+                runtimeOnly(project(":jni-io"))
             }
         }
         val jvmTest by getting {

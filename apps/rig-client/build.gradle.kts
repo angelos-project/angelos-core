@@ -14,14 +14,14 @@ repositories {
 }
 
 dependencies {
-    //testImplementation(kotlin("test"))
+    testImplementation(kotlin("test"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation(project(":angelos-core"))
 }
 
-/*tasks.test {
+tasks.test {
     useJUnit()
-}*/
+}
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"

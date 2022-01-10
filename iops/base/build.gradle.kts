@@ -1,4 +1,4 @@
-val javaHome = System.getenv("JAVA_HOME")
+/*val javaHome = System.getenv("JAVA_HOME")
 
 plugins {
     `cpp-library`
@@ -10,7 +10,7 @@ library {
         compileTask.includes.from("$javaHome/include")
 
         val osFamily = targetPlatform.targetMachine.operatingSystemFamily
-        when{
+        when {
             osFamily.isMacOs-> {
                 compileTask.includes.from("-I$javaHome/include/darwin")
                 compileTask.compilerArgs.add("-I/Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers/")
@@ -24,6 +24,26 @@ library {
         when(toolChain) {
             is VisualCpp -> compileTask.compilerArgs.addAll(listOf("/TC"))
             is Clang, is GccCompatibleToolChain -> compileTask.compilerArgs.addAll(listOf("-x", "c", "-std=c11"))
+        }
+    }
+}*/
+
+plugins {
+    `cpp-library`
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+library {
+    linkage.set(listOf(Linkage.STATIC))
+    binaries.configureEach {
+        val compileTask = compileTask.get()
+        when(toolChain) {
+            is VisualCpp -> compileTask.compilerArgs.addAll(listOf("/TC"))
+            is Clang, is GccCompatibleToolChain -> compileTask.compilerArgs.addAll(listOf("-x", "c"))
         }
     }
 }

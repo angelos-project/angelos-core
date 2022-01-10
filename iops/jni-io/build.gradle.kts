@@ -1,4 +1,4 @@
-val javaHome = System.getenv("JAVA_HOME")
+/* val javaHome = System.getenv("JAVA_HOME")
 
 plugins {
     base
@@ -35,4 +35,33 @@ library {
 
 dependencies {
     implementation(project(":base"))
+}*/
+
+plugins {
+    //`angelos-jni-library`
+    id("angelos-jni-library")
 }
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    jniImplementation(project(":base"))
+    testImplementation("junit:junit:4.12")
+}
+
+library {
+    binaries.configureEach {
+        val compileTask = compileTask.get()
+        when(toolChain) {
+            is VisualCpp -> compileTask.compilerArgs.addAll(listOf("/TC"))
+            is Clang, is GccCompatibleToolChain -> compileTask.compilerArgs.addAll(listOf("-x", "c"))
+        }
+    }
+}
+
+/*tasks.register("prepareKotlinBuildScriptModel", DefaultTask::class) {
+    // outputs.files.forEach{println(it.name)}
+}*/
