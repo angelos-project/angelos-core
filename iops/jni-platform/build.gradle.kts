@@ -61,3 +61,6 @@ library {
         }
     }
 }
+
+tasks.register("prepareKotlinBuildScriptModel", DefaultTask::class) {
+}

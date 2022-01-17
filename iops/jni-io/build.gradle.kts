@@ -62,6 +62,5 @@ library {
     }
 }
 
-/*tasks.register("prepareKotlinBuildScriptModel", DefaultTask::class) {
-    // outputs.files.forEach{println(it.name)}
-}*/
+tasks.register("prepareKotlinBuildScriptModel", DefaultTask::class) {
+}

@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ad4e2c5d-2c5e-4991-a2e0-20051be71b11" name="Changes" comment="Trying new jni integration with gradle, not entirely done yet.">
+      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/angelos_nacl_js_0_0_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/angelos_nacl_jvm_0_0_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/KotlinJavaRuntime.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations/main_dart.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-android/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-android/app/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-android/app/src/debug/AndroidManifest.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-android/app/src/main/kotlin/org/angelos/logo/logo_messenger/MainActivity.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-android/app/src/main/res/drawable-v21/launch_background.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-android/app/src/main/res/drawable/launch_background.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-android/app/src/main/res/values-night/styles.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-android/app/src/main/res/values/styles.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-android/app/src/profile/AndroidManifest.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-android/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-android/gradle.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-android/local.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-android/logo_messenger_android.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-android/settings.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Flutter/AppFrameworkInfo.plist" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Flutter/Debug.xcconfig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Flutter/Release.xcconfig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner.xcodeproj/project.pbxproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner.xcworkspace/contents.xcworkspacedata" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner/AppDelegate.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner/Assets.xcassets/LaunchImage.imageset/Contents.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner/Assets.xcassets/LaunchImage.imageset/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner/Base.lproj/LaunchScreen.storyboard" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner/Base.lproj/Main.storyboard" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner/GeneratedPluginRegistrant.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner/GeneratedPluginRegistrant.m" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner/Info.plist" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-ios/Runner/Runner-Bridging-Header.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-linux/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-linux/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-linux/flutter/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-linux/flutter/generated_plugin_registrant.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-linux/flutter/generated_plugin_registrant.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-linux/flutter/generated_plugins.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-linux/main.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-linux/my_application.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-linux/my_application.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-macos/Flutter/Flutter-Debug.xcconfig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-macos/Flutter/Flutter-Release.xcconfig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-macos/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_128.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_16.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_256.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_32.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_512.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_64.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger-macos/Runner/Base.lproj/MainMenu.xib" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger/.metadata" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger/analysis_options.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger/lib/main.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger/pubspec.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/logo_messenger/pubspec.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/iops/base/src/main/public/jni.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/buildSrc/src/main/kotlin/angelos-jni-library.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/buildSrc/src/main/kotlin/angelos-jni-library.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/iops/jni-io/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/iops/jni-io/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/iops/jni-platform/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/iops/jni-platform/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/iops/jni-proc/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/iops/jni-proc/build.gradle.kts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$/libs/angelos-core">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin Class" />
+        <option value="Kotlin Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="23KpOceFopHofzudNfnJWEMgVzY" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/apps/rig-client/src/main" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.17" />
+    <property name="project.structure.side.proportion" value="0.31566548" />
+    <property name="settings.editor.selected.configurable" value="flutter.settings" />
+    <property name="show.migrate.to.gradle.popup" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/apps/rig-client/src/main" />
+      <recent name="$PROJECT_DIR$/apps/rig-server/src/main" />
+      <recent name="$PROJECT_DIR$/apps/rig-server/src" />
+      <recent name="$PROJECT_DIR$/apps/rig-server" />
+      <recent name="$PROJECT_DIR$/libs/angelos-nacl" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/.idea" />
+      <recent name="$PROJECT_DIR$/.idea/libraries" />
+      <recent name="$PROJECT_DIR$/apps/logo_messenger" />
+      <recent name="$PROJECT_DIR$/apps" />
+      <recent name="$PROJECT_DIR$/apps/angelos_messenger" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Flutter.main.dart">
+    <configuration name="angelos-core" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list />
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="MainKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="MainKt" />
+      <module name="angelos.rig-client.main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="build.gradle.kts (1)" type="KotlinStandaloneScriptRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <module name="angelos.rig-server.main" />
+      <option name="filePath" value="$PROJECT_DIR$/libs/angelos-core/build.gradle.kts" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="build.gradle.kts (2)" type="KotlinStandaloneScriptRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <module name="angelos.angelos-core.jsTest" />
+      <option name="filePath" value="$PROJECT_DIR$/build.gradle.kts" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="build.gradle.kts" type="KotlinStandaloneScriptRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <module name="angelos.angelos-nacl.test" />
+      <option name="filePath" value="$PROJECT_DIR$/buildSrc/build.gradle.kts" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.angelos-core" />
+        <item itemvalue="Kotlin.MainKt" />
+        <item itemvalue="Kotlin script.build.gradle.kts" />
+        <item itemvalue="Kotlin script.build.gradle.kts (1)" />
+        <item itemvalue="Kotlin script.build.gradle.kts (2)" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ad4e2c5d-2c5e-4991-a2e0-20051be71b11" name="Changes" comment="" />
+      <created>1641492603206</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1641492603206</updated>
+      <workItem from="1641492604506" duration="2404000" />
+      <workItem from="1641495074671" duration="4206000" />
+      <workItem from="1641553151618" duration="4561000" />
+      <workItem from="1641557935047" duration="5042000" />
+      <workItem from="1641573379905" duration="127000" />
+      <workItem from="1641573523942" duration="318000" />
+      <workItem from="1641573859013" duration="1975000" />
+      <workItem from="1641575890429" duration="1435000" />
+      <workItem from="1641586065214" duration="2911000" />
+      <workItem from="1641651293747" duration="4387000" />
+      <workItem from="1641660643895" duration="83000" />
+      <workItem from="1641660742060" duration="2518000" />
+      <workItem from="1641737916283" duration="8974000" />
+      <workItem from="1641751342269" duration="1326000" />
+      <workItem from="1641755538047" duration="1735000" />
+      <workItem from="1641757365968" duration="1343000" />
+      <workItem from="1641758728873" duration="1852000" />
+      <workItem from="1641761048663" duration="8370000" />
+      <workItem from="1641771019752" duration="532000" />
+      <workItem from="1641771570782" duration="1061000" />
+      <workItem from="1641838036677" duration="5097000" />
+      <workItem from="1641844785683" duration="369000" />
+      <workItem from="1641845173415" duration="652000" />
+      <workItem from="1641845869515" duration="3817000" />
+      <workItem from="1641929574017" duration="1461000" />
+      <workItem from="1642019368665" duration="848000" />
+      <workItem from="1642090463715" duration="220000" />
+      <workItem from="1642090717382" duration="2161000" />
+      <workItem from="1642383975399" duration="235000" />
+      <workItem from="1642448083260" duration="1196000" />
+      <workItem from="1642451798052" duration="1208000" />
+      <workItem from="1642453031586" duration="6550000" />
+    </task>
+    <task id="LOCAL−00001" summary="Implemented multi project monorepo setup in gradle.">
+      <created>1641508952173</created>
+      <option name="number" value="LOCAL−00001" />
+      <option name="presentableId" value="LOCAL−00001" />
+      <updated>1641508952173</updated>
+    </task>
+    <task id="LOCAL−00002" summary="Multi project monorepo correctly finds other libraries and applications.">
+      <created>1641588985084</created>
+      <option name="number" value="LOCAL−00002" />
+      <option name="presentableId" value="LOCAL−00002" />
+      <updated>1641588985084</updated>
+    </task>
+    <task id="LOCAL−00003" summary="Trying new jni integration with gradle, not entirely done yet.">
+      <created>1641856531092</created>
+      <option name="number" value="LOCAL−00003" />
+      <option name="presentableId" value="LOCAL−00003" />
+      <updated>1641856531092</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Implemented multi project monorepo setup in gradle." />
+    <MESSAGE value="Multi project monorepo correctly finds other libraries and applications." />
+    <MESSAGE value="Trying new jni integration with gradle, not entirely done yet." />
+    <option name="LAST_COMMIT_MESSAGE" value="Trying new jni integration with gradle, not entirely done yet." />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

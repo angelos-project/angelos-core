@@ -46,4 +46,5 @@ tasks.test {
 
 tasks.jar {
     from(library.developmentBinary.flatMap { (it as CppSharedLibrary).linkFile })
+    // https://github.com/realm/realm-kotlin-samples/blob/main/JVMConsole/build.gradle.kts
 }
