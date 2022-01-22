@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="angelos-nacl-jvm-0.0.1">
-    <output-path>$PROJECT_DIR$/libs/angelos-nacl/build/libs</output-path>
-    <root id="archive" name="angelos-nacl-jvm-0.0.1.jar">
-      <element id="module-output" name="angelos.angelos-nacl.jvmMain" />
-    </root>
-  </artifact>
-</component>

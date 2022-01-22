@@ -43,3 +43,18 @@ project(":rig-server").projectDir = File("apps/rig-server")
 
 include("rig-client")
 project(":rig-client").projectDir = File("apps/rig-client")
+
+include("logo-messenger-android")
+project(":logo-messenger-android").projectDir = File("apps/logo_messenger/android")
+
+include("logo-messenger-ios")
+project(":logo-messenger-ios").projectDir = File("apps/logo_messenger/ios")
+
+include("logo-messenger-linux")
+project(":logo-messenger-linux").projectDir = File("apps/logo_messenger/linux")
+
+include("logo-messenger-macos")
+project(":logo-messenger-macos").projectDir = File("apps/logo_messenger/macos")
+
+include("logo-messenger-windows")
+project(":logo-messenger-windows").projectDir = File("apps/logo_messenger/windows")

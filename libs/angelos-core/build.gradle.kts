@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version "1.6.10"
+    kotlin("multiplatform") version Versions.kotlin
 }
 
 // Implement JNI according to:
@@ -54,7 +54,7 @@ kotlin {
             dependencies {
                 //runtimeOnly(project(":jni-proc"))
                 //runtimeOnly(project(":jni-platform"))
-                runtimeOnly(project(":jni-io"))
+                //runtimeOnly(project(":jni-io"))
             }
         }
         val jvmTest by getting {
