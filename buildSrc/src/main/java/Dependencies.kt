@@ -17,7 +17,7 @@ object AndroidVersion {
 
 object Versions {
     const val gradle = "7.3.3"
-    const val android = "7.0.4"
+    const val android = "7.0.2"
     const val kotlin = "1.6.10"
     const val appcompat = "1.1.0"
 

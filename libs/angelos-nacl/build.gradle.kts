@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version Versions.kotlin
+    kotlin("multiplatform") // version Versions.kotlin
 }
 
 group = "angelos-nacl"

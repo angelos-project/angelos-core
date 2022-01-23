@@ -1,9 +1,11 @@
 plugins {
-    kotlin("multiplatform") version Versions.kotlin
+    kotlin("multiplatform") // version Versions.kotlin
 }
 
 // Implement JNI according to:
 // https://github.com/eskatos/jni-library-sample
+
+// https://github.com/dickensas/kotlin-gradle-templates/tree/master/swig-jni-inherit-callback
 
 group = "angelos-core"
 version = "0.0.1"

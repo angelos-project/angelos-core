@@ -1,3 +1,6 @@
+import java.nio.file.Files
+import java.util.*
+
 rootProject.name = "angelos"
 
 dependencyResolutionManagement {
@@ -44,8 +47,21 @@ project(":rig-server").projectDir = File("apps/rig-server")
 include("rig-client")
 project(":rig-client").projectDir = File("apps/rig-client")
 
+// https://github.com/firebase/quickstart-android
 include("logo-messenger-android")
-project(":logo-messenger-android").projectDir = File("apps/logo_messenger/android")
+project(":logo-messenger-android").projectDir = File("apps/logo_messenger/android/app")
+
+// https://gist.github.com/DRSchlaubi/f42be0da6fbd8864565b043b3da3b8b2
+val localProperties = Properties()
+val localPropertiesFile = File(rootProject.projectDir, "local.properties")
+if (Files.exists(localPropertiesFile.toPath())) {
+    Files.newBufferedReader(localPropertiesFile.toPath()).use { localProperties.load(it) }
+}
+
+val flutterSdkPath = localProperties.getProperty("flutter.sdk")
+apply{
+    from("$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle")
+}
 
 include("logo-messenger-ios")
 project(":logo-messenger-ios").projectDir = File("apps/logo_messenger/ios")

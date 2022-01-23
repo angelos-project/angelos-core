@@ -10,8 +10,9 @@ repositories {
 group = "angelos"
 version = "0.0.1"
 
-/*allprojects {
+allprojects {
     repositories {
+        google()
         mavenCentral()
         mavenLocal()
     }
@@ -19,10 +20,12 @@ version = "0.0.1"
 
 buildscript {
     repositories {
+        google()
         mavenCentral()
         mavenLocal()
     }
     dependencies {
-        classpath("org.jetbrains.kotlin.multiplatform:${Versions.kotlin}")
+        classpath("com.android.tools.build:gradle:${Versions.android}")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}")
     }
-}*/
+}
