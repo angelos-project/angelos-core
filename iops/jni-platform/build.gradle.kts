@@ -1,30 +1,26 @@
-/* val javaHome = System.getenv("JAVA_HOME")
+import org.gradle.internal.jvm.Jvm
 
 plugins {
-    base
     `cpp-library`
 }
 
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
 library {
-    binaries.configureEach {
-        base{
-            archivesName.set("jniPlatform")
-            distsDirectory.set(layout.buildDirectory.dir("lib/main/release/"))
-        }
+    binaries.configureEach{
         val compileTask = compileTask.get()
-        compileTask.includes.from("$javaHome/include")
-
-        val osFamily = targetPlatform.targetMachine.operatingSystemFamily
-        when{
-            osFamily.isMacOs-> {
-                compileTask.includes.from("-I$javaHome/include/darwin")
-                compileTask.compilerArgs.add("-I/Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers/")
+        val javaHome = "${Jvm.current().javaHome.canonicalPath}"
+        compileTask.compilerArgs.addAll(compileTask.targetPlatform.map {
+            listOf("-I", "$javaHome/include") + when {
+                it.operatingSystem.isMacOsX -> listOf("-I", "$javaHome/include/darwin")
+                it.operatingSystem.isLinux -> listOf("-I", "$javaHome/include/linux")
+                it.operatingSystem.isWindows -> listOf("-I", "$javaHome/include/win32")
+                else -> emptyList()
             }
-            osFamily.isLinux -> compileTask.includes.from("$javaHome/include/linux")
-            osFamily.isWindows -> compileTask.includes.from("$javaHome/include/win32")
-        }
-
-        compileTask.source.setFrom(fileTree("src/main/cpp"))
+        })
 
         when(toolChain) {
             is VisualCpp -> compileTask.compilerArgs.addAll(listOf("/TC"))
@@ -35,32 +31,4 @@ library {
 
 dependencies {
     implementation(project(":base"))
-}*/
-
-plugins {
-    //`angelos-jni-library`
-    id("angelos-jni-library")
-}
-
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
-
-dependencies {
-    jniImplementation(project(":base"))
-    testImplementation("junit:junit:4.12")
-}
-
-library {
-    binaries.configureEach {
-        val compileTask = compileTask.get()
-        when(toolChain) {
-            is VisualCpp -> compileTask.compilerArgs.addAll(listOf("/TC"))
-            is Clang, is GccCompatibleToolChain -> compileTask.compilerArgs.addAll(listOf("-x", "c"))
-        }
-    }
-}
-
-tasks.register("prepareKotlinBuildScriptModel", DefaultTask::class) {
 }
