@@ -16,7 +16,8 @@ import angelos.nio.ByteBuffer
 import angelos.nio.ByteOrder
 import org.junit.After
 import org.junit.Test
-import kotlin.test.*
+
+import org.junit.Assert.*
 
 @ExperimentalUnsignedTypes
 class ByteBufferTest {
@@ -48,27 +49,27 @@ class ByteBufferTest {
                 throw e
             }
         } finally {
-            assertEquals(happened, true, message)
+            assertEquals(message, happened, true)
         }
     }
 
     @Test
     fun getDirect() {
-        assertEquals(buffer.direct, true, "Value 'direct' should implicitly be 'true'.")
+        assertEquals("Value 'direct' should implicitly be 'true'.", buffer.direct, true)
     }
 
     @Test
     fun getCapacity() {
         assertEquals(
+            "Value 'capacity' should implicitly be the length of the underlying array.",
             buffer.capacity,
-            size,
-            "Value 'capacity' should implicitly be the length of the underlying array."
+            size
         )
     }
 
     @Test
     fun getPosition() {
-        assertEquals(buffer.position, 0, "Property 'position' should implicitly be set to 0.")
+        assertEquals("Property 'position' should implicitly be set to 0.", buffer.position, 0)
     }
 
     @Test
@@ -83,41 +84,41 @@ class ByteBufferTest {
 
         val position: Int = (buffer.capacity * .67).toInt()
         buffer.position = position
-        assertEquals(buffer.position, position, "Property 'position' should accept value between 0 and 'limit'.")
+        assertEquals("Property 'position' should accept value between 0 and 'limit'.", buffer.position, position)
     }
 
     @Test
     fun getOrder() {
-        assertEquals(buffer.order, ByteOrder.BIG_ENDIAN, "Property 'order' should implicitly be 'BIG_ENDIAN'.")
+        assertEquals("Property 'order' should implicitly be 'BIG_ENDIAN'.", buffer.order, ByteOrder.BIG_ENDIAN)
     }
 
     @Test
     fun setOrder() {
         buffer.order = ByteOrder.LITTLE_ENDIAN
-        assertEquals(buffer.order, ByteOrder.LITTLE_ENDIAN, "Property 'order' should be settable.")
+        assertEquals("Property 'order' should be settable.", buffer.order, ByteOrder.LITTLE_ENDIAN)
     }
 
     @Test
     fun hasRemaining() {
         assertEquals(
+            "Method 'hasRemaining' should return true if 'position' has not reached the value of 'limit'.",
             buffer.hasRemaining(),
-            true,
-            "Method 'hasRemaining' should return true if 'position' has not reached the value of 'limit'."
+            true
         )
         buffer.position = size
         assertEquals(
+            "When 'position' has reached value 'limit' method 'hasRemaining' should return false.",
             buffer.hasRemaining(),
-            false,
-            "When 'position' has reached value 'limit' method 'hasRemaining' should return false."
+            false
         )
     }
 
     @Test
     fun remaining() {
         assertEquals(
+            "Method 'remaining' should return 'limit' minus 'position'.",
             buffer.remaining(),
-            buffer.capacity - buffer.position,
-            "Method 'remaining' should return 'limit' minus 'position'."
+            buffer.capacity - buffer.position
         )
     }
 
@@ -126,7 +127,7 @@ class ByteBufferTest {
         val position: Int = (buffer.capacity * .67).toInt()
         buffer.position = position
         buffer.rewind()
-        assertEquals(buffer.position, 0, "Method 'rewind' should rewind 'position' to 0.")
+        assertEquals("Method 'rewind' should rewind 'position' to 0.", buffer.position, 0)
     }
 
     @Test
@@ -149,12 +150,12 @@ class ByteBufferTest {
 
     @Test
     fun hasArray() {
-        assertEquals(buffer.hasArray(), true, "Method 'hasArray' should return true implicitly.")
+        assertEquals("Method 'hasArray' should return true implicitly.", buffer.hasArray(), true)
     }
 
     @Test
     fun array() {
-        assertEquals(buffer.array() is ByteArray, true, "Method 'array' should return a UByteArray.")
+        assertEquals("Method 'array' should return a UByteArray.", buffer.array() is ByteArray, true)
     }
 
     @Test
@@ -165,19 +166,19 @@ class ByteBufferTest {
     @Test
     fun testHashCode() {
         val copy: ByteBuffer = buffer.duplicate()
-        assertEquals(copy.hashCode(), buffer.hashCode(), "Copies should have the same hash code.")
+        assertEquals("Copies should have the same hash code.", copy.hashCode(), buffer.hashCode())
     }
 
     @Test
     fun testEquals() {
         val copy: ByteBuffer = buffer.duplicate()
-        assertEquals(copy.equals(buffer), true, "Copies should equal each other.")
+        assertEquals("Copies should equal each other.", copy.equals(buffer), true)
     }
 
     @Test
     fun compareTo() {
         val copy: ByteBuffer = buffer.duplicate()
-        assertEquals(copy.compareTo(buffer), 0, "Comparing copies should return 0.")
+        assertEquals("Comparing copies should return 0.", copy.compareTo(buffer), 0)
     }
 
     @Test
@@ -190,12 +191,12 @@ class ByteBufferTest {
         val byte: UByte = 0x80u
         buffer.write(byte)
 
-        assertEquals(buffer.position, UByte.SIZE_BYTES,
-            "Method 'set' should advance the 'position' with 'UByte.SIZE_BYTES'.")
+        assertEquals("Method 'set' should advance the 'position' with 'UByte.SIZE_BYTES'.",
+            buffer.position, UByte.SIZE_BYTES)
         buffer.rewind()
-        assertEquals(buffer.read(), byte, "Method 'get' should return the byte.")
-        assertEquals(buffer.position, UByte.SIZE_BYTES,
-            "Method 'get' should advance the 'position' with 'UByte.SIZE_BYTES'.")
+        assertEquals("Method 'get' should return the byte.", buffer.read(), byte)
+        assertEquals("Method 'get' should advance the 'position' with 'UByte.SIZE_BYTES'.",
+            buffer.position, UByte.SIZE_BYTES)
     }
 
     @Test
@@ -209,24 +210,23 @@ class ByteBufferTest {
         val byte: UByte = 0x80u
         buffer.write(index, byte)
 
-        assertEquals(buffer.position, 0,
-            "Method 'set' should NOT advance the 'position'.")
-        assertEquals(buffer.read(index), byte, "Method 'get' should return the byte.")
-        assertEquals(buffer.position, 0,
-            "Method 'get' should NOT advance the 'position'.")
+        assertEquals("Method 'set' should NOT advance the 'position'.",
+            buffer.position, 0)
+        assertEquals("Method 'get' should return the byte.", buffer.read(index), byte)
+        assertEquals("Method 'get' should NOT advance the 'position'.", buffer.position, 0)
     }
 
     @Test
     fun slice() {
         val copy: ByteBuffer = buffer.slice(buffer.position + 10..buffer.capacity - 10)
-        assertEquals(copy.capacity, size - 20, "The slice buffer should have value 'capacity' shorter.")
+        assertEquals("The slice buffer should have value 'capacity' shorter.", copy.capacity, size - 20)
     }
 
     @Test
     fun duplicate() {
         val copy: ByteBuffer = buffer.duplicate()
-        assertFalse(copy === buffer, "The duplicate should not be the same class instance")
-        assertEquals(copy, buffer, "Both buffers data should equal.")
+        assertFalse("The duplicate should not be the same class instance", copy === buffer)
+        assertEquals("Both buffers data should equal.", copy, buffer)
     }
 
     @Test
@@ -239,24 +239,24 @@ class ByteBufferTest {
         val letter = 'Å'
         buffer.writeChar(letter)
         assertEquals(
+            "Method 'writeChar' should advance the 'position' with 'Char.SIZE_BYTES'.",
             buffer.position,
-            Char.SIZE_BYTES,
-            "Method 'writeChar' should advance the 'position' with 'Char.SIZE_BYTES'."
+            Char.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(buffer.readChar(), letter, "Method 'readChar' should be able to read what was written.")
+        assertEquals("Method 'readChar' should be able to read what was written.", buffer.readChar(), letter)
 
         buffer.order = ByteOrder.LITTLE_ENDIAN
         buffer.rewind()
 
         buffer.writeChar(letter)
         assertEquals(
+            "Method 'writeChar' should advance the 'position' with 'Char.SIZE_BYTES'.",
             buffer.position,
-            Char.SIZE_BYTES,
-            "Method 'writeChar' should advance the 'position' with 'Char.SIZE_BYTES'."
+            Char.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(buffer.readChar(), letter, "Method 'readChar' should be able to read what was written.")
+        assertEquals("Method 'readChar' should be able to read what was written.", buffer.readChar(), letter)
     }
 
     @Test
@@ -268,24 +268,24 @@ class ByteBufferTest {
     fun writeShort() {
         buffer.writeShort(short)
         assertEquals(
+            "Method 'writeShort' should advance the 'position' with 'Short.SIZE_BYTES'.",
             buffer.position,
-            Short.SIZE_BYTES,
-            "Method 'writeShort' should advance the 'position' with 'Short.SIZE_BYTES'."
+            Short.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(buffer.readShort(), short, "Method 'readShort' should be able to read what was written.")
+        assertEquals("Method 'readShort' should be able to read what was written.", buffer.readShort(), short)
 
         buffer.order = ByteOrder.LITTLE_ENDIAN
         buffer.rewind()
 
         buffer.writeShort(short)
         assertEquals(
+            "Method 'writeShort' should advance the 'position' with 'Short.SIZE_BYTES'.",
             buffer.position,
-            Short.SIZE_BYTES,
-            "Method 'writeShort' should advance the 'position' with 'Short.SIZE_BYTES'."
+            Short.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(buffer.readShort(), short, "Method 'readShort' should be able to read what was written.")
+        assertEquals("Method 'readShort' should be able to read what was written.", buffer.readShort(), short)
     }
 
     @Test
@@ -297,24 +297,25 @@ class ByteBufferTest {
     fun writeUShort() {
         buffer.writeUShort(ushort)
         assertEquals(
+            "Method 'writeUShort' should advance the 'position' with 'UShort.SIZE_BYTES'.",
             buffer.position,
-            UShort.SIZE_BYTES,
-            "Method 'writeUShort' should advance the 'position' with 'UShort.SIZE_BYTES'."
+            UShort.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(ushort, buffer.readUShort(), "Method 'readUShort' should be able to read what was written.")
+        assertEquals("Method 'readUShort' should be able to read what was written.", ushort, buffer.readUShort())
 
         buffer.order = ByteOrder.LITTLE_ENDIAN
         buffer.rewind()
 
         buffer.writeUShort(ushort)
         assertEquals(
+            "Method 'writeUShort' should advance the 'position' with 'UShort.SIZE_BYTES'.",
             buffer.position,
-            UShort.SIZE_BYTES,
-            "Method 'writeUShort' should advance the 'position' with 'UShort.SIZE_BYTES'."
+            UShort.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(ushort, buffer.readUShort(), "Method 'readUShort' should be able to read what was written.")
+        assertEquals("Method 'readUShort' should be able to read what was written.",
+            ushort, buffer.readUShort())
     }
 
     @Test
@@ -326,24 +327,24 @@ class ByteBufferTest {
     fun writeInt() {
         buffer.writeInt(-int)
         assertEquals(
+            "Method 'writeInt' should advance the 'position' with 'Int.SIZE_BYTES'.",
             buffer.position,
-            Int.SIZE_BYTES,
-            "Method 'writeInt' should advance the 'position' with 'Int.SIZE_BYTES'."
+            Int.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(buffer.readInt(), -int, "Method 'ReadInt' should be able to read what was written.")
+        assertEquals("Method 'ReadInt' should be able to read what was written.", buffer.readInt(), -int)
 
         buffer.order = ByteOrder.LITTLE_ENDIAN
         buffer.rewind()
 
         buffer.writeInt(-int)
         assertEquals(
+            "Method 'writeInt' should advance the 'position' with 'Int.SIZE_BYTES'.",
             buffer.position,
-            Int.SIZE_BYTES,
-            "Method 'writeInt' should advance the 'position' with 'Int.SIZE_BYTES'."
+            Int.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(buffer.readInt(), -int, "Method 'ReadInt' should be able to read what was written.")
+        assertEquals("Method 'ReadInt' should be able to read what was written.", buffer.readInt(), -int)
     }
 
     @Test
@@ -355,24 +356,24 @@ class ByteBufferTest {
     fun writeUInt() {
         buffer.writeUInt(uint)
         assertEquals(
+            "Method 'writeUInt' should advance the 'position' with 'UInt.SIZE_BYTES'.",
             buffer.position,
-            UInt.SIZE_BYTES,
-            "Method 'writeUInt' should advance the 'position' with 'UInt.SIZE_BYTES'."
+            UInt.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(buffer.readUInt(), uint, "Method 'ReadUInt' should be able to read what was written.")
+        assertEquals("Method 'ReadUInt' should be able to read what was written.", buffer.readUInt(), uint)
 
         buffer.order = ByteOrder.LITTLE_ENDIAN
         buffer.rewind()
 
         buffer.writeUInt(uint)
         assertEquals(
+            "Method 'writeUInt' should advance the 'position' with 'UInt.SIZE_BYTES'.",
             buffer.position,
-            UInt.SIZE_BYTES,
-            "Method 'writeUInt' should advance the 'position' with 'UInt.SIZE_BYTES'."
+            UInt.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(buffer.readUInt(), uint, "Method 'ReadUInt' should be able to read what was written.")
+        assertEquals("Method 'ReadUInt' should be able to read what was written.", buffer.readUInt(), uint)
     }
 
     @Test
@@ -384,24 +385,24 @@ class ByteBufferTest {
     fun writeLong() {
         buffer.writeLong(long)
         assertEquals(
+            "Method 'writeLong' should advance the 'position' with 'Long.SIZE_BYTES'.",
             buffer.position,
-            Long.SIZE_BYTES,
-            "Method 'writeLong' should advance the 'position' with 'Long.SIZE_BYTES'."
+            Long.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(buffer.readLong(), long, "Method 'readLong' should be able to read what was written.")
+        assertEquals("Method 'readLong' should be able to read what was written.", buffer.readLong(), long)
 
         buffer.order = ByteOrder.LITTLE_ENDIAN
         buffer.rewind()
 
         buffer.writeLong(long)
         assertEquals(
+            "Method 'writeLong' should advance the 'position' with 'Long.SIZE_BYTES'.",
             buffer.position,
-            Long.SIZE_BYTES,
-            "Method 'writeLong' should advance the 'position' with 'Long.SIZE_BYTES'."
+            Long.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(buffer.readLong(), long, "Method 'readLong' should be able to read what was written.")
+        assertEquals("Method 'readLong' should be able to read what was written.", buffer.readLong(), long)
     }
 
     @Test
@@ -413,24 +414,24 @@ class ByteBufferTest {
     fun writeULong() {
         buffer.writeULong(ulong)
         assertEquals(
+            "Method 'writeLong' should advance the 'position' with 'ULong.SIZE_BYTES'.",
             buffer.position,
-            ULong.SIZE_BYTES,
-            "Method 'writeLong' should advance the 'position' with 'ULong.SIZE_BYTES'."
+            ULong.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(buffer.readULong(), ulong, "Method 'readULong' should be able to read what was written.")
+        assertEquals("Method 'readULong' should be able to read what was written.", buffer.readULong(), ulong)
 
         buffer.order = ByteOrder.LITTLE_ENDIAN
         buffer.rewind()
 
         buffer.writeULong(ulong)
         assertEquals(
+            "Method 'writeLong' should advance the 'position' with 'ULong.SIZE_BYTES'.",
             buffer.position,
-            ULong.SIZE_BYTES,
-            "Method 'writeLong' should advance the 'position' with 'ULong.SIZE_BYTES'."
+            ULong.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(buffer.readULong(), ulong, "Method 'readULong' should be able to read what was written.")
+        assertEquals("Method 'readULong' should be able to read what was written.", buffer.readULong(), ulong)
     }
 
     @Test
@@ -443,24 +444,24 @@ class ByteBufferTest {
         val value: Float = -123.565F
         buffer.writeFloat(value)
         assertEquals(
+            "Method 'writeFloat' should advance the 'position' with 'Float.SIZE_BYTES'.",
             buffer.position,
-            Float.SIZE_BYTES,
-            "Method 'writeFloat' should advance the 'position' with 'Float.SIZE_BYTES'."
+            Float.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(buffer.readFloat(), value, "Method 'readFloat' should be able to read what was written.")
+        assertEquals("Method 'readFloat' should be able to read what was written.", buffer.readFloat(), value)
 
         buffer.order = ByteOrder.LITTLE_ENDIAN
         buffer.rewind()
 
         buffer.writeFloat(value)
         assertEquals(
+            "Method 'writeFloat' should advance the 'position' with 'Float.SIZE_BYTES'.",
             buffer.position,
-            Float.SIZE_BYTES,
-            "Method 'writeFloat' should advance the 'position' with 'Float.SIZE_BYTES'."
+            Float.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(buffer.readFloat(), value, "Method 'readFloat' should be able to read what was written.")
+        assertEquals("Method 'readFloat' should be able to read what was written.", buffer.readFloat(), value)
     }
 
     @Test
@@ -473,24 +474,25 @@ class ByteBufferTest {
         val value: Double = (-234958739.324893498573495834753947535234571209347F).toDouble()
         buffer.writeDouble(value)
         assertEquals(
+            "Method 'writeDouble' should advance the 'position' with 'Double.SIZE_BYTES'.",
             buffer.position,
-            Double.SIZE_BYTES,
-            "Method 'writeDouble' should advance the 'position' with 'Double.SIZE_BYTES'."
+            Double.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(buffer.readDouble(), value, "Method 'readDouble' should be able to read what was written.")
+        assertEquals("Method 'readDouble' should be able to read what was written.",
+            buffer.readDouble(), value)
 
         buffer.order = ByteOrder.LITTLE_ENDIAN
         buffer.rewind()
 
         buffer.writeDouble(value)
         assertEquals(
+            "Method 'writeDouble' should advance the 'position' with 'Double.SIZE_BYTES'.",
             buffer.position,
-            Double.SIZE_BYTES,
-            "Method 'writeDouble' should advance the 'position' with 'Double.SIZE_BYTES'."
+            Double.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals(buffer.readDouble(), value, "Method 'readDouble' should be able to read what was written.")
+        assertEquals("Method 'readDouble' should be able to read what was written.", buffer.readDouble(), value)
     }
 
     @Test
@@ -500,24 +502,24 @@ class ByteBufferTest {
     @Test
     fun allocateDirect() {
         buffer = ByteBuffer.allocateDirect(size)
-        assertEquals(buffer.capacity, size, "Value 'capacity' should always be the same as the given size.")
-        assertEquals(buffer.position, 0, "Property 'position' should implicitly be set to 0.")
-        assertEquals(buffer.direct, true, "Value 'direct' should implicitly be set to 'true'.")
+        assertEquals("Value 'capacity' should always be the same as the given size.", buffer.capacity, size)
+        assertEquals("Property 'position' should implicitly be set to 0.", buffer.position, 0)
+        assertEquals("Value 'direct' should implicitly be set to 'true'.", buffer.direct, true)
     }
 
     @Test
     fun allocate() {
         buffer = ByteBuffer.allocate(size)
-        assertEquals(buffer.capacity, size, "Value 'capacity' should always be the same as the given size.")
-        assertEquals(buffer.position, 0, "Property 'position' should implicitly be set to 0.")
-        assertEquals(buffer.direct, false, "Value 'direct' should implicitly be set to 'false'.")
+        assertEquals("Value 'capacity' should always be the same as the given size.", buffer.capacity, size)
+        assertEquals("Property 'position' should implicitly be set to 0.", buffer.position, 0)
+        assertEquals("Value 'direct' should implicitly be set to 'false'.", buffer.direct, false)
     }
 
     @Test
     fun wrap() {
         buffer = ByteBuffer.wrap(ByteArray(size))
-        assertEquals(buffer.capacity, size, "Value 'capacity' should always be the same as the given size.")
-        assertEquals(buffer.position, 0, "Property 'position' should implicitly be set to 0.")
-        assertEquals(buffer.direct, false, "Value 'direct' should implicitly be set to 'false'.")
+        assertEquals("Value 'capacity' should always be the same as the given size.", buffer.capacity, size)
+        assertEquals("Property 'position' should implicitly be set to 0.", buffer.position, 0)
+        assertEquals("Value 'direct' should implicitly be set to 'false'.", buffer.direct, false)
     }
 }
