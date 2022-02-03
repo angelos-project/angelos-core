@@ -1,6 +1,7 @@
 import org.gradle.internal.jvm.Jvm
 
 plugins {
+    base
     `cpp-library`
 }
 

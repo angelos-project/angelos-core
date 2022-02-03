@@ -17,6 +17,30 @@ repositories {
 
 kotlin {
     jvm {
+        val processResources = compilations["main"].processResourcesTaskName
+       (tasks[processResources] as ProcessResources).apply {
+        /*    dependsOn(":jni-platform:assemble")
+            dependsOn(":jni-proc:assemble")
+            dependsOn(":jni-io:assemble")
+
+            val buildPublish = buildDir.resolve("$buildDir/classes/kotlin/jvm/main").absolutePath
+            outputs.dir(buildPublish)
+
+            copy {
+                from("${project(":jni-proc").buildDir}/lib/main/release/stripped")
+                from("${project(":jni-platform").buildDir}/lib/main/release/stripped")
+                from("${project(":jni-io").buildDir}/lib/main/release/stripped")
+                into(buildPublish)
+            }
+
+            copy {
+                from("${project(":jni-proc").buildDir}/lib/main/debug")
+                from("${project(":jni-platform").buildDir}/lib/main/debug")
+                from("${project(":jni-io").buildDir}/lib/main/debug")
+                into("${project.projectDir}/src/jvmMain")
+            }*/
+        }
+
         compilations.all {
             kotlinOptions.jvmTarget = "1.8"
         }
@@ -54,9 +78,9 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                //runtimeOnly(project(":jni-proc"))
-                //runtimeOnly(project(":jni-platform"))
-                //runtimeOnly(project(":jni-io"))
+                api(project(":jni-proc"))
+                api(project(":jni-platform"))
+                api(project(":jni-io"))
             }
         }
         val jvmTest by getting {

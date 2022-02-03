@@ -39,3 +39,7 @@ hs_err_pid*
 *.png
 *.ico
 *.lock
+
+*.so
+*.dylib
+*.dll
