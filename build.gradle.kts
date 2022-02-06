@@ -27,5 +27,6 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle:${Versions.android}")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}")
+        classpath(TestLibs.junit)
     }
 }

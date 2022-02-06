@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") // version Versions.kotlin
+    kotlin("multiplatform") // version Versions.kotlin
     application
 }
 
@@ -13,18 +13,24 @@ repositories {
     mavenLocal()
 }
 
-dependencies {
-    testImplementation(kotlin("test"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
-    implementation(project(":angelos-core"))
-}
-
-tasks.test {
-    useJUnit()
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+kotlin {
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+    }
+    sourceSets {
+        val commonMain by getting {
+            dependencies{
+                implementation(project(":angelos-core"))
+            }
+        }
+        val jvmMain by getting {
+            dependencies{
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+            }
+        }
+    }
 }
 
 application {

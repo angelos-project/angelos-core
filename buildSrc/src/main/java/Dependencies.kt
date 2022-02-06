@@ -21,7 +21,7 @@ object Versions {
     const val kotlin = "1.6.10"
     const val appcompat = "1.1.0"
 
-    const val junit = "4.12"
+    const val junit = "4.13.1"
 }
 
 object Libs {

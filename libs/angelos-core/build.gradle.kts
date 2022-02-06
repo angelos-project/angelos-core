@@ -18,27 +18,14 @@ repositories {
 kotlin {
     jvm {
         val processResources = compilations["main"].processResourcesTaskName
-       (tasks[processResources] as ProcessResources).apply {
-        /*    dependsOn(":jni-platform:assemble")
+        (tasks[processResources] as ProcessResources).apply {
+            dependsOn(":jni-platform:assemble")
             dependsOn(":jni-proc:assemble")
             dependsOn(":jni-io:assemble")
 
-            val buildPublish = buildDir.resolve("$buildDir/classes/kotlin/jvm/main").absolutePath
-            outputs.dir(buildPublish)
-
-            copy {
-                from("${project(":jni-proc").buildDir}/lib/main/release/stripped")
-                from("${project(":jni-platform").buildDir}/lib/main/release/stripped")
-                from("${project(":jni-io").buildDir}/lib/main/release/stripped")
-                into(buildPublish)
-            }
-
-            copy {
-                from("${project(":jni-proc").buildDir}/lib/main/debug")
-                from("${project(":jni-platform").buildDir}/lib/main/debug")
-                from("${project(":jni-io").buildDir}/lib/main/debug")
-                into("${project.projectDir}/src/jvmMain")
-            }*/
+            from("${project(":jni-proc").buildDir}/lib/main/release/stripped")
+            from("${project(":jni-platform").buildDir}/lib/main/release/stripped")
+            from("${project(":jni-io").buildDir}/lib/main/release/stripped")
         }
 
         compilations.all {
@@ -46,7 +33,11 @@ kotlin {
         }
         withJava()
         testRuns["test"].executionTask.configure {
-            useJUnitPlatform()
+            useJUnit()
+            systemProperty(
+                "java.library.path",
+                file("${buildDir}/processedResources/jvm/main").absolutePath
+            )
         }
     }
     js(IR) {
@@ -76,16 +67,10 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
-        val jvmMain by getting {
-            dependencies {
-                api(project(":jni-proc"))
-                api(project(":jni-platform"))
-                api(project(":jni-io"))
-            }
-        }
+        val jvmMain by getting
         val jvmTest by getting {
             dependencies {
-                implementation("junit:junit:4.13.1")
+                implementation(TestLibs.junit)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
             }
         }
