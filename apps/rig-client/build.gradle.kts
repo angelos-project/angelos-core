@@ -1,7 +1,5 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    kotlin("multiplatform") // version Versions.kotlin
+    kotlin("multiplatform")
     application
 }
 
@@ -27,7 +25,7 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies{
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+                implementation(Libs.coro)
             }
         }
     }

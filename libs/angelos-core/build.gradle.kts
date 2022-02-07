@@ -1,11 +1,6 @@
 plugins {
-    kotlin("multiplatform") // version Versions.kotlin
+    kotlin("multiplatform")
 }
-
-// Implement JNI according to:
-// https://github.com/eskatos/jni-library-sample
-
-// https://github.com/dickensas/kotlin-gradle-templates/tree/master/swig-jni-inherit-callback
 
 group = "angelos-core"
 version = "0.0.1"
@@ -59,7 +54,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+                implementation(Libs.coro)
             }
         }
         val commonTest by getting {
@@ -71,7 +66,7 @@ kotlin {
         val jvmTest by getting {
             dependencies {
                 implementation(TestLibs.junit)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
+                implementation(TestLibs.coro)
             }
         }
         val jsMain by getting

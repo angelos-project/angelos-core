@@ -20,6 +20,7 @@ object Versions {
     const val android = "7.0.2"
     const val kotlin = "1.6.10"
     const val appcompat = "1.1.0"
+    const val coro = "1.5.2"
 
     const val junit = "4.13.1"
 }
@@ -27,8 +28,10 @@ object Versions {
 object Libs {
     const val kotlin = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}"
     const val appcompat = "androidx.appcompat:appcompat:${Versions.appcompat}"
+    const val coro = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coro}"
 }
 
 object TestLibs {
     const val junit = "junit:junit:${Versions.junit}"
+    const val coro = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coro}"
 }

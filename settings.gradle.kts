@@ -47,8 +47,8 @@ project(":rig-server").projectDir = File("apps/rig-server")
 include("rig-client")
 project(":rig-client").projectDir = File("apps/rig-client")
 
-/*
 
+/*
 // https://gist.github.com/DRSchlaubi/f42be0da6fbd8864565b043b3da3b8b2
 val localProperties = Properties()
 val localPropertiesFile = File(rootProject.projectDir, "local.properties")
@@ -59,24 +59,23 @@ if (Files.exists(localPropertiesFile.toPath())) {
 val flutterSdkPath = localProperties.getProperty("flutter.sdk")
 apply{
     from("$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle")
-}
+}*/
 
 // https://github.com/firebase/quickstart-android
-include("logo-messenger-android")
-project(":logo-messenger-android").projectDir = File("apps/logo_messenger/android/app")
+include("app")
+project(":app").projectDir = File("apps/logo_messenger-android")
+//apply { from("flutter_settings.gradle") }
 
 include("logo-messenger-ios")
-project(":logo-messenger-ios").projectDir = File("apps/logo_messenger/ios")
+project(":logo-messenger-ios").projectDir = File("apps/logo_messenger-ios")
 
-include("logo-messenger-linux")
-project(":logo-messenger-linux").projectDir = File("apps/logo_messenger/linux")
+//include("logo-messenger-linux")
+//project(":logo-messenger-linux").projectDir = File("apps/logo_messenger/linux")
 
-include("logo-messenger-macos")
-project(":logo-messenger-macos").projectDir = File("apps/logo_messenger/macos")
+//include("logo-messenger-macos")
+//project(":logo-messenger-macos").projectDir = File("apps/logo_messenger/macos")
 
-include("logo-messenger-windows")
-project(":logo-messenger-windows").projectDir = File("apps/logo_messenger/windows")
+//include("logo-messenger-windows")
+//project(":logo-messenger-windows").projectDir = File("apps/logo_messenger/windows")
 
 // https://github.com/littleGnAl/accounting-multiplatform/tree/littlegnal/blog-kmpp-flutter
-
-*/

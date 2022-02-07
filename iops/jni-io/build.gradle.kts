@@ -10,33 +10,6 @@ repositories {
     mavenLocal()
 }
 
-// https://docs.gradle.org/current/userguide/variant_attributes.html
-// https://docs.gradle.org/current/userguide/component_metadata_rules.html
-// https://github.com/gradle/gradle/blob/master/subprojects/docs/src/docs/design/gradle-module-metadata-latest-specification.md
-/* val mppAttribute = Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java)
-val jvmVersion = Attribute.of("org.gradle.jvm.version", String::class.java)
-val jvmEnv = Attribute.of("org.gradle.jvm.environment", String::class.java)
-val gradleCategory = Attribute.of("org.gradle.category", String::class.java)
-
-dependencies.attributesSchema {
-    attribute(mppAttribute)
-    attribute(jvmVersion)
-    attribute(jvmEnv)
-    attribute(gradleCategory)
-}
-
-configurations {
-    create("mppConfiguration") {
-        attributes {
-            attribute(mppAttribute, "jvm")
-            attribute(jvmVersion, "8")
-            attribute(jvmEnv, "standard-jvm")
-            attribute(gradleCategory, "library")
-        }
-    }
-} */
-
-
 library {
     binaries.configureEach{
         val compileTask = compileTask.get()
