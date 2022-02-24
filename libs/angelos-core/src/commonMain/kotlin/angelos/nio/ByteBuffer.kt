@@ -70,7 +70,7 @@ class ByteBuffer internal constructor(
 
     companion object {
         @JvmStatic
-        private inline fun checkArraySize(limit: Int, offset: Int, size: Int) {
+        internal inline fun checkArraySize(limit: Int, offset: Int, size: Int) {
             if (limit < (size + offset))
                 throw IndexOutOfBoundsException()
         }

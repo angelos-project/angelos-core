@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("android.extensions")
+    //kotlin("android.extensions")
 }
 
 android {
@@ -15,6 +15,9 @@ android {
         versionName = AndroidVersion.versionName
         //testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    /*buildFeatures {
+        viewBinding = true
+    }*/
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true

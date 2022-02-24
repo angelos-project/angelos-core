@@ -471,7 +471,7 @@ class ByteBufferTest {
 
     @Test
     fun writeDouble() {
-        val value: Double = (-234958739.324893498573495834753947535234571209347F).toDouble()
+        val value: Double = (-234958739.324893498573495834753947535234571209347)
         buffer.writeDouble(value)
         assertEquals(
             "Method 'writeDouble' should advance the 'position' with 'Double.SIZE_BYTES'.",
@@ -480,7 +480,7 @@ class ByteBufferTest {
         )
         buffer.rewind()
         assertEquals("Method 'readDouble' should be able to read what was written.",
-            buffer.readDouble(), value)
+            buffer.readDouble().toLong(), value.toLong())
 
         buffer.order = ByteOrder.LITTLE_ENDIAN
         buffer.rewind()
@@ -492,7 +492,8 @@ class ByteBufferTest {
             Double.SIZE_BYTES
         )
         buffer.rewind()
-        assertEquals("Method 'readDouble' should be able to read what was written.", buffer.readDouble(), value)
+        assertEquals("Method 'readDouble' should be able to read what was written.",
+            buffer.readDouble().toLong(), value.toLong())
     }
 
     @Test

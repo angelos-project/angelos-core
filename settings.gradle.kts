@@ -61,6 +61,9 @@ apply{
     from("$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle")
 }*/
 
+include("logo-messenger")
+project(":logo-messenger").projectDir = File("apps/logo_messenger")
+
 // https://github.com/firebase/quickstart-android
 include("app")
 project(":app").projectDir = File("apps/logo_messenger-android")
