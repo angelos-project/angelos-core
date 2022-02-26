@@ -31,6 +31,9 @@ project(":jni-proc").projectDir = File("iops/jni-proc")
  * Libraries mainly for commonMain.
  */
 
+include("angelos-mvp")
+project(":angelos-mvp").projectDir = File("libs/angelos-mvp")
+
 include("angelos-core")
 project(":angelos-core").projectDir = File("libs/angelos-core")
 
@@ -40,6 +43,9 @@ project(":angelos-nacl").projectDir = File("libs/angelos-nacl")
 /**
  * Application projects using the libraries.
  */
+
+include("angelos-admin")
+project(":angelos-admin").projectDir = File("apps/angelos-admin")
 
 include("rig-server")
 project(":rig-server").projectDir = File("apps/rig-server")

@@ -15,7 +15,6 @@
 package angelos.interop
 
 import angelos.io.signal.Signal
-import kotlin.jvm.JvmStatic
 
 /**
  * How to call Kotlin from outside.

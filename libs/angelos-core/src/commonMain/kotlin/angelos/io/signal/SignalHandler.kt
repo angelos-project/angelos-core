@@ -21,6 +21,7 @@ open class SignalHandler internal constructor(
     private val queue: Channel<Int> = Channel()
 ) {
     fun send(signum: Int) = suspend { queue.send(signum) }
+    suspend fun receive(): Int = queue.receive()
 }
 
 // http://www.qnx.com/developers/docs/qnx_4.25_docs/tcpip50/prog_guide/sock_ipc_tut.html
