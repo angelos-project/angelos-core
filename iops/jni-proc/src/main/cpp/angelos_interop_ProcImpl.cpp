@@ -19,6 +19,8 @@
 #include <string.h>
 #include <errno.h>
 
+#include "err.h"
+
 #ifndef _Included_angelos_interop_IO
 #define _Included_angelos_interop_IO
 #ifdef __cplusplus
@@ -26,13 +28,13 @@ extern "C" {
 #endif
 
 
-void set_error(JNIEnv * env) {
-    jclass proc = (*env)->FindClass(env, "angelos/interop/Proc$Companion");
+/*void set_error(JNIEnv * env) {
+    jclass proc = (*env)->FindClass(env, "angelos/interop/Proc$Companion"); //
     jfieldID err_num = (*env)->GetStaticFieldID(env, proc, "errNum", "I");
     jfieldID err_msg = (*env)->GetStaticFieldID(env, proc, "errMsg", "Ljava/lang/String;");
     (*env)->SetStaticIntField(env, proc, err_num, errno);
     (*env)->SetStaticIntField(env, proc, err_msg, (*env)->NewStringUTF(env, strerror(errno)));
-}
+}*/
 
 
 static const char *JNIT_CLASS = "angelos/interop/Proc";
@@ -80,7 +82,9 @@ static jboolean pr_signal(JNIEnv * env, jclass thisClass, jint signum){
     else if (callback_env != env)
         exit(1);
 
-    return sigaction(signum, &cb_action, NULL) ? JNI_FALSE : JNI_TRUE;
+    int result = sigaction(signum, &cb_action, NULL);
+    SET_ERROR(env, result)
+    return result ? JNI_FALSE : JNI_TRUE;
 }
 
 

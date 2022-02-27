@@ -14,5 +14,22 @@
  */
 package angelos.mvp
 
+import angelos.io.signal.Signal
+import angelos.io.signal.SignalHandler
+import kotlinx.coroutines.channels.Channel
+
 class ExtQuit(prepare: (it: ExtQuit) -> Unit) : Extension("quit", prepare as (Extension) -> Unit) {
+    private lateinit var handler: SignalHandler
+    lateinit var signal: ExtSignal
+
+    fun signalReg() {
+        handler = signal.build(Channel(),
+            // Signal.Num.SIGKILL.signum,
+            Signal.Num.SIGABRT.signum,
+            Signal.Num.SIGINT.signum
+        )
+        signal.register(handler)
+    }
+
+    suspend fun await(): Int = handler.receive()
 }

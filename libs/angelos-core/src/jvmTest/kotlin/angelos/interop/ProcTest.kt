@@ -32,6 +32,7 @@ class ProcTest {
 
     @Test
     fun registerInterrupt(){
-        Proc.registerInterrupt(500)
+        assertTrue(Proc.registerInterrupt(8))
+        assertFalse(Proc.registerInterrupt(500))
     }
 }

@@ -62,8 +62,9 @@ actual class Proc: AbstractProc () {
                 throw UnsupportedOperationException("Failed to register signal handler.")
         }
 
-        actual fun registerInterrupt(signum: Int) {
-            sigaction(signum, sigActionData.ptr as CValuesRef<sigaction>, null)
+        actual fun registerInterrupt(signum: Int): Boolean = when (sigaction(signum, sigActionData.ptr as CValuesRef<sigaction>, null)) {
+            0 -> true
+            else -> false
         }
     }
 }

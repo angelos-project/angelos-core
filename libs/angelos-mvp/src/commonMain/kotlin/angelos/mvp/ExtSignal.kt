@@ -14,6 +14,12 @@
  */
 package angelos.mvp
 
+import angelos.io.signal.Signal
+import angelos.io.signal.SignalHandler
+import angelos.io.signal.SignalQueue
+
 class ExtSignal(prepare: (it: ExtSignal) -> Unit) : Extension("signal", prepare as (Extension) -> Unit) {
-    lateinit var quit: Extension
+
+    fun build(queue: SignalQueue, vararg signums: Int): SignalHandler = SignalHandler(signums.toList(), queue)
+    fun register(handler: SignalHandler) = Signal.register(handler)
 }

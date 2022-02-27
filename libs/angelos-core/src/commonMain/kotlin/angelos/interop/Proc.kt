@@ -44,6 +44,6 @@ expect class Proc: AbstractProc {
         var errMsg: String
 
         fun getError(): SystemError
-        fun registerInterrupt(signum: Int)
+        fun registerInterrupt(signum: Int): Boolean
     }
 }

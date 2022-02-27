@@ -31,8 +31,8 @@ actual class Proc: AbstractProc() {
              return err
          }
 
-         actual fun registerInterrupt(signum: Int) {
-             pr_signal(signum)
+         actual fun registerInterrupt(signum: Int): Boolean {
+             return pr_signal(signum)
          }
 
          @JvmStatic

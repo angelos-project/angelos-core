@@ -16,9 +16,11 @@ package angelos.io.signal
 
 import kotlinx.coroutines.channels.Channel
 
-open class SignalHandler internal constructor(
+typealias SignalQueue = Channel<Int>
+
+open class SignalHandler(
     val signals: List<Int>,
-    private val queue: Channel<Int> = Channel()
+    private val queue: SignalQueue = Channel()
 ) {
     fun send(signum: Int) = suspend { queue.send(signum) }
     suspend fun receive(): Int = queue.receive()

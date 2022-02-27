@@ -73,7 +73,10 @@ class Signal internal constructor(
 
         handlers.add(handler)
         handler.signals.forEach {
-            Proc.registerInterrupt(it)
+            if(!Proc.registerInterrupt(it)) {
+                val syserr = Proc.getError()
+                throw SignalError("Couldn't register signal handler for (signum: $it) because of (errnum: ${syserr.first} errmsg: ${syserr.second})")
+            }
             signals.add(it)
             map[it] = handler
         }
