@@ -16,8 +16,6 @@ package angelos.io
 
 import angelos.io.file.channel.FileChannel
 import angelos.nio.Buffer
-import angelos.nio.BufferOverflowException
-import angelos.nio.BufferUnderflowException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex

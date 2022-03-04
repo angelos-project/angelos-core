@@ -14,15 +14,23 @@
  */
 package angelos.interop
 
+import java.lang.System
+
 internal actual class Platform {
     actual companion object {
         actual inline fun isLittleEndian(): Boolean = endian()
+        actual inline fun getPlatform(): Int = platform()
 
         @JvmStatic
         private external fun endian(): Boolean
 
+        @JvmStatic
+        private external fun platform(): Int
+
         init {
             System.loadLibrary("jni-platform")
         }
+
+
     }
 }

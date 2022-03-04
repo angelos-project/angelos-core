@@ -14,6 +14,5 @@
  */
 package angelos.ioc
 
-open class Module {
-    open operator fun invoke() {}
+interface Module {
 }

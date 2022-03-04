@@ -16,8 +16,9 @@ package angelos.mvp
 
 import angelos.ioc.Module
 
-abstract class Extension(val identifier: String, protected val prepare: (it: Extension) -> Unit): Module() {
-    override operator fun invoke() = prepare(this)
-    open fun setup() {}
-    open fun cleanup() {}
+interface Extension : Module {
+    val identifier: String
+
+    fun setup()
+    fun cleanup()
 }

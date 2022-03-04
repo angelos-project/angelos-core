@@ -77,7 +77,7 @@ open class Socket(val host: String, val port: Short) {
         protected fun startup() {
             if (!running){
                 running = true
-                Signal.register(sigHandler)
+                //Signal.register(sigHandler)
             }
         }
 

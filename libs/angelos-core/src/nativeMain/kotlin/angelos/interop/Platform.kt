@@ -19,5 +19,6 @@ import kotlin.native.Platform as NativePlatform
 internal actual class Platform {
     actual companion object {
         actual inline fun isLittleEndian(): Boolean = NativePlatform.isLittleEndian
+        actual inline fun getPlatform(): Int { TODO("Not yet implemented") }
     }
 }

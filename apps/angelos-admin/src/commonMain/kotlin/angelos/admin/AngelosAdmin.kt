@@ -15,14 +15,14 @@
 package angelos.admin
 
 import angelos.mvp.Application
+import angelos.mvp.Extension
 
-open class AngelosAdmin(prepare: Application.() -> Unit) : Application(prepare) {
-    override suspend fun initialize() {
-        println("Initializer")
-    }
+object AngelosAdmin : Application {
+    override val modules: MutableMap<String, Extension> = mutableMapOf()
+    override val identifiers: MutableList<String> = mutableListOf()
 
-    override suspend fun finalize() {
-        println("Finalizer")
+    init {
+
     }
 
     override suspend fun execute() {

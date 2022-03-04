@@ -44,8 +44,24 @@ static jboolean endian(JNIEnv * env, jclass thisClass){
     #endif
 }
 
+/*
+ * Class:     angelos_interop_Platform
+ * Method:    platform
+ * Signature: ()I
+ */
+static jint platform(JNIEnv * env, jclass thisClass){
+    #ifdef defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
+        return 1;
+    #elif defined (_WIN32)
+        return 2;
+    #else
+        return 0;
+    #endif
+}
+
 static JNINativeMethod funcs[] = {
-	{ "endian", "()Z", (void *)&endian }
+        { "endian", "()Z", (void *)&endian }
+        { "endian", "()I", (void *)&platform }
 };
 
 #define CURRENT_JNI JNI_VERSION_1_6

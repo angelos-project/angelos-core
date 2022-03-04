@@ -16,39 +16,26 @@ package angelos.mvp
 
 import angelos.ioc.Container
 
-typealias Ioc = Container<Extension, String>
+interface Application: Container<Extension, String> {
+    val identifiers: MutableList<String>
 
-open class Application(val prepare: Application.() -> Unit): Ioc() {
-    private val instances = mutableMapOf<String, Extension>()
+    suspend operator fun invoke(i: suspend Application.() -> Unit) = i(this)
 
-    init {
-
-    }
-
-    private fun setup () = prepare(this)
-
-    override operator fun get(identifier: String): Extension {
-        if (!instances.containsKey(identifier)) {
-            val ext = modules[identifier]!!
-            ext()
-            instances[identifier] = ext
-        }
-        return instances[identifier]!!
-    }
-
-    fun add(module: Extension) = add(module.identifier, module)
-
-    protected open suspend fun initialize() {}
-
-    protected open suspend fun finalize() {}
-
-    protected open suspend fun execute() {}
-
-    suspend fun run(main: suspend Ioc.() -> Unit) {
-        setup()
+    suspend fun config(c: suspend Application.() -> Unit) {c()}
+    suspend fun run(e: suspend Application.() -> Unit) {
         initialize()
         execute()
-        main()
+        e()
         finalize()
     }
+
+    fun add(module: Extension) {
+        identifiers.add(module.identifier)
+        super.add(module.identifier, module)
+    }
+
+    suspend fun initialize() = identifiers.forEach { modules[it]!!.setup() }
+    suspend fun finalize() = identifiers.asReversed().forEach { modules[it]!!.cleanup() }
+
+    suspend fun execute() {}
 }

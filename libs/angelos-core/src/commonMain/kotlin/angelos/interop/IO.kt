@@ -45,5 +45,8 @@ internal expect class IO {
 
         inline fun clientOpen(host: String, port: Short, domain: Socket.Family, type: Socket.Type, protocol: Int): Int
         inline fun clientClose()
+
+        inline fun streamOpen(stream: Int): Int
+        inline fun streamClose(stream: Int)
     }
 }

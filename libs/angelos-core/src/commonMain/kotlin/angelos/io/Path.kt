@@ -44,10 +44,10 @@ abstract class Path internal constructor(val root: String, val path: PathList, v
             separator: PathSeparator,
         ): PathElements = when {
             separator == PathSeparator.WINDOWS && path.contains(windowsRegex) -> PathElements(path.substring(0..2),
-                path.substring(3..(path.length-1)).split(separator.toChar()) as PathList,
+                path.substring(3 until path.length).split(separator.toChar()) as PathList,
                 separator)
             separator == PathSeparator.POSIX && path.contains(posixRegex) -> PathElements("/",
-                path.substring(1..(path.length-1)).split(separator.toChar()) as PathList,
+                path.substring(1 until path.length).split(separator.toChar()) as PathList,
                 separator)
             else -> PathElements("", path.split(separator.toChar()) as PathList, separator)
         }

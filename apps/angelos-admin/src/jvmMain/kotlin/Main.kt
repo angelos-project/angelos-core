@@ -15,16 +15,18 @@
 import angelos.admin.AngelosAdmin
 import angelos.mvp.ExtSignal
 import angelos.mvp.ExtQuit
+import angelos.mvp.ExtWatcher
 import kotlinx.coroutines.delay
 
 suspend fun main(args: Array<String>) = AngelosAdmin {
-    add(ExtSignal { })
-    add(ExtQuit {
-        it.signal = AngelosAdmin@ this["signal"] as ExtSignal
-        it.signalReg()
-    })
-}.run {
-    delay(3000)
-    println("Hello, world!")
-    (this["quit"] as ExtQuit).await()
+    config {
+        add(ExtSignal())
+        add(ExtQuit(this["signal"] as ExtSignal))
+        add(ExtWatcher(this["signal"] as ExtSignal))
+    }
+    run {
+        delay(3000)
+        println("Hello, world!")
+        (this["quit"] as ExtQuit).await()
+    }
 }

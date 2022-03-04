@@ -15,14 +15,10 @@
 package angelos.ioc
 
 
-open class Container<M: Module, I> {
-    protected val modules: MutableMap<I, M> = mutableMapOf()
+interface Container<M: Module, I> {
+    val modules: MutableMap<I, M>
 
-    operator fun invoke(setup: () -> Unit) {
-
-    }
-
-    open operator fun get(identifier: I): M {
+    operator fun get(identifier: I): M {
         if (!modules.containsKey(identifier))
             throw ContainerException("Module for \"$identifier\" not found")
         return modules[identifier]!!

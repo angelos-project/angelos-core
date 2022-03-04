@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+ * Copyright (c) 2022 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
  *
  * This software is available under the terms of the MIT license. Parts are licensed
  * under different terms if stated. The legal terms are attached to the LICENSE file
@@ -12,17 +12,7 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.interop
+package angelos.io.file
 
-enum class System(val platform: Int) {
-    POSIX(1),
-    NT(2),
-    UNKNOWN(0)
-}
-
-internal expect class Platform {
-    companion object {
-        inline fun isLittleEndian(): Boolean
-        inline fun getPlatform(): Int
-    }
+open class WatcherException(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause) {
 }

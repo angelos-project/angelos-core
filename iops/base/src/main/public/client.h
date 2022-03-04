@@ -12,14 +12,7 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <netdb.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <unistd.h>
+#include "net.h"
 
 
 #ifndef _Included_angelos_interop_IO_client
@@ -28,10 +21,26 @@
 extern "C" {
 #endif
 
+#ifdef defined (__FreeBSD__) || defined (__NetBSD__) || defined (__OpenBSD__) || (defined (__APPLE__))
+// KQUEUE
+
+    typedef int b_socket_t
+
+#elif defined (__linux__)
+// EPOLL
+
+    typedef int b_socket_t
+
+#elif defined (_WIN32)
+// IOCP
+
+    typedef SOCKET b_socket_t
+
+#endif
+
 
 int client_connect(const char * host, short port, int domain, int type, int protocol);
-int client_close(int sockfd);
-
+int client_close(b_socket_t sockfd);
 
 #ifdef __cplusplus
 }

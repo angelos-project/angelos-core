@@ -14,33 +14,31 @@
  */
 package angelos.mvp
 
+import angelos.io.file.Watcher
 import angelos.io.signal.SignalHandler
 import angelos.io.signal.Signum
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.sync.Semaphore
 
-class ExtQuit(private val signal: ExtSignal) : Extension {
+class ExtWatcher(private val signal: ExtSignal): Extension, Watcher {
     override val identifier: String
-        get() = "quit"
+        get() = "watcher"
 
-    private val semaphore = Semaphore(1)
     private lateinit var handler: SignalHandler
 
     init {
         signalReg()
     }
 
-    override fun setup() { }
-    override fun cleanup() { }
+    override fun setup() {}
+    override fun cleanup() {}
 
     fun signalReg() {
-        handler = signal.build(Channel() { semaphore.release() },
-            // Signum.SIGKILL.signum,
-            Signum.SIGABRT.signum,
-            Signum.SIGINT.signum
+        handler = signal.build(
+            Channel() {
+                poll()
+            },
+            Signum.SIGIO.signum,
         )
         signal.register(handler)
     }
-
-    suspend fun await(): Unit = semaphore.acquire()
 }

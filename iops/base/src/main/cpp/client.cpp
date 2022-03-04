@@ -13,10 +13,8 @@
  *      Kristoffer Paulsson - initial implementation
  */
 #include "client.h"
-#include "err.h"
-#include "net.h"
 
-int client_connect(const char * host, short port, int domain, int type, int protocol){
+int client_connect(const char * host, short port, int domain, int type, int protocol) {
     int sockfd, conn;
     struct hostent *he;
     struct sockaddr_in them; /* connector's address information */
@@ -44,6 +42,6 @@ int client_connect(const char * host, short port, int domain, int type, int prot
 }
 
 
-int client_close(int sockfd) {
+int client_close(b_socket_t sockfd) {
 
 }
