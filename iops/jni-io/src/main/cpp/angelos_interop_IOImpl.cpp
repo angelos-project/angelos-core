@@ -28,7 +28,8 @@
 
 #include <string.h>
 
-#include "client.h"
+#include "net.h"
+ #include "client.h"
 #include "server.h"
 #include "err.h"
 
@@ -61,7 +62,7 @@ static jint fs_close(JNIEnv * env, jclass thisClass, jint fd) {
  */
 static jlong fs_read(JNIEnv * env, jclass thisClass, jint fd, jbyteArray output, jint index, jlong count) {
     jsize size = (*env)->GetArrayLength(env, output);
-    unsigned char* buf = (*env)->GetByteArrayElements(env, output, NULL);
+    signed char* buf = (*env)->GetByteArrayElements(env, output, NULL);
     if (size < count)
         count = size;
 
@@ -215,7 +216,7 @@ static jobject fs_fileinfo(JNIEnv * env, jclass thisClass, jstring path) {
  */
 static jstring fs_readlink(JNIEnv * env, jclass thisClass, jstring path) {
     const char *link = (*env)->GetStringUTFChars(env, path, NULL);
-    unsigned char* target = malloc(4096);
+    char* target = malloc(4096);
 
     ssize_t length = readlink(link, target, 4096);
     if (length == -1){
@@ -307,6 +308,33 @@ static jint fs_open(JNIEnv * env, jclass thisClass, jstring path, jint perm) {
 }
 
 
+/*
+ * Class:     angelos_interop_IO
+ * Method:    ep_pull
+ * Signature: ()Langelos/interop/PollAction;
+ */
+static jobject ep_pull(JNIEnv * env, jclass thisClass) {
+    int description = -1;
+    int action = -1;
+    int err = 0;
+
+    err = event_poll(&description, &action);
+    if (err != 0)
+        exit(1);
+
+    jclass local_cls = (*env)->FindClass(env, "angelos/interop/PollAction");
+    if (local_cls == NULL) // Quit program if Java class can't be found
+        exit(1);
+
+    jclass global_cls = (*env)->NewGlobalRef(env, local_cls);
+    jmethodID cls_init = (*env)->GetMethodID(env, global_cls, "<init>", "(I;I)V");
+    if (cls_init == NULL) // Quit program if Java class constructor can't be found
+        exit(1);
+
+    return (*env)->NewObject(env, global_cls, cls_init, description, action);
+}
+
+
 /* ==== ==== ==== ==== SERVER ==== ==== ==== ==== */
 
 
@@ -380,6 +408,8 @@ static JNINativeMethod funcs[] = {
 	{ "fs_closedir", "(J)I", (void *)&fs_closedir },
 	{ "fs_open", "(Ljava/lang/String;I)I", (void *)&fs_open },
 
+    { "ep_pull", "()Langelos/interop/PollAction;", (void *)&ep_pull },
+
 	{ "server_open", "(III)I", (void *)&server1_open },
 	{ "server_listen", "(ILjava/lang/String;SII)I", (void *)&server1_listen },
 	{ "client_connect", "(Ljava/lang/String;SIII)I", (void *)&client1_connect },
@@ -405,6 +435,8 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved) {
 	if (res != 0)
 		return -1;
 
+    OPEN_QUEUE()
+
 	return CURRENT_JNI;
 }
 
@@ -421,6 +453,8 @@ JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void *reserved) {
 	cls = (*env)->FindClass(env, JNIT_CLASS);
 	if (cls == NULL)
 		return;
+
+    CLOSE_QUEUE()
 
 	(*env)->UnregisterNatives(env, cls);
 }

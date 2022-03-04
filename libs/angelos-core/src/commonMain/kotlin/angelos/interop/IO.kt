@@ -18,6 +18,8 @@ import angelos.io.FileSystem
 import angelos.io.net.Socket
 import angelos.nio.Buffer
 
+data class PollAction(val descriptor: Int, val action: Int)
+
 internal expect class IO {
     companion object {
         inline fun readFile(number: Int, dst: Buffer, index: Int, count: Long): Long
@@ -43,7 +45,9 @@ internal expect class IO {
         inline fun serverHandle()
         inline fun serverClose()
 
-        inline fun clientOpen(host: String, port: Short, domain: Socket.Family, type: Socket.Type, protocol: Int): Int
+        inline fun pollAction(): PollAction
+
+        fun clientOpen(host: String, port: Short, domain: Socket.Family, type: Socket.Type, protocol: Int): Int
         inline fun clientClose()
 
         inline fun streamOpen(stream: Int): Int

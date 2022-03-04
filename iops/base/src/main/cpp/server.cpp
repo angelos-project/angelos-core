@@ -20,37 +20,37 @@ int server_open(int domain, int type, int protocol) {
     CLEAR_ERROR()
     int sockfd = socket(domain, type, protocol);
 
-    if (fcntl(sockfd,F_SETOWN, getpid()))
+    if (fcntl(sockfd, F_SETOWN, getpid()))
         return -1;
 
-    if (fcntl(sockfd,F_SETFL,FASYNC))
+    if (fcntl(sockfd, F_SETFL, FASYNC))
         return -1;
 
     return sockfd;
 }
 
 
-int server_listen(int sockfd, const char * host, short port, int domain, int max_conn) {
+int server_listen(int sockfd, const char *host, short port, int domain, int max_conn) {
     struct sockaddr_in server;
     server.sin_family = domain;
     server.sin_port = htons(port);
 
     CLEAR_ERROR()
 
-    if(inet_pton(domain, host, &server.sin_addr.s_addr) != 1){
+    if (inet_pton(domain, host, &server.sin_addr.s_addr) != 1) {
         struct hostent *hp = gethostbyname(host);
-        if(hp == 0){
+        if (hp == 0) {
             return -1;
         }
         memcpy(&server.sin_addr, hp->h_addr, hp->h_length);
         free(hp);
     }
 
-    if (bind(sockfd, (struct sockaddr *)&server, sizeof(server)))
+    if (bind(sockfd, (struct sockaddr *) &server, sizeof(server)))
         return errno;
 
     unsigned int length = sizeof(server);
-    if (getsockname(sockfd, (struct sockaddr *)&server, &length))
+    if (getsockname(sockfd, (struct sockaddr *) &server, &length))
         return errno;
 
     if (listen(sockfd, max_conn))
@@ -64,14 +64,14 @@ void server_close() {
 }
 
 
-int server_handle(int sockfd, const char * buffer) {
-	int 			numbytes;
-	unsigned int addr_len;
-	struct sockaddr_in 	their_addr;	/* connector's address information	*/
+int server_handle(int sockfd, const char *buffer) {
+    int numbytes;
+    unsigned int addr_len;
+    struct sockaddr_in their_addr;    /* connector's address information	*/
 
-	CLEAR_ERROR()
+    CLEAR_ERROR()
 
-    return recvfrom(sockfd, (void *)buffer, MAXBUFLEN, 0, (struct sockaddr *)&their_addr, &addr_len);
+    return recvfrom(sockfd, (void *) buffer, MAXBUFLEN, 0, (struct sockaddr *) &their_addr, &addr_len);
 }
 
 
@@ -92,7 +92,7 @@ int server_connection_handler(int signal) {
     if (!FD_ISSET(sockfd, &ready))
         return -1;
 
-    return accept(sockfd, (struct sockaddr *)0, (int *)0);
+    return accept(sockfd, (struct sockaddr *) 0, (int *) 0);
 }
 
 

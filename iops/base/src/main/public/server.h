@@ -34,7 +34,8 @@ extern "C" {
 
 
 int server_open(int domain, int type, int protocol);
-int server_listen(int sockfd, const char * host, short port, int domain, int max_conn);
+
+int server_listen(int sockfd, const char *host, short port, int domain, int max_conn);
 
 
 #ifdef __cplusplus

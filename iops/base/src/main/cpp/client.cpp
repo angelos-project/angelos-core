@@ -14,10 +14,10 @@
  */
 #include "client.h"
 
-int client_connect(const char * host, short port, int domain, int type, int protocol) {
+int client_connect(const char *host, short port, int domain, int type, int protocol) {
     int sockfd, conn;
-    struct hostent *he;
-    struct sockaddr_in them; /* connector's address information */
+    /*struct hostent *he;
+    struct sockaddr_in them;
 
     CLEAR_ERROR()
 
@@ -36,7 +36,7 @@ int client_connect(const char * host, short port, int domain, int type, int prot
 
     conn = connect(sockfd, (struct sockaddr *)&them, sizeof(them)); // [Errno 61]
     if (conn == -1)
-        return -1;
+        return -1;*/
 
     return sockfd;
 }

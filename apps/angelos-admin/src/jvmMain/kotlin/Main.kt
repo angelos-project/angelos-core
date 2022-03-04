@@ -27,6 +27,8 @@ suspend fun main(args: Array<String>) = AngelosAdmin {
     run {
         delay(3000)
         println("Hello, world!")
-        (this["quit"] as ExtQuit).await()
+        val signum = (this["quit"] as ExtQuit).await()
+        println("Signum $signum")
+        delay(1000)
     }
 }

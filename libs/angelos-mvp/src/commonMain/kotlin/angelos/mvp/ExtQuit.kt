@@ -18,12 +18,12 @@ import angelos.io.signal.SignalHandler
 import angelos.io.signal.Signum
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 
 class ExtQuit(private val signal: ExtSignal) : Extension {
     override val identifier: String
         get() = "quit"
 
-    private val semaphore = Semaphore(1)
     private lateinit var handler: SignalHandler
 
     init {
@@ -34,7 +34,7 @@ class ExtQuit(private val signal: ExtSignal) : Extension {
     override fun cleanup() { }
 
     fun signalReg() {
-        handler = signal.build(Channel() { semaphore.release() },
+        handler = signal.build(Channel(),
             // Signum.SIGKILL.signum,
             Signum.SIGABRT.signum,
             Signum.SIGINT.signum
@@ -42,5 +42,5 @@ class ExtQuit(private val signal: ExtSignal) : Extension {
         signal.register(handler)
     }
 
-    suspend fun await(): Unit = semaphore.acquire()
+    suspend fun await(): Int = handler.receive()
 }

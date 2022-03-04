@@ -21,8 +21,8 @@ interface Application: Container<Extension, String> {
 
     suspend operator fun invoke(i: suspend Application.() -> Unit) = i(this)
 
-    suspend fun config(c: suspend Application.() -> Unit) {c()}
-    suspend fun run(e: suspend Application.() -> Unit) {
+    suspend fun config(c: suspend () -> Unit) {c()}
+    suspend fun run(e: suspend () -> Unit) {
         initialize()
         execute()
         e()

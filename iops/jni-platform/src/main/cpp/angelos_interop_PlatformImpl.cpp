@@ -27,21 +27,21 @@ static const char *JNIT_CLASS = "angelos/interop/Platform";
  * Method:    endian
  * Signature: ()Z
  */
-static jboolean endian(JNIEnv * env, jclass thisClass){
-    #define LITTLE_ENDIAN 0x41424344UL
-    #define BIG_ENDIAN    0x44434241UL
-    #define PDP_ENDIAN    0x42414443UL
-    #define ENDIAN_ORDER  ('ABCD')
+static jboolean endian(JNIEnv *env, jclass thisClass) {
+#define LITTLE_ENDIAN 0x41424344UL
+#define BIG_ENDIAN    0x44434241UL
+#define PDP_ENDIAN    0x42414443UL
+#define ENDIAN_ORDER  ('ABCD')
 
-    #if ENDIAN_ORDER==LITTLE_ENDIAN
-        return JNI_TRUE;
-    #elif ENDIAN_ORDER==BIG_ENDIAN
-        return JNI_FALSE;
-    #elif ENDIAN_ORDER==PDP_ENDIAN
-        #error "Can't compile machine is PDP"
-    #else
-        #error "Can't compile undistinguished endianness!"
-    #endif
+#if ENDIAN_ORDER == LITTLE_ENDIAN
+    return JNI_TRUE;
+#elif ENDIAN_ORDER == BIG_ENDIAN
+    return JNI_FALSE;
+#elif ENDIAN_ORDER==PDP_ENDIAN
+#error "Can't compile machine is PDP"
+#else
+#error "Can't compile undistinguished endianness!"
+#endif
 }
 
 /*
@@ -49,60 +49,58 @@ static jboolean endian(JNIEnv * env, jclass thisClass){
  * Method:    platform
  * Signature: ()I
  */
-static jint platform(JNIEnv * env, jclass thisClass){
-    #ifdef defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
-        return 1;
-    #elif defined (_WIN32)
-        return 2;
-    #else
-        return 0;
-    #endif
+static jint platform(JNIEnv *env, jclass thisClass) {
+#if defined(__unix__) || defined(__APPLE__)
+    return 1;
+#elif defined (_WIN32)
+    return 2;
+#else
+    return 0;
+#endif
 }
 
 static JNINativeMethod funcs[] = {
-        { "endian", "()Z", (void *)&endian }
-        { "endian", "()I", (void *)&platform }
+        {"endian",   "()Z", (void *) &endian},
+        {"platform", "()I", (void *) &platform}
 };
 
 #define CURRENT_JNI JNI_VERSION_1_6
 
-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
-{
-	JNIEnv *env;
-	jclass  cls;
-	jint    res;
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+    JNIEnv *env;
+    jclass cls;
+    jint res;
 
-	(void)reserved;
+    (void) reserved;
 
-	if ((*vm)->GetEnv(vm, (void **)&env, CURRENT_JNI) != JNI_OK)
-		return -1;
+    if ((*vm)->GetEnv(vm, (void **) &env, CURRENT_JNI) != JNI_OK)
+        return -1;
 
-	cls = (*env)->FindClass(env, JNIT_CLASS);
-	if (cls == NULL)
-		return -1;
+    cls = (*env)->FindClass(env, JNIT_CLASS);
+    if (cls == NULL)
+        return -1;
 
-	res = (*env)->RegisterNatives(env, cls, funcs, sizeof(funcs)/sizeof(*funcs));
-	if (res != 0)
-		return -1;
+    res = (*env)->RegisterNatives(env, cls, funcs, sizeof(funcs) / sizeof(*funcs));
+    if (res != 0)
+        return -1;
 
-	return CURRENT_JNI;
+    return CURRENT_JNI;
 }
 
-JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void *reserved)
-{
-	JNIEnv *env;
-	jclass  cls;
+JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void *reserved) {
+    JNIEnv *env;
+    jclass cls;
 
-	(void)reserved;
+    (void)reserved;
 
-	if ((*vm)->GetEnv(vm, (void **)&env, CURRENT_JNI) != JNI_OK)
-		return;
+    if ((*vm)->GetEnv(vm,(void **)&env, CURRENT_JNI) != JNI_OK)
+        return;
 
-	cls = (*env)->FindClass(env, JNIT_CLASS);
-	if (cls == NULL)
-		return;
+    cls = (*env)->FindClass(env, JNIT_CLASS);
+    if (cls == NULL)
+        return;
 
-	(*env)->UnregisterNatives(env, cls);
+    (*env)->UnregisterNatives(env, cls);
 }
 
 

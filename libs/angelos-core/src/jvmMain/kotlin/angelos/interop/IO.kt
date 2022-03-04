@@ -14,6 +14,7 @@
  */
 package angelos.interop
 
+import java.lang.System
 import angelos.io.FileSystem
 import angelos.io.FileNotFoundException
 import angelos.io.IOException
@@ -156,6 +157,10 @@ internal actual class IO {
         @JvmStatic
         private external fun fs_closedir(dir: Long): Int
 
+        actual inline fun pollAction(): PollAction = ep_pull()
+
+        @JvmStatic
+        private external fun ep_pull(): PollAction
 
         actual inline fun serverOpen(domain: Socket.Family, type: Socket.Type, protocol: Int): Int = server_open(domain.family, type.type, protocol)
 
@@ -183,6 +188,14 @@ internal actual class IO {
 
         @JvmStatic
         private external fun client_connect(host: String, port: Short, domain: Int, type: Int, protocol: Int): Int
+
+        actual inline fun streamOpen(stream: Int): Int {
+            TODO("Not yet implemented")
+        }
+
+        actual inline fun streamClose(stream: Int) {
+            TODO("Not yet implemented")
+        }
 
         init {
             System.loadLibrary("jni-io")

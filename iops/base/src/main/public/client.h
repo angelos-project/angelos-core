@@ -21,25 +21,20 @@
 extern "C" {
 #endif
 
-#ifdef defined (__FreeBSD__) || defined (__NetBSD__) || defined (__OpenBSD__) || (defined (__APPLE__))
+#if defined (__FreeBSD__) || defined (__NetBSD__) || defined (__OpenBSD__) || defined (__APPLE__)
 // KQUEUE
-
-    typedef int b_socket_t
 
 #elif defined (__linux__)
 // EPOLL
 
-    typedef int b_socket_t
-
-#elif defined (_WIN32)
+#elif defined(_WIN32) || defined(_WIN64)
 // IOCP
-
-    typedef SOCKET b_socket_t
 
 #endif
 
 
-int client_connect(const char * host, short port, int domain, int type, int protocol);
+int client_connect(const char *host, short port, int domain, int type, int protocol);
+
 int client_close(b_socket_t sockfd);
 
 #ifdef __cplusplus

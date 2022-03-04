@@ -14,6 +14,8 @@
  */
 package angelos.interop
 
+import java.lang.System
+
 /**
  * How to call Kotlin from outside.
  * https://www.iitk.ac.in/esc101/05Aug/tutorial/native1.1/implementing/method.html
