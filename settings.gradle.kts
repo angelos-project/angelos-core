@@ -18,6 +18,9 @@ dependencyResolutionManagement {
 include("base")
 project(":base").projectDir = File("iops/base")
 
+include("jni-base")
+project(":jni-base").projectDir = File("iops/jni-base")
+
 include("jni-io")
 project(":jni-io").projectDir = File("iops/jni-io")
 

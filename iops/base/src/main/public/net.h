@@ -112,7 +112,7 @@ typedef struct {
 
 e_queue_t kq; // Event queue
 
-int event_poll(int *descriptor, int *event);
+extern int event_poll(int *descriptor, int *event);
 
 #ifdef __cplusplus
 }

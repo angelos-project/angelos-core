@@ -17,10 +17,12 @@ kotlin {
             dependsOn(":jni-platform:assemble")
             dependsOn(":jni-proc:assemble")
             dependsOn(":jni-io:assemble")
+            dependsOn(":jni-base:assemble")
 
             from("${project(":jni-proc").buildDir}/lib/main/release/stripped")
             from("${project(":jni-platform").buildDir}/lib/main/release/stripped")
             from("${project(":jni-io").buildDir}/lib/main/release/stripped")
+            from("${project(":jni-base").buildDir}/lib/main/release/stripped")
         }
 
         compilations.all {
@@ -51,6 +53,22 @@ kotlin {
         else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
     }
 
+    nativeTarget.apply {
+        val includePath = file("${project(":base").projectDir}/src/main/public/").absolutePath
+        val libraryPathMain = file(project.file("${project(":base").buildDir}/lib/main/release/")).absolutePath
+        val libraryPathTest = file(project.file("${project(":base").buildDir}/lib/main/debug/")).absolutePath
+
+        val main by compilations.getting
+
+        val printline by main.cinterops.creating {
+            defFile(project.file("src/nativeInterop/cinterop/base.def"))
+            compilerOpts("-I$includePath")
+            includeDirs.allHeaders(includePath)
+            extraOpts("-libraryPath", "$libraryPathMain")
+            extraOpts("-libraryPath", "$libraryPathTest")
+        }
+    }
+
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -74,4 +92,8 @@ kotlin {
         val nativeMain by getting
         val nativeTest by getting
     }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.CInteropProcess::class) {
+    dependsOn(":base:assemble")
 }

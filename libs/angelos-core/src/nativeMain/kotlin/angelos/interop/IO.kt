@@ -14,10 +14,11 @@
  */
 package angelos.interop
 
-import angelos.nio.Buffer
-import angelos.io.*
+import angelos.io.FileNotFoundException
 import angelos.io.FileSystem
+import angelos.io.IOException
 import angelos.io.net.Socket
+import angelos.nio.Buffer
 import kotlinx.cinterop.*
 import platform.posix.*
 
@@ -136,6 +137,17 @@ internal actual class IO {
         }
 
         actual inline fun clientClose() {
+        }
+
+        actual inline fun pollAction(): PollAction {
+            TODO("Not yes implemented")
+        }
+
+        actual inline fun streamOpen(stream: Int): Int {
+            TODO("Not yet implemented")
+        }
+
+        actual inline fun streamClose(stream: Int) {
         }
     }
 }

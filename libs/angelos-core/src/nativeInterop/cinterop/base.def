@@ -1,0 +1,3 @@
+headers = base.h
+staticLibraries = libbase.a
+package = base
