@@ -19,6 +19,8 @@
 #elif defined (__linux__)
 # include "linux/sig.h"
 #elif defined(_WIN32) || defined(_WIN64)
-# include "win/fsig.h"
+# include "win/sig.h"
+
+
 #endif
 #endif //BASE_SIG_H

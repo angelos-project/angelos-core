@@ -16,7 +16,6 @@ package angelos.io.net
 
 import angelos.interop.Proc
 import angelos.io.IOException
-import angelos.io.signal.Signal
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.sync.Mutex
 import kotlin.jvm.JvmStatic

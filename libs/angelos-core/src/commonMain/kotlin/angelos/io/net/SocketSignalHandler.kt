@@ -14,10 +14,7 @@
  */
 package angelos.io.net
 
-import angelos.io.signal.Signal
-import angelos.io.signal.SignalHandler
-import angelos.io.signal.Signum
 import kotlinx.coroutines.channels.Channel
 
-class SocketSignalHandler(queue: Channel<Int>) : SignalHandler(listOf(Signum.SIGIO.signum), queue) {
+class SocketSignalHandler(queue: Channel<Int>) /*: SignalHandler(listOf(Signal.SIGPOLL.signal), queue)*/ {
 }

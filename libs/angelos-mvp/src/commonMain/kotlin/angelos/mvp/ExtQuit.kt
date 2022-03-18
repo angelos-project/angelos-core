@@ -15,10 +15,8 @@
 package angelos.mvp
 
 import angelos.io.signal.SignalHandler
-import angelos.io.signal.Signum
+import angelos.io.signal.SigName
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 
 class ExtQuit(private val signal: ExtSignal) : Extension {
     override val identifier: String
@@ -36,8 +34,8 @@ class ExtQuit(private val signal: ExtSignal) : Extension {
     fun signalReg() {
         handler = signal.build(Channel(),
             // Signum.SIGKILL.signum,
-            Signum.SIGABRT.signum,
-            Signum.SIGINT.signum
+            SigName.SIGABRT.sigNum,
+            SigName.SIGINT.sigNum
         )
         signal.register(handler)
     }

@@ -18,6 +18,8 @@ expect class Base {
     companion object{
         fun getEndian(): Int
         fun getPlatform(): Int
+        fun setInterrupt(sigNum: Int): Boolean
+        fun sigAbbr(sigNum: Int): String
     }
 
 }

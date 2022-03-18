@@ -18,6 +18,10 @@ import java.lang.System
 
 actual class Base {
     actual companion object {
+        init {
+            System.loadLibrary("jni-base") // Load underlying library via JNI.
+        }
+
         actual fun getEndian(): Int = endian()
 
         actual fun getPlatform(): Int = platform()
@@ -28,8 +32,16 @@ actual class Base {
         @JvmStatic
         private external fun platform(): Int
 
-        init {
-            System.loadLibrary("jni-base")
+        actual fun setInterrupt(sigNum: Int): Boolean {
+            TODO("Not yet implemented")
+        }
+
+        private fun incomingSignal(sigNum: Int) {
+            TODO("$sigNum. Time to implement signal handler on native.")
+        }
+
+        actual fun sigAbbr(sigNum: Int): String {
+            TODO("Not yet implemented")
         }
     }
 }

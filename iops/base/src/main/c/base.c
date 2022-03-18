@@ -15,9 +15,9 @@
 #include "base.h"
 
 
-#define LITTLE_ENDIAN 0x41424344UL
-#define BIG_ENDIAN    0x44434241UL
-#define PDP_ENDIAN    0x42414443UL
+#define _LITTLE_ENDIAN 0x41424344UL
+#define _BIG_ENDIAN    0x44434241UL
+#define _PDP_ENDIAN    0x42414443UL
 #define ENDIAN_ORDER  ('ABCD')
 
 
@@ -27,11 +27,11 @@ enum {
 };
 
 int endian() {
-#if ENDIAN_ORDER == LITTLE_ENDIAN
+#if ENDIAN_ORDER == _LITTLE_ENDIAN
     return kLittleEndian;
-#elif ENDIAN_ORDER == BIG_ENDIAN
+#elif ENDIAN_ORDER == _BIG_ENDIAN
     return kBigEndian;
-#elif ENDIAN_ORDER==PDP_ENDIAN
+#elif ENDIAN_ORDER==_PDP_ENDIAN
 #error "Can't compile machine is PDP"
 #else
 #error "Can't compile undistinguished endianness!"

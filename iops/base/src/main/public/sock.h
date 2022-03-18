@@ -13,7 +13,7 @@
  *      Kristoffer Paulsson - initial implementation
  */
 #ifndef BASE_SOCK_H
-#define BASE_SOCL_H
+#define BASE_SOCK_H
 #if defined (__FreeBSD__) || defined (__NetBSD__) || defined (__OpenBSD__) || defined (__APPLE__)
 # include "bsd/sock.h"
 #elif defined (__linux__)

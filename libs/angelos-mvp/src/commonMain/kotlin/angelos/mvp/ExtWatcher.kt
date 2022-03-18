@@ -16,7 +16,7 @@ package angelos.mvp
 
 import angelos.io.file.Watcher
 import angelos.io.signal.SignalHandler
-import angelos.io.signal.Signum
+import angelos.io.signal.SigName
 import kotlinx.coroutines.channels.Channel
 
 class ExtWatcher(private val signal: ExtSignal): Extension, Watcher {
@@ -37,7 +37,7 @@ class ExtWatcher(private val signal: ExtSignal): Extension, Watcher {
             Channel() {
                 poll()
             },
-            Signum.SIGIO.signum,
+            SigName.SIGIO.sigNum,
         )
         signal.register(handler)
     }

@@ -14,13 +14,31 @@
  */
 package angelos.interop
 
-import base.endian
-import base.platform
+import base.*
+import kotlinx.cinterop.staticCFunction
+
 
 actual class Base {
     actual companion object {
+        init {
+            // Setting up the outbound signal action callback
+            // and initializing external signal handler.
+            init_signal_handler(staticCFunction<Int, Unit> { incomingSignal(it) })
+        }
+
         actual fun getEndian(): Int = endian()
 
         actual fun getPlatform(): Int = platform()
+
+        actual fun setInterrupt(sigNum: Int): Boolean = when(register_signal_handler(sigNum)){
+            0 -> true
+            else -> false
+        }
+
+        private inline fun incomingSignal(sigNum: Int) {
+            TODO("$sigNum. Time to implement signal handler on native.")
+        }
+
+        actual fun sigAbbr(sigNum: Int): String = signal_abbreviation(sigNum).toString()
     }
 }

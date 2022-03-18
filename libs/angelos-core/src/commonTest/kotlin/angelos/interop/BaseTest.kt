@@ -15,6 +15,8 @@
 package angelos.interop
 
 import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class BaseTest{
 
@@ -26,5 +28,11 @@ class BaseTest{
     @Test
     fun getPlatform() {
         Base.getPlatform()
+    }
+
+    @Test
+    fun setInterrupt() {
+        assertTrue { Base.setInterrupt(2) }
+        assertFalse { Base.setInterrupt(500) }
     }
 }

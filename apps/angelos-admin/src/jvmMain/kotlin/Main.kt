@@ -13,8 +13,8 @@
  *      Kristoffer Paulsson - port from python
  */
 import angelos.admin.AngelosAdmin
-import angelos.mvp.ExtSignal
 import angelos.mvp.ExtQuit
+import angelos.mvp.ExtSignal
 import angelos.mvp.ExtWatcher
 import kotlinx.coroutines.delay
 
