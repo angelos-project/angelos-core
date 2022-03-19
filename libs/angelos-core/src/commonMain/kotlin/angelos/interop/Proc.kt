@@ -30,7 +30,7 @@ abstract class AbstractProc{
         internal lateinit var sigHandler: Signal
 
         fun interrupt(signum: Int) {
-            sigHandler.handler(signum)
+            //sigHandler.handler(signum)
         }
 
     }

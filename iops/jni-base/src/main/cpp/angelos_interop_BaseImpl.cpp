@@ -13,6 +13,8 @@
  *      Kristoffer Paulsson - initial implementation
  */
 #include <jni.h>
+#include <string.h>
+#include <errno.h>
 #include "base.h"
 
 #ifndef _Included_angelos_interop_Base
@@ -25,7 +27,7 @@ static const char *JNIT_CLASS = "angelos/interop/Base";
 
 /*
  * Class:     angelos_interop_Base
- * Method:    endian
+ * Method:    get_endian
  * Signature: ()I
  */
 static jint get_endian(JNIEnv *env, jclass thisClass) {
@@ -34,16 +36,44 @@ static jint get_endian(JNIEnv *env, jclass thisClass) {
 
 /*
  * Class:     angelos_interop_Base
- * Method:    platform
+ * Method:    get_platform
  * Signature: ()I
  */
 static jint get_platform(JNIEnv *env, jclass thisClass) {
     return platform();
 }
 
+/*
+ * Class:     angelos_interop_Base
+ * Method:    get_signal_abbreviation
+ * Signature: (I)Ljava/lang/String;
+ */
+static jstring get_signal_abbreviation(JNIEnv *env, jclass thisClass, jint signum) {
+    const char* abbr = signal_abbreviation(signum);
+    return (*env)->NewStringUTF(env, abbr);
+}
+
+/*
+ * Class:     angelos_interop_Base
+ * Method:    get_error
+ * Signature: ()V
+ */
+static void get_error(JNIEnv * env, jclass thisClass){
+    if (errno == 0)
+        return;
+
+    jclass proc = (*env)->FindClass(env, "angelos/sys/Error");
+    jfieldID err_num = (*env)->GetStaticFieldID(env, proc, "errNum", "I");
+    jfieldID err_msg = (*env)->GetStaticFieldID(env, proc, "errMsg", "Ljava/lang/String;");
+    (*env)->SetStaticIntField(env, proc, err_num, errno);
+    (*env)->SetStaticObjectField(env, proc, err_msg, (*env)->NewStringUTF(env, strerror(errno)));
+}
+
 static JNINativeMethod funcs[] = {
         {"endian",   "()I", (void *) &get_endian},
-        {"platform", "()I", (void *) &get_platform}
+        {"platform", "()I", (void *) &get_platform},
+        {"signal_abbreviation", "(I)Ljava/lang/String;", (void *) &get_signal_abbreviation},
+        {"get_error", "()V", (void *) &get_error},
 };
 
 #define CURRENT_JNI JNI_VERSION_1_6

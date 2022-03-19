@@ -17,6 +17,18 @@
 #include "sig.h"
 
 
+/**
+ * Signal action struct, used as standard action handler.
+ */
+struct sigaction signal_action_cb;
+
+/**
+ * Pointer of outbound signal interrupt function.
+ * This pointer should be set before initializing.
+ */
+outbound_signal_ptr outbound_action_cb = NULL;
+
+
 void handler(int signum, siginfo_t *info, void *context)
 {
     // Blocking incoming signals

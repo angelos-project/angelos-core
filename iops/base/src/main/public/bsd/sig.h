@@ -23,17 +23,6 @@
 
 typedef void (*outbound_signal_ptr)(int);
 
-/**
- * Signal action struct, used as standard action handler.
- */
-struct sigaction signal_action_cb;
-
-/**
- * Pointer of outbound signal interrupt function.
- * This pointer should be set before initializing.
- */
-outbound_signal_ptr outbound_action_cb = NULL;
-
 
 /**
  * Handler function that is registered to deliver the signal actions.

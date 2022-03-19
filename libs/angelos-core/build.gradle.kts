@@ -30,7 +30,6 @@ kotlin {
         }
         withJava()
         testRuns["test"].executionTask.configure {
-            useJUnit()
             systemProperty(
                 "java.library.path",
                 file("${buildDir}/processedResources/jvm/main").absolutePath
@@ -60,12 +59,12 @@ kotlin {
 
         val main by compilations.getting
 
-        val printline by main.cinterops.creating {
+        val base by main.cinterops.creating {
             defFile(project.file("src/nativeInterop/cinterop/base.def"))
             compilerOpts("-I$includePath")
             includeDirs.allHeaders(includePath)
-            extraOpts("-libraryPath", "$libraryPathMain")
-            extraOpts("-libraryPath", "$libraryPathTest")
+            extraOpts("-libraryPath", libraryPathMain)
+            extraOpts("-libraryPath", libraryPathTest)
         }
     }
 
@@ -83,7 +82,6 @@ kotlin {
         val jvmMain by getting
         val jvmTest by getting {
             dependencies {
-                implementation(TestLibs.junit)
                 implementation(TestLibs.coro)
             }
         }

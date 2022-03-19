@@ -28,6 +28,7 @@ enum class SigName(val sigName: String){
     SIGINT("INT"), // Terminal interrupt signal
     SIGKILL("KILL"), // Kill (cannot be caught or ignored)
     SIGPIPE("PIPE"), // Write on a pipe with no one to read it
+    SIGIO("IO"), // Pollable event
     SIGPOLL("POLL"), // Pollable event
     SIGPROF("PROF"), // Profiling timer expired
     SIGQUIT("QUIT"), // Terminal quit signal
@@ -47,12 +48,26 @@ enum class SigName(val sigName: String){
     SIGXFSZ("XFSZ"), // File size limit exceeded
     SIGWINCH("WINCH"); // Terminal window size changed
 
+
     override fun toString(): String = "SIG$sigName"
 
     companion object {
-        private val cache = mutableMapOf<Int, SigName>()
+        private val numCache = mutableMapOf<Int, SigName>()
+        private val nameCache = mutableMapOf<SigName, Int>()
 
-        fun codeToName(sigNum: Int): SigName = cache[sigNum] ?: valueOf(Base.sigAbbr(sigNum)).also { cache[sigNum] = it}
+        init {
+            for(num in 1..32) {
+                val abbr = Base.sigAbbr(num)
+                try {
+                    val sig = valueOf("SIG$abbr")
+                    numCache[num] = sig
+                    nameCache[sig] = num
+                } catch (_: Exception) {}
+            }
+        }
+
+        fun codeToName(sigNum: Int): SigName = numCache[sigNum] ?: throw SignalError("Unsupported signal number: $sigNum")
+        fun nameToCode(sigName: SigName): Int = nameCache[sigName] ?: throw SignalError("Unsupported signal: $sigName")
     }
 }
 

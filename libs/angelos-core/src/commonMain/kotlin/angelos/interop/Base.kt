@@ -14,12 +14,26 @@
  */
 package angelos.interop
 
+import angelos.io.signal.SigName
+
 expect class Base {
-    companion object{
+    companion object {
+
+        // System endianness
         fun getEndian(): Int
+
+        // System API
         fun getPlatform(): Int
-        fun setInterrupt(sigNum: Int): Boolean
+
+        // Methods and properties relating to signal interrupts.
+        @Suppress("VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL")
+        internal var interrupt: (sigNum: SigName) -> (Unit)
+        fun setInterrupt(sigName: SigName): Boolean
+        internal fun incomingSignal(sigName: SigName)
         fun sigAbbr(sigNum: Int): String
+
+        // Method to load and populate error number and message from the system.
+        fun getError()
     }
 
 }

@@ -14,13 +14,18 @@
  */
 package angelos.interop
 
+import angelos.io.signal.SigName
+import sun.misc.Signal
 import java.lang.System
+import kotlin.properties.Delegates
 
 actual class Base {
     actual companion object {
         init {
             System.loadLibrary("jni-base") // Load underlying library via JNI.
         }
+
+        internal actual var interrupt: (sigNum: SigName) -> Unit by Delegates.notNull()
 
         actual fun getEndian(): Int = endian()
 
@@ -32,16 +37,25 @@ actual class Base {
         @JvmStatic
         private external fun platform(): Int
 
-        actual fun setInterrupt(sigNum: Int): Boolean {
-            TODO("Not yet implemented")
+        actual fun setInterrupt(sigName: SigName): Boolean {
+            Signal.handle(Signal(sigName.sigName)) {
+                incomingSignal(SigName.codeToName(it.number))
+            }
+            return true
         }
 
-        private fun incomingSignal(sigNum: Int) {
-            TODO("$sigNum. Time to implement signal handler on native.")
+        internal actual fun incomingSignal(sigName: SigName) { interrupt(sigName) }
+
+        actual fun sigAbbr(sigNum: Int): String = signal_abbreviation(sigNum).uppercase()
+
+        @JvmStatic
+        private external fun signal_abbreviation(sigNum: Int): String
+
+        actual fun getError() {
+            get_error()
         }
 
-        actual fun sigAbbr(sigNum: Int): String {
-            TODO("Not yet implemented")
-        }
+        @JvmStatic
+        private external fun get_error()
     }
 }

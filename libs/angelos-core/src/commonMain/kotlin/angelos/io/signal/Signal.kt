@@ -14,24 +14,23 @@
  */
 package angelos.io.signal
 
+import angelos.interop.Base
+
 interface Signal {
-    companion object {
-        private val signals = mutableMapOf<SigName, MutableList<suspend (it: SigName) -> (Unit)>>()
-
-        init {
-            // Hook into Base class.
-        }
-
-        fun catchInterrupt(sigNum: Int) {
-            val sig = SigName.codeToName(sigNum)
-            signals[sig]?.forEach { suspend { it(sig) } }
-        }
-    }
-
     fun registerHandler(sig: SigName, action: suspend (it: SigName) -> (Unit)) {
         if (signals.contains(sig))
             signals[sig]!!.add(action)
         else
             signals[sig] = mutableListOf(action)
+    }
+
+    companion object {
+        init {
+            Base.interrupt = { catchInterrupt(it) }
+        }
+
+        private val signals = mutableMapOf<SigName, MutableList<suspend (it: SigName) -> (Unit)>>()
+
+        private inline fun catchInterrupt(sigName: SigName) = signals[sigName]?.forEach { suspend { it(sigName) } }
     }
 }
