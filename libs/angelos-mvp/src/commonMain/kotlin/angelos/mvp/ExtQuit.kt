@@ -14,15 +14,15 @@
  */
 package angelos.mvp
 
-import angelos.io.signal.SignalHandler
 import angelos.io.signal.SigName
+import angelos.io.signal.SignalHandler
 import kotlinx.coroutines.channels.Channel
 
 class ExtQuit(private val signal: ExtSignal) : Extension {
     override val identifier: String
         get() = "quit"
 
-    private lateinit var handler: SignalHandler
+    private var queue = Channel<SigName>()
 
     init {
         signalReg()
@@ -32,13 +32,10 @@ class ExtQuit(private val signal: ExtSignal) : Extension {
     override fun cleanup() { }
 
     fun signalReg() {
-        handler = signal.build(Channel(),
-            // Signum.SIGKILL.signum,
-            SigName.SIGABRT.sigNum,
-            SigName.SIGINT.sigNum
-        )
-        signal.register(handler)
+        val handler: SignalHandler = { queue.send(it) }
+        signal.registerHandler(SigName.SIGINT, handler)
+        signal.registerHandler(SigName.SIGABRT, handler)
     }
 
-    suspend fun await(): Int = handler.receive()
+    suspend fun await(): SigName = queue.receive()
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+ * Copyright (c) 2021-2022 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
  *
  * This software is available under the terms of the MIT license. Parts are licensed
  * under different terms if stated. The legal terms are attached to the LICENSE file
@@ -14,16 +14,13 @@
  */
 package angelos.interop
 
+import angelos.io.poll.PollAction
 import angelos.io.signal.SigName
 import angelos.sys.Error
 import base.*
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.staticCFunction
-import kotlinx.cinterop.toKString
-import kotlinx.cinterop.usePinned
+import kotlinx.cinterop.*
 import platform.posix.errno
 import platform.posix.strerror
-import kotlin.properties.Delegates
 
 
 actual class Base {
@@ -34,9 +31,11 @@ actual class Base {
             init_signal_handler(staticCFunction<Int, Unit> {
                 incomingSignal(SigName.codeToName(it))
             })
+            // Setting up polling.
+            init_event_handler()
         }
 
-        internal actual var interrupt: (sigNum: SigName) -> Unit by Delegates.notNull()
+        internal actual var interrupt: (sigNum: SigName) -> Unit = {}
 
         actual fun getEndian(): Int = endian()
 
@@ -58,5 +57,18 @@ actual class Base {
             Error.errNum.usePinned { errno }
             Error.errMsg.usePinned { strerror(errno)?.toKString().toString() }
         }
+
+        actual fun pollAction(): PollAction = memScoped {
+            val description = alloc<IntVar>()
+            val event = alloc<IntVar>()
+            if(event_poll(description.ptr, event.ptr) != 0) {
+                Error.loadError()
+                throw BaseError("Failed to poll due to cause: (${Error.errNum}) ${Error.errMsg}")
+            }
+
+            return PollAction(description.value, event.value)
+        }
+
+        actual fun pollFinalize() = finalize_event_handler()
     }
 }

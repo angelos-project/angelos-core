@@ -318,7 +318,7 @@ static jobject ep_pull(JNIEnv * env, jclass thisClass) {
     int action = -1;
     int err = 0;
 
-    err = event_poll(&description, &action);
+    err = event_poll2(&description, &action);
     if (err != 0)
         exit(1);
 

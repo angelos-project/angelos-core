@@ -68,6 +68,8 @@ enum class SigName(val sigName: String){
 
         fun codeToName(sigNum: Int): SigName = numCache[sigNum] ?: throw SignalError("Unsupported signal number: $sigNum")
         fun nameToCode(sigName: SigName): Int = nameCache[sigName] ?: throw SignalError("Unsupported signal: $sigName")
+        fun isImplemented(sigNum: Int) = numCache.containsKey(sigNum)
+        fun isImplemented(sigName: SigName) = nameCache.containsKey(sigName)
     }
 }
 

@@ -69,11 +69,38 @@ static void get_error(JNIEnv * env, jclass thisClass){
     (*env)->SetStaticObjectField(env, proc, err_msg, (*env)->NewStringUTF(env, strerror(errno)));
 }
 
+/*
+ * Class:     angelos_interop_Base
+ * Method:    get_event_poll
+ * Signature: ()Langelos/io/poll/PollAction;
+ */
+static jobject get_event_poll(JNIEnv * env, jclass thisClass) {
+    int description = -1;
+    int action = -1;
+    int err = 0;
+
+    err = event_poll(&description, &action);
+    if (err != 0)
+        return NULL;
+
+    jclass local_cls = (*env)->FindClass(env, "angelos/io/poll/PollAction");
+    if (local_cls == NULL) // Quit program if Java class can't be found
+        exit(1);
+
+    jclass global_cls = (*env)->NewGlobalRef(env, local_cls);
+    jmethodID cls_init = (*env)->GetMethodID(env, global_cls, "<init>", "(I;I)V");
+    if (cls_init == NULL) // Quit program if Java class constructor can't be found
+        exit(1);
+
+    return (*env)->NewObject(env, global_cls, cls_init, description, action);
+}
+
 static JNINativeMethod funcs[] = {
         {"endian",   "()I", (void *) &get_endian},
         {"platform", "()I", (void *) &get_platform},
         {"signal_abbreviation", "(I)Ljava/lang/String;", (void *) &get_signal_abbreviation},
         {"get_error", "()V", (void *) &get_error},
+        {"event_poll", "()Langelos/io/poll/PollAction;", (void *) &get_event_poll},
 };
 
 #define CURRENT_JNI JNI_VERSION_1_6
@@ -96,6 +123,8 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     if (res != 0)
         return -1;
 
+    init_event_handler();
+
     return CURRENT_JNI;
 }
 
@@ -111,6 +140,8 @@ JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void *reserved) {
     cls = (*env)->FindClass(env, JNIT_CLASS);
     if (cls == NULL)
         return;
+
+    finalize_event_handler();
 
     (*env)->UnregisterNatives(env, cls);
 }

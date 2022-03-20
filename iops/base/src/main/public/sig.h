@@ -15,12 +15,10 @@
 #ifndef BASE_SIG_H
 #define BASE_SIG_H
 #if defined (__FreeBSD__) || defined (__NetBSD__) || defined (__OpenBSD__) || defined (__APPLE__)
-# include "bsd/sig.h"
+#include "bsd/sig.h"
 #elif defined (__linux__)
-# include "linux/sig.h"
+#include "linux/sig.h"
 #elif defined(_WIN32) || defined(_WIN64)
-# include "win/sig.h"
-
-
+#include "win/sig.h"
 #endif
 #endif //BASE_SIG_H

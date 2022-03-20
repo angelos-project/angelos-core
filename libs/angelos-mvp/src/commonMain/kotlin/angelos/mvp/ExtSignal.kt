@@ -15,8 +15,6 @@
 package angelos.mvp
 
 import angelos.io.signal.Signal
-import angelos.io.signal.SignalHandler
-import angelos.io.signal.SignalQueue
 
 class ExtSignal : Extension, Signal {
     override val identifier: String
@@ -25,9 +23,9 @@ class ExtSignal : Extension, Signal {
     override fun setup() { }
     override fun cleanup() { }
 
-    override val handlers: MutableList<SignalHandler> = mutableListOf()
-    override val signals: MutableList<Int> = mutableListOf()
-    override val map: HashMap<Int, SignalHandler> = hashMapOf()
+    //override val handlers: MutableList<SignalHandler> = mutableListOf()
+    //override val signals: MutableList<Int> = mutableListOf()
+    //override val map: HashMap<Int, SignalHandler> = hashMapOf()
 
-    fun build(queue: SignalQueue, vararg signums: Int): SignalHandler = SignalHandler(signums.toList(), queue)
+    //fun build(queue: SignalQueue, vararg signums: Int): SignalHandler = SignalHandler(signums.toList(), queue)
 }

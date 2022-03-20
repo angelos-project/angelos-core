@@ -14,13 +14,14 @@
  */
 package angelos.io.file
 
-import angelos.interop.IO
+import angelos.interop.Base
+import angelos.io.signal.SigName
 
 interface Watcher {
 
-    fun poll() {
+    fun poll(sigName: SigName) {
         // First poll in POSIX
-        val event = IO.pollAction()
+        val event = Base.pollAction()
         suspend {
             when {
                 streams.contains(event.descriptor) -> onStream(event.descriptor) {

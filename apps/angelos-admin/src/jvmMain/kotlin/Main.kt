@@ -16,7 +16,7 @@ import angelos.admin.AngelosAdmin
 import angelos.mvp.ExtQuit
 import angelos.mvp.ExtSignal
 import angelos.mvp.ExtWatcher
-import kotlinx.coroutines.delay
+import java.lang.ProcessHandle.current
 
 suspend fun main(args: Array<String>) = AngelosAdmin {
     config {
@@ -25,10 +25,8 @@ suspend fun main(args: Array<String>) = AngelosAdmin {
         add(ExtWatcher(this["signal"] as ExtSignal))
     }
     run {
-        delay(3000)
-        println("Hello, world!")
-        val signum = (this["quit"] as ExtQuit).await()
-        println("Signum $signum")
-        delay(1000)
+        println("Hello, world! ${current().pid()}")
+        (this["quit"] as ExtQuit).await()
+        println("Quitting")
     }
 }

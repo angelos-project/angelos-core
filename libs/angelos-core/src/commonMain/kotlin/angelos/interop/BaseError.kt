@@ -12,13 +12,7 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-#ifndef BASE_FILE_H
-#define BASE_FILE_H
-#if defined (__FreeBSD__) || defined (__NetBSD__) || defined (__OpenBSD__) || defined (__APPLE__)
-#include "bsd/file.h"
-#elif defined (__linux__)
-#include "linux/file.h"
-#elif defined(_WIN32) || defined(_WIN64)
-#include "win/file.h"
-#endif
-#endif //BASE_FILE_H
+package angelos.interop
+
+class BaseError(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause) {
+}

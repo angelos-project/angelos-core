@@ -15,10 +15,10 @@
 #ifndef BASE_SOCK_H
 #define BASE_SOCK_H
 #if defined (__FreeBSD__) || defined (__NetBSD__) || defined (__OpenBSD__) || defined (__APPLE__)
-# include "bsd/sock.h"
+#include "bsd/sock.h"
 #elif defined (__linux__)
-# include "linux/sock.h"
+#include "linux/sock.h"
 #elif defined(_WIN32) || defined(_WIN64)
-# include "win/sock.h"
+#include "win/sock.h"
 #endif
 #endif //BASE_SOCK_H

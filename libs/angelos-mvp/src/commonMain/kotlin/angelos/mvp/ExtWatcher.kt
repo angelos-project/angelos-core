@@ -15,15 +15,13 @@
 package angelos.mvp
 
 import angelos.io.file.Watcher
-import angelos.io.signal.SignalHandler
 import angelos.io.signal.SigName
-import kotlinx.coroutines.channels.Channel
+import angelos.io.signal.SignalError
+import angelos.io.signal.SignalHandler
 
 class ExtWatcher(private val signal: ExtSignal): Extension, Watcher {
     override val identifier: String
         get() = "watcher"
-
-    private lateinit var handler: SignalHandler
 
     init {
         signalReg()
@@ -33,12 +31,11 @@ class ExtWatcher(private val signal: ExtSignal): Extension, Watcher {
     override fun cleanup() {}
 
     fun signalReg() {
-        handler = signal.build(
-            Channel() {
-                poll()
-            },
-            SigName.SIGIO.sigNum,
-        )
-        signal.register(handler)
+        val handler: SignalHandler = { poll(it) }
+        when {
+            SigName.isImplemented(SigName.SIGIO) -> signal.registerHandler(SigName.SIGIO, handler)
+            SigName.isImplemented(SigName.SIGPOLL) -> signal.registerHandler(SigName.SIGPOLL, handler)
+            else -> throw SignalError("Neither ${SigName.SIGIO} nor ${SigName.SIGPOLL} are implemented")
+        }
     }
 }

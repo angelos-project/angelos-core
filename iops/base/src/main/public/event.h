@@ -12,13 +12,13 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-#ifndef BASE_FILE_H
-#define BASE_FILE_H
+#ifndef BASE_EVENT_H
+#define BASE_EVENT_H
 #if defined (__FreeBSD__) || defined (__NetBSD__) || defined (__OpenBSD__) || defined (__APPLE__)
-#include "bsd/file.h"
+#include "bsd/event.h"
 #elif defined (__linux__)
-#include "linux/file.h"
+#include "linux/event.h"
 #elif defined(_WIN32) || defined(_WIN64)
-#include "win/file.h"
+#include "win/event.h"
 #endif
-#endif //BASE_FILE_H
+#endif //BASE_EVENT_H

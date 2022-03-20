@@ -15,7 +15,7 @@
 #include "net.h"
 
 
-int event_poll(int *descriptor, int *event) {
+int event_poll2(int *descriptor, int *event) {
     int error = 0;
 
 #if defined (__FreeBSD__) || defined (__NetBSD__) || defined (__OpenBSD__) || defined (__APPLE__)
