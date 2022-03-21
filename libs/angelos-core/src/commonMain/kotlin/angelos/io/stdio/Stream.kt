@@ -12,13 +12,20 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.io.file
+package angelos.io.stdio
 
-interface WatchableContainer {
-    val descriptors: MutableMap<Int, Watchable>
+import angelos.io.channel.Channel
+import angelos.io.file.Watchable
+import angelos.io.file.WatchableTypes
 
-    fun add(w: Watchable) { descriptors[w.descriptor] = w }
-    fun remove(d: Int) = descriptors.remove(d)
-    fun contains(d: Int) = descriptors.containsKey(d)
-    fun get(d: Int) = descriptors[d]
+abstract class Stream(override val descriptor: Int) : Channel, Watchable {
+    override val type = WatchableTypes.STREAM
+
+    override fun isOpen(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun close() {
+        TODO("Not yet implemented")
+    }
 }

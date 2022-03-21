@@ -39,7 +39,7 @@ int event_poll(int *descriptor, int *event)
     struct timespec timeout = {0, 0}; // return immediately
     int n = kevent(kq, NULL, 0, events, 1, &timeout);
     if (n <= 0)
-        exit(1);
+        return -1;
 
     if (events[0].flags & EV_EOF) {
         errno = events[0].fflags;

@@ -31,11 +31,13 @@ class ExtQuit(private val signal: ExtSignal) : Extension {
     override fun setup() { }
     override fun cleanup() { }
 
-    fun signalReg() {
+    private fun signalReg() {
         val handler: SignalHandler = { queue.send(it) }
         signal.registerHandler(SigName.SIGINT, handler)
         signal.registerHandler(SigName.SIGABRT, handler)
     }
 
     suspend fun await(): SigName = queue.receive()
+
+    suspend fun quit() = queue.send(SigName.UNKNOWN)
 }

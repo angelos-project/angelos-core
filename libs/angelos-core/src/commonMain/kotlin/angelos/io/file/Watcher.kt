@@ -15,37 +15,40 @@
 package angelos.io.file
 
 import angelos.interop.Base
+import angelos.interop.BaseError
 import angelos.io.signal.SigName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlin.coroutines.EmptyCoroutineContext
 
 interface Watcher {
 
-    fun poll(sigName: SigName) {
-        // First poll in POSIX
-        val event = Base.pollAction()
-        suspend {
+    suspend fun poll(sigName: SigName) {
+        try {
+            val event = Base.pollAction()
             when {
-                streams.contains(event.descriptor) -> onStream(event.descriptor) {
-
-                }
-                files.contains(event.descriptor) -> onFile(event.descriptor) {
-
-                }
-                sockets.contains(event.descriptor) -> onSocket(event.descriptor) {
-
-                }
-                else -> throw WatcherException("Watcher with descriptor doesn't exist")
+                files.contains(event.descriptor) -> descriptors[event.descriptor]?.forEach {
+                    scope.launch { onFile(event.descriptor, it) } }
+                sockets.contains(event.descriptor) -> descriptors[event.descriptor]?.forEach {
+                    scope.launch { onSocket(event.descriptor, it) } }
+                streams.contains(event.descriptor) -> descriptors[event.descriptor]?.forEach {
+                    scope.launch { onStream(event.descriptor, it) } }
+                else -> throw WatcherException("Watcher ${event.descriptor} doesn't exist")
             }
-        }
+        } catch (_: BaseError) {}
     }
 
-    fun register(watchable: Watchable) {
+    fun register(watchable: Watchable, vararg handlers: WatchableHandler) {
+        if(descriptors.containsKey(watchable.descriptor))
+            throw WatcherException("Watcher ${watchable.descriptor} already registered")
+
         when (watchable.type) {
             WatchableTypes.STREAM -> streams.add(watchable)
             WatchableTypes.FILE -> files.add(watchable)
             WatchableTypes.SOCKET -> sockets.add(watchable)
             else -> throw WatcherException("Watcher can not handle type ${watchable.type}")
         }
-        descriptors.add(watchable.descriptor)
+        descriptors[watchable.descriptor] = handlers.toList()
     }
 
     fun remove(descriptor: Int) {
@@ -56,23 +59,48 @@ interface Watcher {
         }
         descriptors.remove(descriptor)
     }
+
     fun remove(watchable: Watchable) = remove(watchable.descriptor)
 
-    suspend fun onStream(descriptor: Int, s: suspend (watchable: Watchable) -> Unit) { s(streams.get(descriptor)!!) }
-    suspend fun onFile(descriptor: Int, f: suspend (it: Watchable) -> Unit)  { f(streams.get(descriptor)!!) }
-    suspend fun onSocket(descriptor: Int, s: suspend (it: Watchable) -> Unit)  { s(streams.get(descriptor)!!) }
+    suspend fun onStream(descriptor: Int, w: WatchableHandler) {
+        w(streams.get(descriptor)?: throw WatcherException("Stream watchable $descriptor not registered"))
+    }
+
+    suspend fun onFile(descriptor: Int, w: WatchableHandler)  {
+        w(files.get(descriptor)?: throw WatcherException("File watchable $descriptor not registered"))
+    }
+
+    suspend fun onSocket(descriptor: Int, w: WatchableHandler)  {
+        w(sockets.get(descriptor)?: throw WatcherException("Socket watchable $descriptor not registered"))
+    }
 
     companion object {
-        private val descriptors = mutableListOf<Int>()
+        private val scope = CoroutineScope(EmptyCoroutineContext)
+        private val descriptors = mutableMapOf<Int, List<WatchableHandler>>()
 
         protected val streams = object: WatchableContainer {
             override val descriptors: MutableMap<Int, Watchable> = mutableMapOf()
+
+            override fun add(w: Watchable): Unit {
+                // Attach to event queue in Base
+                super.add(w)
+            }
         }
         protected val files = object: WatchableContainer {
             override val descriptors: MutableMap<Int, Watchable> = mutableMapOf()
+
+            override fun add(w: Watchable): Unit {
+                // Attach to event queue in Base
+                super.add(w)
+            }
         }
         protected val sockets = object: WatchableContainer {
             override val descriptors: MutableMap<Int, Watchable> = mutableMapOf()
+
+            override fun add(w: Watchable): Unit {
+                // Attach to event queue in Base
+                super.add(w)
+            }
         }
     }
 }

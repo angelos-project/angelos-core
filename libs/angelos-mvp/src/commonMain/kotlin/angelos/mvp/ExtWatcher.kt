@@ -14,6 +14,7 @@
  */
 package angelos.mvp
 
+import angelos.interop.Base
 import angelos.io.file.Watcher
 import angelos.io.signal.SigName
 import angelos.io.signal.SignalError
@@ -28,9 +29,9 @@ class ExtWatcher(private val signal: ExtSignal): Extension, Watcher {
     }
 
     override fun setup() {}
-    override fun cleanup() {}
+    override fun cleanup() { Base.pollFinalize() }
 
-    fun signalReg() {
+    private fun signalReg() {
         val handler: SignalHandler = { poll(it) }
         when {
             SigName.isImplemented(SigName.SIGIO) -> signal.registerHandler(SigName.SIGIO, handler)

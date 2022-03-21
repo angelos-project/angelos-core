@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+ * Copyright (c) 2022 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
  *
  * This software is available under the terms of the MIT license. Parts are licensed
  * under different terms if stated. The legal terms are attached to the LICENSE file
@@ -12,10 +12,10 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.io.channel
+package angelos.io.stdio
 
-import angelos.nio.Buffer
-
-interface WritableByteChannel: Channel {
-    suspend fun write(src: Buffer): Long
+enum class StdNum(val fileNum: Int) {
+    STDIN(0),
+    STDOUT(1),
+    STDERR(2)
 }

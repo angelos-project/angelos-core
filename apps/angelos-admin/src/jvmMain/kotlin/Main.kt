@@ -15,6 +15,7 @@
 import angelos.admin.AngelosAdmin
 import angelos.mvp.ExtQuit
 import angelos.mvp.ExtSignal
+import angelos.mvp.ExtStreams
 import angelos.mvp.ExtWatcher
 import java.lang.ProcessHandle.current
 
@@ -23,10 +24,11 @@ suspend fun main(args: Array<String>) = AngelosAdmin {
         add(ExtSignal())
         add(ExtQuit(this["signal"] as ExtSignal))
         add(ExtWatcher(this["signal"] as ExtSignal))
+        add(ExtStreams(this["watcher"] as ExtWatcher))
     }
     run {
         println("Hello, world! ${current().pid()}")
-        (this["quit"] as ExtQuit).await()
-        println("Quitting")
+        val sigName = (this["quit"] as ExtQuit).await()
+        println("Quitting on $sigName")
     }
 }

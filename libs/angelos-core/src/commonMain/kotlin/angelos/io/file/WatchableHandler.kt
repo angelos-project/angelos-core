@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+ * Copyright (c) 2022 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
  *
  * This software is available under the terms of the MIT license. Parts are licensed
  * under different terms if stated. The legal terms are attached to the LICENSE file
@@ -12,8 +12,6 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.lang
+package angelos.io.file
 
-interface AutoClosable {
-    fun close()
-}
+typealias WatchableHandler = suspend (it: Watchable) -> (Unit)

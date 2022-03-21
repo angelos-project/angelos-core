@@ -46,7 +46,10 @@ enum class SigName(val sigName: String){
     SIGVTALRM("VTALRM"), // Virtual timer expired
     SIGXCPU("XCPU"), // CPU time limit exceeded
     SIGXFSZ("XFSZ"), // File size limit exceeded
-    SIGWINCH("WINCH"); // Terminal window size changed
+    SIGWINCH("WINCH"), // Terminal window size changed
+
+
+    UNKNOWN("UNKNOWN"); // Dummy for unauthorized use.
 
 
     override fun toString(): String = "SIG$sigName"

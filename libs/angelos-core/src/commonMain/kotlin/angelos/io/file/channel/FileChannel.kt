@@ -84,7 +84,7 @@ abstract class FileChannel(val option: FileSystem.OpenOption): SeekableByteChann
 
     override fun read(dsts: List<Buffer>): Long = read(dsts, 0, dsts.size)
 
-    override fun write(src: Buffer): Long {
+    override suspend fun write(src: Buffer): Long {
         val length = src.allowance()
         if(writeFd(src, src.position, length) != length)
             throw IOException("Couldn't write $length bytes to file.")

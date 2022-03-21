@@ -12,13 +12,16 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.io.file
+package angelos.io.stdio
 
-interface WatchableContainer {
-    val descriptors: MutableMap<Int, Watchable>
+import angelos.io.channel.WritableByteChannel
+import angelos.nio.Buffer
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
-    fun add(w: Watchable) { descriptors[w.descriptor] = w }
-    fun remove(d: Int) = descriptors.remove(d)
-    fun contains(d: Int) = descriptors.containsKey(d)
-    fun get(d: Int) = descriptors[d]
+class Error : Stream(StdNum.STDERR.fileNum), WritableByteChannel {
+    private val mutex = Mutex()
+    override suspend fun write(src: Buffer): Long  = mutex.withLock {
+        TODO("Not yet implemented")
+    }
 }

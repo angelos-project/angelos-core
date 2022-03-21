@@ -14,7 +14,6 @@
  */
 package angelos.io
 
-import angelos.lang.AutoClosable
-
-interface Closable: AutoClosable {
+interface Closable {
+    fun close()
 }
