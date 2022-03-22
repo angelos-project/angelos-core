@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+ * Copyright (c) 2021-2022 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
  *
  * This software is available under the terms of the MIT license. Parts are licensed
  * under different terms if stated. The legal terms are attached to the LICENSE file
@@ -14,9 +14,5 @@
  */
 package angelos.io
 
-import angelos.interop.DirectBuffer
-
-expect class MutableDirectByteBufferImpl: AbstractMutableByteBuffer, DirectBuffer {
-    override fun load(offset: Int): UByte
-    override fun save(value: UByte, offset: Int)
+class ByteBufferException(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause)  {
 }

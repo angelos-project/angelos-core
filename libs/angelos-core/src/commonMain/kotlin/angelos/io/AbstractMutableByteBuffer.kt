@@ -14,31 +14,46 @@
  */
 package angelos.io
 
-import angelos.nio.BufferUnderflowException
 import kotlin.math.absoluteValue
+import kotlin.math.ceil
 import kotlin.math.min
 
-abstract class AbstractMutableByteBuffer(
+abstract class AbstractMutableByteBuffer internal constructor(
     capacity: Int,
-    limit: Int = capacity,
-    position: Int = 0,
-    mark: Int = 0,
-    endianness: Endianness = ByteBuffer.nativeEndianness
+    limit: Int,
+    position: Int,
+    mark: Int,
+    endianness: Endianness
 ) : AbstractByteBuffer(capacity, limit, mark, endianness), MutableByteBuffer {
-    private var _position: Int = min(limit.absoluteValue, position.absoluteValue)
+    protected var _position: Int
     override val position: Int
         get() = _position
 
-    override var _mark: Int = min(limit.absoluteValue, mark.absoluteValue)
+    init {
+        _position = min(limit.absoluteValue, position.absoluteValue)
+        _mark = min(position.absoluteValue, mark.absoluteValue)
+    }
+
+    constructor(array: ByteArray, limit: Int, endianness: Endianness = ByteBuffer.nativeEndianness) : this(array.size, limit, 0, 0, endianness) {
+        _array = array
+    }
+
+    constructor(capacity: Int, endianness: Endianness = ByteBuffer.nativeEndianness) : this(ByteArray(ceil((capacity.absoluteValue / 8).toFloat()).toInt() * 8), capacity, endianness)
+
+
+    override fun rewind() {
+        _position = 0
+        _mark = 0
+    }
 
     private inline fun enoughSpace(size: Int) {
         if (_limit - _position < size)
-            throw BufferUnderflowException("End of buffer.")
+            throw ByteBufferException("End of buffer.")
     }
 
     override fun enoughData(size: Int) {
         if (_position - _mark < size)
-            throw BufferUnderflowException("End of data.")
+            throw ByteBufferException("End of data.")
     }
 
     private inline fun forwardPosition(length: Int) {

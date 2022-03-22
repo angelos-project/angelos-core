@@ -486,7 +486,7 @@ abstract class Buffer(capacity: Long, limit: Long, order: ByteOrder = nativeEndi
     companion object {
 
         @JvmStatic
-        private val nativeEndianness: ByteOrder = ByteOrder.nativeOrder()
+        internal val nativeEndianness: ByteOrder = ByteOrder.nativeOrder()
 
         @JvmStatic
         inline fun reverseShort(value: Short): Short = (

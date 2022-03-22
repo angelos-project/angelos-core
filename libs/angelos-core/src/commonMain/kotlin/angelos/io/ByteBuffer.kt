@@ -27,6 +27,10 @@ interface ByteBuffer {
     val mark: Int
         get() = TODO()
 
+    var endian: Endianness
+
+    fun rewind()
+
     fun getChar(): Char
     fun getShort(): Short
     fun getUShort(): UShort

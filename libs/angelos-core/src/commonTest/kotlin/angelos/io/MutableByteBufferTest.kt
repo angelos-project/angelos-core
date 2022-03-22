@@ -1,27 +1,9 @@
-/**
- * Copyright (c) 2021 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
- *
- * This software is available under the terms of the MIT license. Parts are licensed
- * under different terms if stated. The legal terms are attached to the LICENSE file
- * and are made available on:
- *
- *      https://opensource.org/licenses/MIT
- *
- * SPDX-License-Identifier: MIT
- *
- * Contributors:
- *      Kristoffer Paulsson - initial implementation
- */
-package angelos.nio
+package angelos.io
 
-import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
-
-@ExperimentalUnsignedTypes
-class ByteHeapBufferTest {
+class MutableByteBufferTest {
     private val short: Short = 0B1010101_10101010
     private val ushort: UShort = 0B10101010_10101010u
 
@@ -31,36 +13,22 @@ class ByteHeapBufferTest {
     private val long: Long = 0B1010101_10101010_10101010_10101010_10101010_10101010_10101010_10101010L
     private val ulong: ULong = 0B10101010_10101010_10101010_10101010_10101010_10101010_10101010_10101010u
 
-    private val size: Long = 128
-    private var buffer: ByteHeapBuffer = ByteHeapBuffer(size, size)
+    private val size: Int = 128
+    private var buffer = mutableByteBufferOf(size)
 
-    fun reverseEndian(){
-        buffer.order = if(buffer.order == ByteOrder.LITTLE_ENDIAN)
-            ByteOrder.BIG_ENDIAN
-        else
-            ByteOrder.LITTLE_ENDIAN
-    }
-
-    @Before
-    fun setUp() {
-    }
-
-    @After
-    fun tearDown() {
-    }
-
-    @Test
-    fun readChar() {
-        // readChar is tested in writeChar.
+    fun reverseEndian() {
+        buffer.endian = when(buffer.endian != Endianness.LITTLE_ENDIAN){
+            true -> Endianness.LITTLE_ENDIAN
+            false -> Endianness.BIG_ENDIAN
+        }
     }
 
     @Test
     fun writeChar() {
         val letter = 'Å'
+
         buffer.putChar(letter)
         assertEquals(buffer.position, Char.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(buffer.getChar(), letter)
 
         reverseEndian()
@@ -68,22 +36,13 @@ class ByteHeapBufferTest {
 
         buffer.putChar(letter)
         assertEquals(buffer.position, Char.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(buffer.getChar(), letter)
-    }
-
-    @Test
-    fun readShort() {
-        // readShort is tested in writeShort.
     }
 
     @Test
     fun writeShort() {
         buffer.putShort(short)
         assertEquals(buffer.position, Short.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(buffer.getShort(), short)
 
         reverseEndian()
@@ -91,22 +50,13 @@ class ByteHeapBufferTest {
 
         buffer.putShort(short)
         assertEquals(buffer.position, Short.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(buffer.getShort(), short)
-    }
-
-    @Test
-    fun readUShort() {
-        // readUShort is tested in writeUShort.
     }
 
     @Test
     fun writeUShort() {
         buffer.putUShort(ushort)
         assertEquals(buffer.position, UShort.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(ushort, buffer.getUShort())
 
         reverseEndian()
@@ -114,22 +64,13 @@ class ByteHeapBufferTest {
 
         buffer.putUShort(ushort)
         assertEquals(buffer.position, UShort.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(ushort, buffer.getUShort())
-    }
-
-    @Test
-    fun readInt() {
-        // readInt is tested in writeInt.
     }
 
     @Test
     fun writeInt() {
         buffer.putInt(-int)
         assertEquals(buffer.position, Int.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(buffer.getInt(), -int)
 
         reverseEndian()
@@ -137,22 +78,13 @@ class ByteHeapBufferTest {
 
         buffer.putInt(-int)
         assertEquals(buffer.position, Int.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(buffer.getInt(), -int)
-    }
-
-    @Test
-    fun readUInt() {
-        // readUInt is tested in writeUInt.
     }
 
     @Test
     fun writeUInt() {
         buffer.putUInt(uint)
-        kotlin.test.assertEquals(buffer.position, UInt.SIZE_BYTES)
-
-        buffer.rewind()
+        assertEquals(buffer.position, UInt.SIZE_BYTES)
         assertEquals(buffer.getUInt(), uint)
 
         reverseEndian()
@@ -160,22 +92,13 @@ class ByteHeapBufferTest {
 
         buffer.putUInt(uint)
         assertEquals(buffer.position, UInt.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(buffer.getUInt(), uint)
-    }
-
-    @Test
-    fun readLong() {
-        // readLong is tested in writeLong.
     }
 
     @Test
     fun writeLong() {
         buffer.putLong(long)
         assertEquals(buffer.position, Long.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(buffer.getLong(), long)
 
         reverseEndian()
@@ -183,22 +106,13 @@ class ByteHeapBufferTest {
 
         buffer.putLong(long)
         assertEquals(buffer.position, Long.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(buffer.getLong(), long)
-    }
-
-    @Test
-    fun readULong() {
-        // readULong is tested in writeULong.
     }
 
     @Test
     fun writeULong() {
         buffer.putULong(ulong)
         assertEquals(buffer.position, ULong.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(buffer.getULong(), ulong)
 
         reverseEndian()
@@ -206,14 +120,7 @@ class ByteHeapBufferTest {
 
         buffer.putULong(ulong)
         assertEquals(buffer.position, ULong.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(buffer.getULong(), ulong)
-    }
-
-    @Test
-    fun readFloat() {
-        // readFloat is tested in writeFloat.
     }
 
     @Test
@@ -221,8 +128,6 @@ class ByteHeapBufferTest {
         val value: Float = -123.565F
         buffer.putFloat(value)
         assertEquals(buffer.position, Float.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(buffer.getFloat(), value)
 
         reverseEndian()
@@ -230,14 +135,7 @@ class ByteHeapBufferTest {
 
         buffer.putFloat(value)
         assertEquals(buffer.position, Float.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(buffer.getFloat(), value)
-    }
-
-    @Test
-    fun readDouble() {
-        // readDouble is tested in writeDouble.
     }
 
     @Test
@@ -245,8 +143,6 @@ class ByteHeapBufferTest {
         val value: Double = (-234958739.324893498573495834753947535234571209347F).toDouble()
         buffer.putDouble(value)
         assertEquals(buffer.position, Double.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(buffer.getDouble(), value, 0.0)
 
         reverseEndian()
@@ -254,16 +150,6 @@ class ByteHeapBufferTest {
 
         buffer.putDouble(value)
         assertEquals(buffer.position, Double.SIZE_BYTES)
-
-        buffer.rewind()
         assertEquals(buffer.getDouble(), value, 0.0)
-    }
-
-    @Test
-    fun load() {
-    }
-
-    @Test
-    fun save() {
     }
 }

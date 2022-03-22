@@ -14,40 +14,64 @@
  */
 package angelos.io
 
-import angelos.nio.BufferUnderflowException
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
 import kotlin.math.min
 
-abstract class AbstractByteBuffer(capacity: Int, limit: Int = capacity, mark: Int = 0,
-                                  endianness: Endianness = ByteBuffer.nativeEndianness): ByteBuffer {
-    private val array by lazy { ByteArray(this._capacity) }
+abstract class AbstractByteBuffer internal constructor(
+    capacity: Int,
+    limit: Int,
+    mark: Int,
+    endianness: Endianness
+): ByteBuffer {
 
-    private var _capacity: Int = ceil((capacity.absoluteValue / 8).toFloat()).toInt() * 8
+    protected var _array: ByteArray = ByteArray(ceil((capacity.absoluteValue / 8).toFloat()).toInt() * 8)
+
+    private var _capacity: Int
     override val capacity: Int
         get() = _capacity
 
-    protected var _limit: Int = min(capacity.absoluteValue, limit.absoluteValue)
+    protected var _limit: Int
     override val limit: Int
         get() = _limit
 
-    protected open var _mark: Int = min(limit.absoluteValue, mark.absoluteValue)
+    protected var _mark: Int
     override val mark: Int
         get() = _mark
 
-    private var _endian: Endianness = endianness
-    var endian: Endianness
+    protected var _reverse: Boolean
+    val reverse: Boolean
+        get() = _reverse
+
+    private var _endian: Endianness
+    override var endian: Endianness
         get() = _endian
         set(value) {
             _endian = value
             _reverse = _endian != ByteBuffer.nativeEndianness
         }
 
-    protected var _reverse: Boolean = _endian != ByteBuffer.nativeEndianness
+    init {
+        _capacity = capacity
+        _limit = min(capacity.absoluteValue, limit.absoluteValue)
+        _mark = min(limit.absoluteValue, mark.absoluteValue)
+        _endian = endianness
+        _reverse = _endian != ByteBuffer.nativeEndianness
+    }
+
+    constructor(array: ByteArray, limit: Int, endianness: Endianness = ByteBuffer.nativeEndianness) : this(array.size, limit, 0, endianness) {
+        _array = array
+    }
+
+    constructor(capacity: Int, endianness: Endianness = ByteBuffer.nativeEndianness) : this(ByteArray(ceil((capacity.absoluteValue / 8).toFloat()).toInt() * 8), capacity, endianness)
+
+    override fun rewind() {
+        _mark = 0
+    }
 
     protected open fun enoughData(size: Int) {
         if (_limit - _mark < size)
-            throw BufferUnderflowException("End of data.")
+            throw ByteBufferException("End of data.")
     }
 
     private inline fun forwardMark(length: Int) { _mark += length }

@@ -103,7 +103,7 @@ class FileSystemTest {
 
     @Test
     fun testWrite(){
-        val message = ByteHeapBuffer(13, 13, 0);
+        val message = ByteHeapBuffer(13, 13);
         "Hello, world!".toByteArray().copyInto(message.toArray())
         val size = "Hello, world!".toByteArray().size.toLong()
 
@@ -118,7 +118,7 @@ class FileSystemTest {
     fun testRead(){
         val message = "Hello, world!"
         val size = message.toByteArray().size.toLong()
-        var loaded = ByteHeapBuffer(size.toLong(), size.toLong(), 0)
+        var loaded = ByteHeapBuffer(size.toLong(), size.toLong())
 
         val writer = java.nio.file.Files.newBufferedWriter(tmpFile)
         writer.write(message)
@@ -133,7 +133,7 @@ class FileSystemTest {
 
     @Test
     fun testFile() {
-        val message = ByteHeapBuffer(13, 13, 0);
+        val message = ByteHeapBuffer(13, 13);
         "Hello, world!".toByteArray().copyInto(message.toArray())
         val size = "Hello, world!".toByteArray().size.toLong()
         val file = IO.openFile(tmpFile.toString(), 3)
@@ -145,7 +145,7 @@ class FileSystemTest {
         assertTrue(IO.tellFile(file) == size)
         assertTrue(IO.seekFile(file, 0, angelos.io.FileSystem.Seek.SET) == 0L)
 
-        val loaded = ByteHeapBuffer(size.toLong(), size.toLong(), 0)
+        val loaded = ByteHeapBuffer(size.toLong(), size.toLong())
         assertTrue(IO.readFile(file, loaded, 0, size) == 13L)
         assertEquals(message.toArray().contentToString(), loaded.toArray().contentToString())
 

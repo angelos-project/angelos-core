@@ -30,7 +30,7 @@ class ByteDirectBufferTest{
     private val ulong: ULong = 0B10101010_10101010_10101010_10101010_10101010_10101010_10101010_10101010u
 
     private val size: Long = 128
-    private var buffer: ByteDirectBuffer = ByteDirectBuffer(size, size, 0L)
+    private var buffer: ByteDirectBuffer = ByteDirectBuffer(size, size)
 
     fun reverseEndian(){
         buffer.order = if(buffer.order == ByteOrder.LITTLE_ENDIAN)

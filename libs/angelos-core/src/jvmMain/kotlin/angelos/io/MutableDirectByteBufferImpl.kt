@@ -23,11 +23,11 @@ actual class MutableDirectByteBufferImpl internal constructor(
     mark: Int,
     endianness: Endianness
 ) : AbstractMutableByteBuffer(capacity, limit, position, mark, endianness), DirectBuffer {
-    actual override fun save(value: UByte, offset: Int) {
+    actual override fun load(offset: Int): UByte {
         TODO("Not yet implemented")
     }
 
-    actual override fun load(offset: Int): UByte {
+    actual override fun save(value: UByte, offset: Int) {
         TODO("Not yet implemented")
     }
 }

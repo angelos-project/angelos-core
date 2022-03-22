@@ -14,6 +14,6 @@
  */
 package angelos.io
 
-expect class ByteBufferImpl: AbstractByteBuffer {
-    override fun load(offset: Int): UByte
+expect class ByteBufferImpl: AbstractByteBuffer{
+    actual override fun load(offset: Int): UByte
 }

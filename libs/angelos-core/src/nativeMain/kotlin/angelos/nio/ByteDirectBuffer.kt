@@ -16,8 +16,8 @@ package angelos.nio
 
 @ExperimentalUnsignedTypes
 @Suppress("OVERRIDE_BY_INLINE")
-actual class ByteDirectBuffer actual constructor(capacity: Long, limit: Long, position: Long) :
-    Buffer(capacity, limit, position) {
+actual class ByteDirectBuffer actual constructor(capacity: Long, limit: Long, order: ByteOrder) :
+    Buffer(capacity, limit, order) {
 
     private val _inner = ByteBufferOperations()
 

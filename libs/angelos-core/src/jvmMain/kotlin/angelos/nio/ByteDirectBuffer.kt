@@ -16,8 +16,8 @@ package angelos.nio
 
 import angelos.interop.Buffer as BufferHelper
 
-actual class ByteDirectBuffer actual constructor(capacity: Long, limit: Long, position: Long) :
-    Buffer(capacity, limit, position) {
+actual class ByteDirectBuffer actual constructor(capacity: Long, limit: Long, order: ByteOrder) :
+    Buffer(capacity, limit, order) {
     private val _arrayAddress: Long = BufferHelper.allocateMemory(capacity)
 
     actual override fun toArray(): ByteArray = throw UnsupportedOperationException()

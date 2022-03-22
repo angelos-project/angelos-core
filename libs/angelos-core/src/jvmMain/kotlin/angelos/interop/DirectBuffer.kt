@@ -12,11 +12,10 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.io
+package angelos.interop
 
-import angelos.interop.DirectBuffer
+actual interface DirectBuffer {
+    actual companion object {
 
-expect class MutableDirectByteBufferImpl: AbstractMutableByteBuffer, DirectBuffer {
-    override fun load(offset: Int): UByte
-    override fun save(value: UByte, offset: Int)
+    }
 }

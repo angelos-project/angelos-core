@@ -14,7 +14,7 @@
  */
 package angelos.nio
 
-expect class ByteDirectBuffer(capacity: Long, limit: Long) : Buffer {
+expect class ByteDirectBuffer(capacity: Long, limit: Long, order: ByteOrder = nativeEndianness) : Buffer {
     override fun toArray(): ByteArray
     override fun toPtr(): Long
 
