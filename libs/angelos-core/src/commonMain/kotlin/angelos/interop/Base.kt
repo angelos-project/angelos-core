@@ -39,6 +39,8 @@ expect class Base {
         // Polling events
         fun pollAction(): PollAction
         fun pollFinalize()
-    }
 
+        fun attachStream(fd: Int)
+        fun attachSocket(fd: Int)
+    }
 }

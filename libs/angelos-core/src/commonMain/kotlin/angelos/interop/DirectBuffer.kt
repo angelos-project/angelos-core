@@ -12,20 +12,10 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-#if defined (__FreeBSD__) || defined (__NetBSD__) || defined (__OpenBSD__) || defined (__APPLE__)
+package angelos.interop
 
-#include "sock.h"
+expect interface DirectBuffer {
+    companion object{
 
-
-int socket_attach(int fd) {
-    sock_context obj = {fd};
-
-    struct kevent events[2];
-    EV_SET(&events[0], obj.fd, EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, &obj);
-    EV_SET(&events[1], obj.fd, EVFILT_WRITE, EV_ADD | EV_CLEAR, 0, 0, &obj);
-    return kevent(kq, events, 2, NULL, 0, NULL);
+    }
 }
-
-
-#endif
-

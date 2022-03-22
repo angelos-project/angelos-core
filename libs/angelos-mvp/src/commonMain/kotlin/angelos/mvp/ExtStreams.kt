@@ -15,10 +15,14 @@
 package angelos.mvp
 
 import angelos.io.stdio.Streams
+import angelos.nio.ByteDirectBuffer
+import kotlinx.coroutines.channels.Channel
 
-class ExtStreams(private val watcher: ExtWatcher) : Extension, Streams {
+class ExtStreams(private val watcher: ExtWatcher, val bufSize: Long = 4096) : Extension, Streams {
     override val identifier: String
         get() = "stdio"
+
+    private var queue = Channel<ByteDirectBuffer>(32)
 
     init {
         watchableReg()
@@ -26,10 +30,14 @@ class ExtStreams(private val watcher: ExtWatcher) : Extension, Streams {
 
     private fun watchableReg() {
         watcher.register(Streams.stdIn, {
-            // Read from stream and broadcast to queue
+            val buffer = ByteDirectBuffer(bufSize, bufSize)
+            Streams.stdIn.read(buffer)
+            queue.send(buffer)
         })
     }
 
     override fun setup() { }
     override fun cleanup() { }
+
+    suspend fun read(): ByteDirectBuffer = queue.receive()
 }

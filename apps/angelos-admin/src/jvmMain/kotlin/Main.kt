@@ -24,7 +24,7 @@ suspend fun main(args: Array<String>) = AngelosAdmin {
         add(ExtSignal())
         add(ExtQuit(this["signal"] as ExtSignal))
         add(ExtWatcher(this["signal"] as ExtSignal))
-        add(ExtStreams(this["watcher"] as ExtWatcher))
+        add(ExtStreams(this["watcher"] as ExtWatcher, 128))
     }
     run {
         println("Hello, world! ${current().pid()}")

@@ -16,7 +16,7 @@ package angelos.nio
 
 @ExperimentalUnsignedTypes
 @Suppress("OVERRIDE_BY_INLINE")
-class ByteHeapBuffer(capacity: Long, limit: Long, position: Long) : Buffer(capacity, limit, position) {
+class ByteHeapBuffer(capacity: Long, limit: Long) : Buffer(capacity, limit) {
     private val _inner = ByteBufferOperations()
 
     override fun toArray(): ByteArray = _inner._array

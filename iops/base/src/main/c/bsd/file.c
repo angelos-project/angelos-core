@@ -14,6 +14,16 @@
  */
 #if defined (__FreeBSD__) || defined (__NetBSD__) || defined (__OpenBSD__) || defined (__APPLE__)
 
+#include "file.h"
+
+
+int stream_attach(int fd) {
+    sock_context obj = {fd};
+
+    struct kevent events[1];
+    EV_SET(&events[0], obj.fd, EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, &obj);
+    return kevent(kq, events, 1, NULL, 0, NULL);
+}
 
 
 #endif

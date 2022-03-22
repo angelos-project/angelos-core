@@ -15,7 +15,6 @@
 package angelos.io.file
 
 import angelos.interop.Base
-import angelos.interop.BaseError
 import angelos.io.signal.SigName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -35,7 +34,7 @@ interface Watcher {
                     scope.launch { onStream(event.descriptor, it) } }
                 else -> throw WatcherException("Watcher ${event.descriptor} doesn't exist")
             }
-        } catch (_: BaseError) {}
+        } catch (_: WatcherException) {}
     }
 
     fun register(watchable: Watchable, vararg handlers: WatchableHandler) {
@@ -82,10 +81,11 @@ interface Watcher {
             override val descriptors: MutableMap<Int, Watchable> = mutableMapOf()
 
             override fun add(w: Watchable): Unit {
-                // Attach to event queue in Base
+                Base.attachStream(w.descriptor)
                 super.add(w)
             }
         }
+
         protected val files = object: WatchableContainer {
             override val descriptors: MutableMap<Int, Watchable> = mutableMapOf()
 
@@ -94,11 +94,12 @@ interface Watcher {
                 super.add(w)
             }
         }
+
         protected val sockets = object: WatchableContainer {
             override val descriptors: MutableMap<Int, Watchable> = mutableMapOf()
 
             override fun add(w: Watchable): Unit {
-                // Attach to event queue in Base
+                Base.attachSocket(w.descriptor)
                 super.add(w)
             }
         }

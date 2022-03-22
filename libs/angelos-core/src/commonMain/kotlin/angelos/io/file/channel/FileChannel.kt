@@ -92,13 +92,13 @@ abstract class FileChannel(val option: FileSystem.OpenOption): SeekableByteChann
         return length
     }
 
-    override fun write(srcs: List<Buffer>, offset: Int, length: Int): Long {
+    override suspend fun write(srcs: List<Buffer>, offset: Int, length: Int): Long {
         var count: Long = 0
         srcs.subList(offset, length).asSequence().forEach { count += write(it) }
         return count
     }
 
-    override fun write(srcs: List<Buffer>): Long = write(srcs, 0, srcs.size)
+    override suspend fun write(srcs: List<Buffer>): Long = write(srcs, 0, srcs.size)
 
     override fun truncate(size: Long): SeekableByteChannel {
         TODO("Not yet implemented")

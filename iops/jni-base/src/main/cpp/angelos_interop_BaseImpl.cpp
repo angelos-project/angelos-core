@@ -95,12 +95,32 @@ static jobject get_event_poll(JNIEnv * env, jclass thisClass) {
     return (*env)->NewObject(env, global_cls, cls_init, description, action);
 }
 
+/*
+ * Class:     angelos_interop_Base
+ * Method:    get_socket_attach
+ * Signature: (I)I
+ */
+static jint get_socket_attach(JNIEnv *env, jclass thisClass, jint fd) {
+    return socket_attach(fd);
+}
+
+/*
+ * Class:     angelos_interop_Base
+ * Method:    get_stream_attach
+ * Signature: (I)I
+ */
+static jint get_stream_attach(JNIEnv *env, jclass thisClass, jint fd) {
+    return stream_attach(fd);
+}
+
 static JNINativeMethod funcs[] = {
         {"endian",   "()I", (void *) &get_endian},
         {"platform", "()I", (void *) &get_platform},
         {"signal_abbreviation", "(I)Ljava/lang/String;", (void *) &get_signal_abbreviation},
         {"get_error", "()V", (void *) &get_error},
         {"event_poll", "()Langelos/io/poll/PollAction;", (void *) &get_event_poll},
+        {"socket_attach", "(I)I", (void *) &get_socket_attach},
+        {"stream_attach", "(I)I", (void *) &get_stream_attach},
 };
 
 #define CURRENT_JNI JNI_VERSION_1_6

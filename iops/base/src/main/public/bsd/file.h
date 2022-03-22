@@ -16,6 +16,10 @@
 #define BASE_BSD_FILE_H
 #if defined (__FreeBSD__) || defined (__NetBSD__) || defined (__OpenBSD__) || defined (__APPLE__)
 
+#include "event.h"
+
+
+extern int stream_attach(int fd);
 
 
 #endif

@@ -18,7 +18,7 @@ import kotlin.jvm.JvmStatic
 import kotlin.math.absoluteValue
 import kotlin.math.min
 
-abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOrder = nativeEndianness) {
+abstract class Buffer(capacity: Long, limit: Long, order: ByteOrder = nativeEndianness) {
     private var _capacity: Int
     val capacity: Int
         get() = _capacity
@@ -27,12 +27,13 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
     val limit: Int
         get() = _limit
 
+    protected var _mark: Int
+    val mark: Int
+        get() = _mark
+
     protected var _position: Int = 0
-    var position: Int
+    val position: Int
         get() = _position
-        set(value) {
-            _position = min(value.absoluteValue, _limit)
-        }
 
     private var _endian: ByteOrder = order
     protected var _reverse: Boolean = _endian != nativeEndianness
@@ -47,13 +48,17 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
     init {
         _capacity = capacity.absoluteValue.toInt()
         _limit = min(limit.absoluteValue.toInt(), _capacity)
-        this.position = min(position.absoluteValue.toInt(), _limit)
+        _mark = 0
+        _position = 0
     }
 
     abstract fun toArray(): ByteArray
     abstract fun toPtr(): Long
 
-    fun rewind() = 0.also { position = it }
+    fun rewind() {
+        _position = 0
+        _mark = 0
+    }
     fun allowance(): Long = (_capacity - _limit).toLong()
 
     internal abstract fun _getChar(): Char
@@ -80,14 +85,18 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
             throw BufferUnderflowException("End of buffer.")
     }
 
-    private inline fun forwardPosition(length: Int) {
-        _position += length
+    private inline fun enoughData(size: Int) {
+        if (_position - _mark < size)
+            throw BufferUnderflowException("End of data.")
     }
 
+    private inline fun forwardPosition(length: Int) { _position += length }
+    private inline fun forwardMark(length: Int) { _mark += length }
+
     fun getChar(): Char {
-        enoughSpace(2)
+        enoughData(2)
         val value = _getChar()
-        forwardPosition(2)
+        forwardMark(2)
         return value
     }
 
@@ -98,9 +107,9 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
     }
 
     fun getShort(): Short {
-        enoughSpace(2)
+        enoughData(2)
         val value = _getShort()
-        forwardPosition(2)
+        forwardMark(2)
         return value
     }
 
@@ -111,9 +120,9 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
     }
 
     fun getUShort(): UShort {
-        enoughSpace(2)
+        enoughData(2)
         val value = _getUShort()
-        forwardPosition(2)
+        forwardMark(2)
         return value
     }
 
@@ -124,9 +133,9 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
     }
 
     fun getInt(): Int {
-        enoughSpace(4)
+        enoughData(4)
         val value = _getInt()
-        forwardPosition(4)
+        forwardMark(4)
         return value
     }
 
@@ -137,9 +146,9 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
     }
 
     fun getUInt(): UInt {
-        enoughSpace(4)
+        enoughData(4)
         val value = _getUInt()
-        forwardPosition(4)
+        forwardMark(4)
         return value
     }
 
@@ -150,9 +159,9 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
     }
 
     fun getLong(): Long {
-        enoughSpace(8)
+        enoughData(8)
         val value = _getLong()
-        forwardPosition(8)
+        forwardMark(8)
         return value
     }
 
@@ -163,9 +172,9 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
     }
 
     fun getULong(): ULong {
-        enoughSpace(8)
+        enoughData(8)
         val value = _getULong()
-        forwardPosition(8)
+        forwardMark(8)
         return value
     }
 
@@ -176,9 +185,9 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
     }
 
     fun getFloat(): Float {
-        enoughSpace(4)
+        enoughData(4)
         val value = _getFloat()
-        forwardPosition(4)
+        forwardMark(4)
         return Float.fromBits(value)
     }
 
@@ -189,9 +198,9 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
     }
 
     fun getDouble(): Double {
-        enoughSpace(8)
+        enoughData(8)
         val value = _getDouble()
-        forwardPosition(8)
+        forwardMark(8)
         return Double.fromBits(value)
     }
 
@@ -481,22 +490,22 @@ abstract class Buffer(capacity: Long, limit: Long, position: Long, order: ByteOr
 
         @JvmStatic
         inline fun reverseShort(value: Short): Short = (
-                (value.toInt() shl 8 and 0xff00) or (value.toInt() shr 8 and 0xff)).toShort()
+                (value.toInt() shl 8 and 0xFF00) or (value.toInt() shr 8 and 0xFF)).toShort()
 
         @JvmStatic
         inline fun reverseInt(value: Int): Int = (value shl 24 and -0x1000000) or
-                (value shl 8 and 0xff0000) or
-                (value shr 8 and 0xff00) or
-                (value shr 24 and 0xff)
+                (value shl 8 and 0xFF0000) or
+                (value shr 8 and 0xFF00) or
+                (value shr 24 and 0xFF)
 
         @JvmStatic
         inline fun reverseLong(value: Long): Long = (value shl 56 and -0x1000000_00000000) or
-                (value shl 40 and 0xff0000_00000000) or
-                (value shl 24 and 0xff00_00000000) or
-                (value shl 8 and 0xff_00000000) or
-                (value shr 8 and 0xff000000) or
-                (value shr 24 and 0xff0000) or
-                (value shr 40 and 0xff00) or
-                (value shr 56 and 0xff)
+                (value shl 40 and 0xFF0000_00000000) or
+                (value shl 24 and 0xFF00_00000000) or
+                (value shl 8 and 0xFF_00000000) or
+                (value shr 8 and 0xFF000000) or
+                (value shr 24 and 0xFF0000) or
+                (value shr 40 and 0xFF00) or
+                (value shr 56 and 0xFF)
     }
 }

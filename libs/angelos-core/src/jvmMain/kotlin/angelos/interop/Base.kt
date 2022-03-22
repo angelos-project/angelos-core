@@ -14,6 +14,7 @@
  */
 package angelos.interop
 
+import angelos.io.file.WatcherException
 import angelos.io.poll.PollAction
 import angelos.io.signal.SigName
 import angelos.sys.Error
@@ -72,5 +73,25 @@ actual class Base {
         private external fun event_poll(): PollAction?
 
         actual fun pollFinalize() {} // Leave empty for compatability
+
+        actual fun attachStream(fd: Int) {
+            if (stream_attach(fd) != 0) {
+                Error.loadError()
+                throw WatcherException("Failed to attach stream due to cause: (${Error.errNum}) ${Error.errMsg}")
+            }
+        }
+
+        @JvmStatic
+        private external fun stream_attach(fd: Int): Int
+
+        actual fun attachSocket(fd: Int) {
+            if (socket_attach(fd) != 0) {
+                Error.loadError()
+                throw WatcherException("Failed to attach socket due to cause: (${Error.errNum}) ${Error.errMsg}")
+            }
+        }
+
+        @JvmStatic
+        private external fun socket_attach(fd: Int): Int
     }
 }
