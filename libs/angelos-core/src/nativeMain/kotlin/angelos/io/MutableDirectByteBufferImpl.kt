@@ -16,7 +16,7 @@ package angelos.io
 
 import angelos.interop.DirectBuffer
 
-actual class MutableDirectByteBufferImpl internal constructor(
+actual class MutableDirectByteBufferImpl internal actual constructor(
     capacity: Int,
     limit: Int,
     position: Int,
@@ -28,6 +28,10 @@ actual class MutableDirectByteBufferImpl internal constructor(
     }
 
     actual override fun load(offset: Int): UByte {
+        TODO("Not yet implemented")
+    }
+
+    actual override fun copyInto(buffer: MutableByteBuffer, range: IntRange) {
         TODO("Not yet implemented")
     }
 }

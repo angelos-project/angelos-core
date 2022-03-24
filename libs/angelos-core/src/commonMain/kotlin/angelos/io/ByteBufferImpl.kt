@@ -14,6 +14,14 @@
  */
 package angelos.io
 
-expect class ByteBufferImpl: AbstractByteBuffer{
-    actual override fun load(offset: Int): UByte
+expect class ByteBufferImpl internal constructor(
+    array: ByteArray,
+    capacity: Int,
+    limit: Int,
+    mark: Int,
+    endianness: Endianness
+): AbstractByteBuffer {
+    override fun load(offset: Int): UByte
+    override fun copyInto(buffer: MutableByteBuffer, range: IntRange)
+    fun toMutableByteBuffer(): MutableByteBuffer
 }

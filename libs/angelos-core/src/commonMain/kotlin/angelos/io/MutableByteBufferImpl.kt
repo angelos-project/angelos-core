@@ -15,6 +15,7 @@
 package angelos.io
 
 expect class MutableByteBufferImpl internal constructor(
+    array: ByteArray,
     capacity: Int,
     limit: Int,
     position: Int,
@@ -23,6 +24,5 @@ expect class MutableByteBufferImpl internal constructor(
 ) : AbstractMutableByteBuffer {
     override fun load(offset: Int): UByte
     override fun save(value: UByte, offset: Int)
+    override fun copyInto(buffer: MutableByteBuffer, range: IntRange)
 }
-
-fun mutableByteBufferOf(capacity: Int, endianness: Endianness = ByteBuffer.nativeEndianness) = MutableByteBufferImpl(capacity, capacity, 0, 0, endianness)

@@ -15,7 +15,6 @@
 package angelos.io
 
 import kotlin.math.absoluteValue
-import kotlin.math.ceil
 import kotlin.math.min
 
 abstract class AbstractMutableByteBuffer internal constructor(
@@ -33,13 +32,6 @@ abstract class AbstractMutableByteBuffer internal constructor(
         _position = min(limit.absoluteValue, position.absoluteValue)
         _mark = min(position.absoluteValue, mark.absoluteValue)
     }
-
-    constructor(array: ByteArray, limit: Int, endianness: Endianness = ByteBuffer.nativeEndianness) : this(array.size, limit, 0, 0, endianness) {
-        _array = array
-    }
-
-    constructor(capacity: Int, endianness: Endianness = ByteBuffer.nativeEndianness) : this(ByteArray(ceil((capacity.absoluteValue / 8).toFloat()).toInt() * 8), capacity, endianness)
-
 
     override fun rewind() {
         _position = 0
@@ -60,55 +52,55 @@ abstract class AbstractMutableByteBuffer internal constructor(
         _position += length
     }
 
-    override fun putChar(value: Char) {
+    override fun setChar(value: Char) {
         enoughSpace(2)
         writeChar(value)
         forwardPosition(2)
     }
 
-    override fun putShort(value: Short) {
+    override fun setShort(value: Short) {
         enoughSpace(2)
         writeShort(value)
         forwardPosition(2)
     }
 
-    override fun putUShort(value: UShort) {
+    override fun setUShort(value: UShort) {
         enoughSpace(2)
         writeUShort(value)
         forwardPosition(2)
     }
 
-    override fun putInt(value: Int) {
+    override fun setInt(value: Int) {
         enoughSpace(4)
         writeInt(value)
         forwardPosition(4)
     }
 
-    override fun putUInt(value: UInt) {
+    override fun setUInt(value: UInt) {
         enoughSpace(4)
         writeUInt(value)
         forwardPosition(4)
     }
 
-    override fun putLong(value: Long) {
+    override fun setLong(value: Long) {
         enoughSpace(8)
         writeLong(value)
         forwardPosition(8)
     }
 
-    override fun putULong(value: ULong) {
+    override fun setULong(value: ULong) {
         enoughSpace(8)
         writeULong(value)
         forwardPosition(8)
     }
 
-    override fun putFloat(value: Float) {
+    override fun setFloat(value: Float) {
         enoughSpace(4)
         writeFloat(value.toRawBits())
         forwardPosition(4)
     }
 
-    override fun putDouble(value: Double) {
+    override fun setDouble(value: Double) {
         enoughSpace(8)
         writeDouble(value.toRawBits())
         forwardPosition(8)

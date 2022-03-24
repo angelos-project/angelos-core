@@ -15,13 +15,13 @@
 package angelos.io
 
 interface MutableByteBuffer: ByteBuffer {
-    fun putChar(value: Char)
-    fun putShort(value: Short)
-    fun putUShort(value: UShort)
-    fun putInt(value: Int)
-    fun putUInt(value: UInt)
-    fun putLong(value: Long)
-    fun putULong(value: ULong)
-    fun putFloat(value: Float)
-    fun putDouble(value: Double)
+    fun setChar(value: Char)
+    fun setShort(value: Short)
+    fun setUShort(value: UShort)
+    fun setInt(value: Int)
+    fun setUInt(value: UInt)
+    fun setLong(value: Long)
+    fun setULong(value: ULong)
+    fun setFloat(value: Float)
+    fun setDouble(value: Double)
 }

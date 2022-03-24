@@ -17,5 +17,6 @@ package angelos.io
 import angelos.interop.DirectBuffer
 
 expect class DirectByteBufferImpl: AbstractByteBuffer, DirectBuffer{
-    actual override fun load(offset: Int): UByte
+    override fun load(offset: Int): UByte
+    override fun copyInto(buffer: MutableByteBuffer, range: IntRange)
 }

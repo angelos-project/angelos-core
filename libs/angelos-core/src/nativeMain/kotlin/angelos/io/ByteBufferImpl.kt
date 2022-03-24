@@ -14,19 +14,23 @@
  */
 package angelos.io
 
-actual class ByteBufferImpl internal constructor(
+@Suppress("OVERRIDE_BY_INLINE")
+@OptIn(ExperimentalUnsignedTypes::class)
+actual class ByteBufferImpl internal actual constructor(
+    array: ByteArray,
     capacity: Int,
     limit: Int,
     mark: Int,
     endianness: Endianness
 ) : AbstractByteBuffer(capacity, limit, mark, endianness) {
 
-    @OptIn(ExperimentalUnsignedTypes::class)
-    private val _view: UByteArray = _array.asUByteArray()
+    private val _array = array
+    private val _view = _array.asUByteArray()
 
-    @Suppress("OVERRIDE_BY_INLINE")
-    actual override inline fun load(offset: Int): UByte {
-        return _view[_mark + offset]
+    actual override inline fun load(offset: Int): UByte = _view[_mark + offset]
+    actual override fun copyInto(buffer: MutableByteBuffer, range: IntRange) {
+        TODO("Not yet implemented")
     }
+    actual fun toMutableByteBuffer(): MutableByteBuffer = mutableByteBufferFrom(_array.sliceArray(0.._capacity), endian)
 
 }

@@ -41,6 +41,8 @@ interface ByteBuffer {
     fun getFloat(): Float
     fun getDouble(): Double
 
+    fun copyInto(buffer: MutableByteBuffer, range: IntRange)
+
     companion object {
         val nativeEndianness = Endianness.nativeOrder()
 

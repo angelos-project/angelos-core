@@ -25,4 +25,8 @@ actual class DirectByteBufferImpl internal constructor(
     actual override fun load(offset: Int): UByte {
         TODO("Not yet implemented")
     }
+
+    actual override fun copyInto(buffer: MutableByteBuffer, range: IntRange) {
+        TODO("Not yet implemented")
+    }
 }

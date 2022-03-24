@@ -15,7 +15,6 @@
 package angelos.io
 
 import kotlin.math.absoluteValue
-import kotlin.math.ceil
 import kotlin.math.min
 
 abstract class AbstractByteBuffer internal constructor(
@@ -25,9 +24,7 @@ abstract class AbstractByteBuffer internal constructor(
     endianness: Endianness
 ): ByteBuffer {
 
-    protected var _array: ByteArray = ByteArray(ceil((capacity.absoluteValue / 8).toFloat()).toInt() * 8)
-
-    private var _capacity: Int
+    protected var _capacity: Int
     override val capacity: Int
         get() = _capacity
 
@@ -58,12 +55,6 @@ abstract class AbstractByteBuffer internal constructor(
         _endian = endianness
         _reverse = _endian != ByteBuffer.nativeEndianness
     }
-
-    constructor(array: ByteArray, limit: Int, endianness: Endianness = ByteBuffer.nativeEndianness) : this(array.size, limit, 0, endianness) {
-        _array = array
-    }
-
-    constructor(capacity: Int, endianness: Endianness = ByteBuffer.nativeEndianness) : this(ByteArray(ceil((capacity.absoluteValue / 8).toFloat()).toInt() * 8), capacity, endianness)
 
     override fun rewind() {
         _mark = 0

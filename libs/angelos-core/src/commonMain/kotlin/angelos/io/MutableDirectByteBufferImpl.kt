@@ -16,7 +16,14 @@ package angelos.io
 
 import angelos.interop.DirectBuffer
 
-expect class MutableDirectByteBufferImpl: AbstractMutableByteBuffer, DirectBuffer {
+expect class MutableDirectByteBufferImpl internal constructor(
+    capacity: Int,
+    limit: Int,
+    position: Int,
+    mark: Int,
+    endianness: Endianness
+) : AbstractMutableByteBuffer, DirectBuffer {
     override fun load(offset: Int): UByte
     override fun save(value: UByte, offset: Int)
+    override fun copyInto(buffer: MutableByteBuffer, range: IntRange)
 }
