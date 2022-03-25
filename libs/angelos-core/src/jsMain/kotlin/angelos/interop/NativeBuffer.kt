@@ -12,11 +12,10 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.io
+package angelos.interop
 
-import angelos.interop.DirectBuffer
+actual interface NativeBuffer {
+    actual companion object {
 
-expect class DirectByteBufferImpl: AbstractByteBuffer, DirectBuffer{
-    override fun load(offset: Int): UByte
-    override fun copyInto(buffer: MutableByteBuffer, range: IntRange)
+    }
 }

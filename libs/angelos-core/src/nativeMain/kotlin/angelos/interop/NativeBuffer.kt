@@ -1,6 +1,8 @@
 package angelos.interop
 
-actual interface DirectBuffer {
+import kotlinx.cinterop.*
+
+actual interface NativeBuffer {
     actual companion object {
 
     }

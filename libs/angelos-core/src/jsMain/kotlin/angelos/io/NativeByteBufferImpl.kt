@@ -14,22 +14,20 @@
  */
 package angelos.io
 
-import angelos.interop.DirectBuffer
+import angelos.interop.NativeBuffer
 
-actual class MutableDirectByteBufferImpl internal actual constructor(
+@OptIn(ExperimentalUnsignedTypes::class)
+actual class NativeByteBufferImpl internal actual constructor(
     capacity: Int,
     limit: Int,
-    position: Int,
     mark: Int,
     endianness: Endianness
-) : AbstractMutableByteBuffer(capacity, limit, position, mark, endianness), DirectBuffer {
-    actual override fun load(offset: Int): UByte {
-        TODO("Not yet implemented")
-    }
+) : AbstractByteBuffer(capacity, limit, mark, endianness), NativeBuffer {
 
-    actual override fun save(value: UByte, offset: Int) {
-        TODO("Not yet implemented")
-    }
+    private val _array = ByteArray(capacity)
+    private val _view = _array.asUByteArray()
+
+    actual override fun load(offset: Int): UByte = _view[_mark + offset]
 
     actual override fun copyInto(buffer: MutableByteBuffer, range: IntRange) {
         TODO("Not yet implemented")

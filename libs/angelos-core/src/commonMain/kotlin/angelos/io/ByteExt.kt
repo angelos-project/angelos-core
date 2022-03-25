@@ -20,3 +20,4 @@ import kotlin.math.ceil
 fun byteBufferFrom(array: ByteArray, endianness: Endianness = ByteBuffer.nativeEndianness): ByteBuffer = ByteBufferImpl(array, array.size, array.size, 0, endianness)
 fun mutableByteBufferWith(capacity: Int, endianness: Endianness = ByteBuffer.nativeEndianness): MutableByteBuffer = MutableByteBufferImpl(ByteArray(ceil((capacity.absoluteValue / 8).toFloat()).toInt() * 8), capacity, capacity, 0, 0, endianness)
 fun mutableByteBufferFrom(array: ByteArray, endianness: Endianness = ByteBuffer.nativeEndianness): MutableByteBuffer = MutableByteBufferImpl(array, array.size, array.size, 0, 0, endianness)
+fun nativeByteBuffer(capacity: Int, endianness: Endianness = ByteBuffer.nativeEndianness): ByteBuffer = NativeByteBufferImpl(capacity, capacity, 0, endianness)

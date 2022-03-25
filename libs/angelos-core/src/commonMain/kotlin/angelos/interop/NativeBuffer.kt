@@ -14,8 +14,7 @@
  */
 package angelos.interop
 
-expect interface DirectBuffer {
-    companion object{
-
+expect interface NativeBuffer {
+    companion object {
     }
 }

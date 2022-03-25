@@ -108,7 +108,7 @@ abstract class AbstractMutableByteBuffer internal constructor(
 
     internal abstract fun save(value: UByte, offset: Int)
 
-    private inline fun writeChar(value: Char) = when (_reverse) {
+    internal open fun writeChar(value: Char) = when (_reverse) {
         true -> {
             save((value.code and 0xFF).toUByte(), 0)
             save(((value.code ushr 8) and 0xFF).toUByte(), 1)
@@ -119,7 +119,7 @@ abstract class AbstractMutableByteBuffer internal constructor(
         }
     }
 
-    private inline fun writeShort(value: Short) = when (_reverse) {
+    internal open fun writeShort(value: Short) = when (_reverse) {
         true -> {
             save((value.toInt() and 0xFF).toUByte(), 0)
             save(((value.toInt() ushr 8) and 0xFF).toUByte(), 1)
@@ -130,7 +130,7 @@ abstract class AbstractMutableByteBuffer internal constructor(
         }
     }
 
-    private inline fun writeUShort(value: UShort) = when (_reverse) {
+    internal open fun writeUShort(value: UShort) = when (_reverse) {
         true -> {
             save((value.toInt() and 0xFF).toUByte(), 0)
             save(((value.toInt() ushr 8) and 0xFF).toUByte(), 1)
@@ -141,7 +141,7 @@ abstract class AbstractMutableByteBuffer internal constructor(
         }
     }
 
-    private inline fun writeInt(value: Int) = when (_reverse) {
+    internal open fun writeInt(value: Int) = when (_reverse) {
         true -> {
             save((value and 0xFF).toUByte(), 0)
             save(((value ushr 8) and 0xFF).toUByte(), 1)
@@ -156,7 +156,7 @@ abstract class AbstractMutableByteBuffer internal constructor(
         }
     }
 
-    private inline fun writeUInt(value: UInt) = when (_reverse) {
+    internal open fun writeUInt(value: UInt) = when (_reverse) {
         true -> {
             save((value.toInt() and 0xFF).toUByte(), 0)
             save(((value.toInt() ushr 8) and 0xFF).toUByte(), 1)
@@ -171,7 +171,7 @@ abstract class AbstractMutableByteBuffer internal constructor(
         }
     }
 
-    private inline fun writeLong(value: Long) = when (_reverse) {
+    internal open fun writeLong(value: Long) = when (_reverse) {
         true -> {
             save((value and 0xFF).toUByte(), 0)
             save(((value ushr 8) and 0xFF).toUByte(), 1)
@@ -194,7 +194,7 @@ abstract class AbstractMutableByteBuffer internal constructor(
         }
     }
 
-    private inline fun writeULong(value: ULong) = when (_reverse) {
+    internal open fun writeULong(value: ULong) = when (_reverse) {
         true -> {
             save((value.toLong() and 0xFF).toUByte(), 0)
             save(((value.toLong() ushr 8) and 0xFF).toUByte(), 1)
@@ -217,7 +217,7 @@ abstract class AbstractMutableByteBuffer internal constructor(
         }
     }
 
-    private inline fun writeFloat(value: Int) = when (_reverse) {
+    internal open fun writeFloat(value: Int) = when (_reverse) {
         true -> {
             save((value and 0xFF).toUByte(), 0)
             save(((value ushr 8) and 0xFF).toUByte(), 1)
@@ -232,7 +232,7 @@ abstract class AbstractMutableByteBuffer internal constructor(
         }
     }
 
-    private inline fun writeDouble(value: Long) = when (_reverse) {
+    internal open fun writeDouble(value: Long) = when (_reverse) {
         true -> {
             save((value and 0xFF).toUByte(), 0)
             save(((value ushr 8) and 0xFF).toUByte(), 1)

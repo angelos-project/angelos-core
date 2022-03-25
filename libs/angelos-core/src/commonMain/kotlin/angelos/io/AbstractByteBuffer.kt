@@ -132,28 +132,28 @@ abstract class AbstractByteBuffer internal constructor(
 
     internal abstract fun load(offset: Int): UByte
 
-    private inline fun readChar(): Char = when (_reverse) {
+    internal open fun readChar(): Char = when (_reverse) {
         true -> load(0).toInt() or
                 (load(1).toInt() shl 8)
         false -> load(1).toInt() or
                 (load(0).toInt() shl 8)
     }.toChar()
 
-    private inline fun readShort(): Short = when (_reverse) {
+    internal open fun readShort(): Short = when (_reverse) {
         true -> load(0).toInt() or
                 (load(1).toInt() shl 8)
         false -> load(1).toInt() or
                 (load(0).toInt() shl 8)
     }.toShort()
 
-    private inline fun readUShort(): UShort = when (_reverse) {
+    internal open fun readUShort(): UShort = when (_reverse) {
         true -> (load(0).toInt() or
                 (load(1).toInt() shl 8))
         false -> (load(1).toInt() or
                 (load(0).toInt() shl 8))
     }.toUShort()
 
-    private inline fun readInt(): Int = when (_reverse) {
+    internal open fun readInt(): Int = when (_reverse) {
         true -> load(0).toInt() or
                 (load(1).toInt() shl 8) or
                 (load(2).toInt() shl 16) or
@@ -164,7 +164,7 @@ abstract class AbstractByteBuffer internal constructor(
                 (load(0).toInt() shl 24)
     }
 
-    private inline fun readUInt(): UInt = when (_reverse) {
+    internal open fun readUInt(): UInt = when (_reverse) {
         true -> load(0).toUInt() or
                 (load(1).toUInt() shl 8) or
                 (load(2).toUInt() shl 16) or
@@ -175,7 +175,7 @@ abstract class AbstractByteBuffer internal constructor(
                 (load(0).toUInt() shl 24)
     }
 
-    private inline fun readLong(): Long = when (_reverse) {
+    internal open fun readLong(): Long = when (_reverse) {
         true -> load(0).toLong() or
                 (load(1).toLong() shl 8) or
                 (load(2).toLong() shl 16) or
@@ -194,7 +194,7 @@ abstract class AbstractByteBuffer internal constructor(
                 (load(0).toLong() shl 56)
     }
 
-    private inline fun readULong(): ULong = when (_reverse) {
+    internal open fun readULong(): ULong = when (_reverse) {
         true -> load(0).toULong() or
                 (load(1).toULong() shl 8) or
                 (load(2).toULong() shl 16) or
@@ -213,7 +213,7 @@ abstract class AbstractByteBuffer internal constructor(
                 (load(0).toULong() shl 56)
     }
 
-    private inline fun readFloat(): Int = when (_reverse) {
+    internal open fun readFloat(): Int = when (_reverse) {
         true -> load(0).toInt() or
                 (load(1).toInt() shl 8) or
                 (load(2).toInt() shl 16) or
@@ -224,7 +224,7 @@ abstract class AbstractByteBuffer internal constructor(
                 (load(0).toInt() shl 24)
     }
 
-    private inline fun readDouble(): Long = when (_reverse) {
+    internal open fun readDouble(): Long = when (_reverse) {
         true -> load(0).toLong() or
                 (load(1).toLong() shl 8) or
                 (load(2).toLong() shl 16) or
