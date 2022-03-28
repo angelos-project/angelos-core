@@ -23,4 +23,13 @@ expect class ByteBufferImpl internal constructor(
 ): ByteBuffer {
     override fun getArray(): ByteArray
     override fun load(offset: Int): UByte
+
+    fun toMutableNativeByteBuffer(): MutableNativeByteBufferImpl
+    fun toNativeByteBuffer(): NativeByteBufferImpl
+}
+
+fun byteBufferFrom(array: ByteArray, endianness: Endianness = ByteBuffer.nativeEndianness): ByteBufferImpl = ByteBufferImpl(array, array.size, array.size, 0, endianness)
+
+fun ByteBufferImpl.toMutableByteBuffer(): MutableByteBufferImpl {
+    return MutableByteBufferImpl(getArray().copyOf(), capacity, limit, mark, mark, endian)
 }

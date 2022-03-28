@@ -29,4 +29,10 @@ actual class MutableByteBufferImpl internal actual constructor(
     actual override fun getArray(): ByteArray = _array
     actual override fun save(value: UByte, offset: Int) { _view[_position + offset] = value }
     actual override fun load(offset: Int): UByte = _view[_mark + offset]
+
+    actual fun toMutableNativeByteBuffer(): MutableNativeByteBufferImpl {
+        val mnbb = MutableNativeByteBufferImpl(capacity, limit, mark, mark, endian)
+        copyInto(mnbb, 0..capacity)
+        return mnbb
+    }
 }
