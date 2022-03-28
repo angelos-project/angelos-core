@@ -22,8 +22,8 @@ expect class MutableNativeByteBufferImpl internal constructor(
     position: Int,
     mark: Int,
     endianness: Endianness
-) : AbstractMutableByteBuffer, NativeBuffer {
+) : MutableByteBuffer, NativeBuffer {
+    override fun getArray(): ByteArray
     override fun load(offset: Int): UByte
     override fun save(value: UByte, offset: Int)
-    override fun copyInto(buffer: MutableByteBuffer, range: IntRange)
 }

@@ -15,7 +15,7 @@
 package angelos.nio
 
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
@@ -30,7 +30,7 @@ class ByteDirectBufferTest{
     private val ulong: ULong = 0B10101010_10101010_10101010_10101010_10101010_10101010_10101010_10101010u
 
     private val size: Long = 128
-    private var buffer: ByteDirectBuffer = ByteDirectBuffer(size, size)
+    private var buffer: ByteDirectBuffer = ByteDirectBuffer(size, size, ByteOrder.nativeOrder())
 
     fun reverseEndian(){
         buffer.order = if(buffer.order == ByteOrder.LITTLE_ENDIAN)

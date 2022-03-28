@@ -14,7 +14,7 @@ class MutableByteBufferTest {
     private val ulong: ULong = 0B10101010_10101010_10101010_10101010_10101010_10101010_10101010_10101010u
 
     private val size: Int = 128
-    private var buffer = mutableByteBufferWith(size)
+    private var buffer = mutableNativeByteBufferWith(size)
 
     fun reverseEndian() {
         buffer.endian = when(buffer.endian != Endianness.LITTLE_ENDIAN) {

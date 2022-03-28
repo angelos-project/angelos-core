@@ -26,7 +26,7 @@ actual class MutableNativeByteBufferImpl internal actual constructor(
     position: Int,
     mark: Int,
     endianness: Endianness
-) : AbstractMutableByteBuffer(capacity, limit, position, mark, endianness), NativeBuffer {
+) : MutableByteBuffer(capacity, limit, position, mark, endianness), NativeBuffer {
 
     private val theUnsafe: Unsafe
     private val _array: Long
@@ -135,15 +135,7 @@ actual class MutableNativeByteBufferImpl internal actual constructor(
         theUnsafe.freeMemory(_array)
     }
 
-    actual override fun load(offset: Int): UByte {
-        TODO("Do not implement")
-    }
-
-    actual override fun save(value: UByte, offset: Int) {
-        TODO("Do not implement")
-    }
-
-    actual override fun copyInto(buffer: MutableByteBuffer, range: IntRange) {
-        TODO("Not yet implemented")
-    }
+    actual override fun getArray(): ByteArray { TODO("Do not implement") }
+    actual override fun load(offset: Int): UByte { TODO("Do not implement") }
+    actual override fun save(value: UByte, offset: Int) { TODO("Do not implement") }
 }

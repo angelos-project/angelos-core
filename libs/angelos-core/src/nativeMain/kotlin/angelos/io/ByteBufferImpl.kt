@@ -22,15 +22,11 @@ actual class ByteBufferImpl internal actual constructor(
     limit: Int,
     mark: Int,
     endianness: Endianness
-) : AbstractByteBuffer(capacity, limit, mark, endianness) {
+) : ByteBuffer(capacity, limit, mark, endianness) {
 
     private val _array = array
     private val _view = _array.asUByteArray()
 
+    actual override fun getArray(): ByteArray = _array
     actual override inline fun load(offset: Int): UByte = _view[_mark + offset]
-    actual override fun copyInto(buffer: MutableByteBuffer, range: IntRange) {
-        TODO("Not yet implemented")
-    }
-    actual fun toMutableByteBuffer(): MutableByteBuffer = mutableByteBufferFrom(_array.sliceArray(0.._capacity), endian)
-
 }

@@ -23,14 +23,11 @@ actual class MutableByteBufferImpl internal actual constructor(
     position: Int,
     mark: Int,
     endianness: Endianness
-) : AbstractMutableByteBuffer(capacity, limit, position, mark, endianness) {
+) : MutableByteBuffer(capacity, limit, position, mark, endianness) {
     private val _array = array
     private val _view = _array.asUByteArray()
 
+    actual override fun getArray(): ByteArray = _array
     actual override inline fun save(value: UByte, offset: Int) { _view[_position + offset] = value }
     actual override inline fun load(offset: Int): UByte = _view[_mark + offset]
-
-    actual override fun copyInto(buffer: MutableByteBuffer, range: IntRange) {
-        TODO("Not yet implemented")
-    }
 }
