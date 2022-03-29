@@ -58,7 +58,7 @@ abstract class ByteBuffer internal constructor(
 
     internal abstract fun getArray(): ByteArray
 
-    fun copyInto(buffer: MutableByteBuffer, range: IntRange) {
+    open fun copyInto(buffer: MutableByteBuffer, range: IntRange) {
         getArray().copyInto(buffer.getArray(), buffer.position, range.first, range.last)
     }
 
@@ -72,6 +72,20 @@ abstract class ByteBuffer internal constructor(
     }
 
     private inline fun forwardMark(length: Int) { _mark += length }
+
+    fun getByte(): Byte {
+        enoughData(1)
+        val value = readByte()
+        forwardMark(1)
+        return value
+    }
+
+    fun getUByte(): UByte {
+        enoughData(1)
+        val value = readUByte()
+        forwardMark(1)
+        return value
+    }
 
     fun getChar(): Char {
         enoughData(2)
@@ -137,6 +151,9 @@ abstract class ByteBuffer internal constructor(
     }
 
     internal abstract fun load(offset: Int): UByte
+
+    internal open fun readByte(): Byte = load(0).toByte()
+    internal open fun readUByte(): UByte = load(0)
 
     internal open fun readChar(): Char = when (_reverse) {
         true -> load(0).toInt() or

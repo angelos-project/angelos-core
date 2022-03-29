@@ -33,6 +33,6 @@ actual class MutableNativeByteBufferImpl internal actual constructor(
     actual override fun load(offset: Int): UByte = _view[_mark + offset]
 
     actual fun toMutableByteBuffer(): MutableByteBufferImpl {
-        return MutableByteBufferImpl(getArray().copyOf(), capacity, limit, mark, mark, endian)
+        return MutableByteBufferImpl(getArray().copyOf(), capacity, limit, position, mark, endian)
     }
 }

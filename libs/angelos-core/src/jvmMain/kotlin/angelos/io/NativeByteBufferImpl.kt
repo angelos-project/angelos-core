@@ -38,55 +38,62 @@ actual class NativeByteBufferImpl internal actual constructor(
         _array = theUnsafe.allocateMemory(capacity.toLong())
     }
 
-    private fun calculateAddress(): Long = _array + _mark
+    private fun calculateAddress(cursor: Int): Long = _array + cursor
+
+    override fun readByte(): Byte = theUnsafe.getByte(calculateAddress(_mark))
+    override fun readUByte(): UByte = theUnsafe.getByte(calculateAddress(_mark)).toUByte()
 
     override fun readChar(): Char = when (_reverse) {
-        true -> reverseShort(theUnsafe.getShort(calculateAddress())).toInt().toChar()
-        false -> Buffer.getChar(calculateAddress())
+        true -> reverseShort(theUnsafe.getShort(calculateAddress(_mark))).toInt().toChar()
+        false -> Buffer.getChar(calculateAddress(_mark))
     }
 
     override fun readShort(): Short = when (_reverse) {
-        true -> reverseShort(theUnsafe.getShort(calculateAddress()))
-        false -> theUnsafe.getShort(calculateAddress())
+        true -> reverseShort(theUnsafe.getShort(calculateAddress(_mark)))
+        false -> theUnsafe.getShort(calculateAddress(_mark))
     }
 
     override fun readUShort(): UShort = when (_reverse) {
-        true -> reverseShort(theUnsafe.getShort(calculateAddress()))
-        false -> theUnsafe.getShort(calculateAddress())
+        true -> reverseShort(theUnsafe.getShort(calculateAddress(_mark)))
+        false -> theUnsafe.getShort(calculateAddress(_mark))
     }.toUShort()
 
     override fun readInt(): Int = when (_reverse) {
-        true -> reverseInt(theUnsafe.getInt(calculateAddress()))
-        false -> theUnsafe.getInt(calculateAddress())
+        true -> reverseInt(theUnsafe.getInt(calculateAddress(_mark)))
+        false -> theUnsafe.getInt(calculateAddress(_mark))
     }
 
     override fun readUInt(): UInt = when (_reverse) {
-        true -> reverseInt(theUnsafe.getInt(calculateAddress()))
-        false -> theUnsafe.getInt(calculateAddress())
+        true -> reverseInt(theUnsafe.getInt(calculateAddress(_mark)))
+        false -> theUnsafe.getInt(calculateAddress(_mark))
     }.toUInt()
 
     override fun readLong(): Long = when (_reverse) {
-        true -> reverseLong(theUnsafe.getLong(calculateAddress()))
-        false -> theUnsafe.getLong(calculateAddress())
+        true -> reverseLong(theUnsafe.getLong(calculateAddress(_mark)))
+        false -> theUnsafe.getLong(calculateAddress(_mark))
     }
 
     override fun readULong(): ULong = when (_reverse) {
-        true -> reverseLong(theUnsafe.getLong(calculateAddress()))
-        false -> theUnsafe.getLong(calculateAddress())
+        true -> reverseLong(theUnsafe.getLong(calculateAddress(_mark)))
+        false -> theUnsafe.getLong(calculateAddress(_mark))
     }.toULong()
 
     override fun readFloat(): Int = when (_reverse) {
-        true -> reverseInt(theUnsafe.getInt(calculateAddress()))
-        false -> theUnsafe.getInt(calculateAddress())
+        true -> reverseInt(theUnsafe.getInt(calculateAddress(_mark)))
+        false -> theUnsafe.getInt(calculateAddress(_mark))
     }
 
     override fun readDouble(): Long = when (_reverse) {
-        true -> reverseLong(theUnsafe.getLong(calculateAddress()))
-        false -> theUnsafe.getLong(calculateAddress())
+        true -> reverseLong(theUnsafe.getLong(calculateAddress(_mark)))
+        false -> theUnsafe.getLong(calculateAddress(_mark))
     }
 
     protected fun finalize() {
         theUnsafe.freeMemory(_array)
+    }
+
+    override fun copyInto(buffer: MutableByteBuffer, range: IntRange) {
+        TODO("Not yet implemented")
     }
 
     actual override fun getArray(): ByteArray { TODO("Do not implement") }
@@ -101,7 +108,7 @@ actual class NativeByteBufferImpl internal actual constructor(
 
     actual fun toMutableNativeByteBuffer(): MutableNativeByteBufferImpl {
         val buffer = MutableNativeByteBufferImpl(capacity, limit, mark,  mark, endian)
-        theUnsafe.copyMemory(_array, buffer._array, mark.toLong())
+        theUnsafe.copyMemory(_array, buffer._array, capacity.toLong())
         return buffer
     }
 }

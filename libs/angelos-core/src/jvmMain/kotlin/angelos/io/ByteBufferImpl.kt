@@ -38,7 +38,7 @@ actual class ByteBufferImpl internal actual constructor(
 
     actual fun toNativeByteBuffer(): NativeByteBufferImpl {
         val mnbb = NativeByteBufferImpl(capacity, limit, mark, endian)
-        for (index in 0 until mark)
+        for (index in 0 until capacity)
             mnbb.theUnsafe.putByte(mnbb._array + index, _array[index])
         return mnbb
     }

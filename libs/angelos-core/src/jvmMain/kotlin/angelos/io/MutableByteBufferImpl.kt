@@ -31,7 +31,7 @@ actual class MutableByteBufferImpl internal actual constructor(
     actual override fun load(offset: Int): UByte = _view[_mark + offset]
 
     actual fun toMutableNativeByteBuffer(): MutableNativeByteBufferImpl {
-        val mnbb = MutableNativeByteBufferImpl(capacity, limit, mark, mark, endian)
+        val mnbb = MutableNativeByteBufferImpl(capacity, limit, position, mark, endian)
         for (index in 0 until capacity)
              mnbb.theUnsafe.putByte(mnbb._array + index, _array[index])
         return mnbb

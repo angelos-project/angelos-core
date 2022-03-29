@@ -52,6 +52,18 @@ abstract class MutableByteBuffer internal constructor(
         _position += length
     }
 
+    fun setByte(value: Byte) {
+        enoughSpace(1)
+        writeByte(value)
+        forwardPosition(1)
+    }
+
+    fun setUByte(value: UByte) {
+        enoughSpace(1)
+        writeUByte(value)
+        forwardPosition(1)
+    }
+
     fun setChar(value: Char) {
         enoughSpace(2)
         writeChar(value)
@@ -107,6 +119,9 @@ abstract class MutableByteBuffer internal constructor(
     }
 
     internal abstract fun save(value: UByte, offset: Int)
+
+    internal open fun writeByte(value: Byte) = save((value.toInt() and 0xFF).toUByte(), 0)
+    internal open fun writeUByte(value: UByte) = save(value, 0)
 
     internal open fun writeChar(value: Char) = when (_reverse) {
         true -> {

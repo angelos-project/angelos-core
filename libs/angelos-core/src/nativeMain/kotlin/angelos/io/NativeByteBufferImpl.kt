@@ -36,6 +36,8 @@ actual class NativeByteBufferImpl internal actual constructor(
     }
 
     actual fun toMutableNativeByteBuffer(): MutableNativeByteBufferImpl {
-        return MutableNativeByteBufferImpl(capacity, limit, mark,  mark, endian)
+        val mnbb = MutableNativeByteBufferImpl(capacity, limit, mark,  mark, endian)
+        _array.copyInto(mnbb.getArray(), 0)
+        return mnbb
     }
 }

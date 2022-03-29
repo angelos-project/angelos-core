@@ -16,26 +16,23 @@ package angelos.io
 
 import angelos.interop.Base
 
-enum class Endianness(val endian: Int) {
-    UNKNOWN_ENDIAN(0),
-    BIG_ENDIAN(1),
-    LITTLE_ENDIAN(2);
+enum class Endianness(val endian: Boolean) {
+    BIG_ENDIAN(false),
+    LITTLE_ENDIAN(true);
 
-    fun isUnknown(): Boolean = endian == UNKNOWN_ENDIAN.endian
     fun isBig(): Boolean = endian == BIG_ENDIAN.endian
     fun isLittle(): Boolean = endian == LITTLE_ENDIAN.endian
 
     companion object {
         fun nativeOrder(): Endianness = when(Base.getEndian()) {
-            BIG_ENDIAN.endian -> BIG_ENDIAN
-            LITTLE_ENDIAN.endian -> LITTLE_ENDIAN
-            else -> UNKNOWN_ENDIAN
+            1 -> BIG_ENDIAN
+            2 -> LITTLE_ENDIAN
+            else -> throw RuntimeException("Unknown type of endian.")
         }
     }
 
     override fun toString(): String = when(endian) {
-        BIG_ENDIAN.endian -> "BIG_ENDIAN"
-        LITTLE_ENDIAN.endian -> "LITTLE_ENDIAN"
-        else -> "UNKNOWN_ENDIAN"
+        false -> "BIG_ENDIAN"
+        true -> "LITTLE_ENDIAN"
     }
 }

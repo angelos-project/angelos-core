@@ -5,7 +5,7 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class MutableByteBufferTest {
+class MutableNativeByteBufferTest {
     private val refRead = byteArrayOf(
         0B1010101, 0B10101010u.toByte(),
         0B1010101, 0B10101010.toByte(), 0B10101010.toByte(), 0B10101010.toByte(),
@@ -66,7 +66,7 @@ class MutableByteBufferTest {
 
     @Test
     fun readAny() {
-        val buf = mutableByteBufferFrom(refRead.copyOf(), Endianness.LITTLE_ENDIAN)
+        val buf = byteBufferFrom(refRead.copyOf(), Endianness.LITTLE_ENDIAN).toMutableNativeByteBuffer()
         assertEquals(buf.getByte(), refByte)
         assertEquals(buf.getUByte(), refUByte)
         assertEquals(buf.getShort(), refShort)
@@ -81,7 +81,7 @@ class MutableByteBufferTest {
 
     @Test
     fun writeAny() {
-        val buf = mutableByteBufferFrom(refWrite.copyOf(), Endianness.LITTLE_ENDIAN)
+        val buf = byteBufferFrom(refWrite.copyOf(), Endianness.LITTLE_ENDIAN).toMutableNativeByteBuffer()
         buf.setByte(refByte)
         buf.setUByte(refUByte)
         buf.setShort(refShort)
@@ -95,7 +95,7 @@ class MutableByteBufferTest {
 
     @Test
     fun writeByte() {
-        val buf = mutableByteBufferWith(size)
+        val buf = mutableNativeByteBufferWith(size)
         buf.setByte(refByte)
         assertEquals(buf.position, Byte.SIZE_BYTES)
         assertEquals(buf.getByte(), refByte)
@@ -110,7 +110,7 @@ class MutableByteBufferTest {
 
     @Test
     fun writeUByte() {
-        val buf = mutableByteBufferWith(size)
+        val buf = mutableNativeByteBufferWith(size)
         buf.setUByte(refUByte)
         assertEquals(buf.position, UByte.SIZE_BYTES)
         assertEquals(buf.getUByte(), refUByte)
@@ -125,7 +125,7 @@ class MutableByteBufferTest {
 
     @Test
     fun writeChar() {
-        val buf = mutableByteBufferWith(size)
+        val buf = mutableNativeByteBufferWith(size)
         val letter = 'Å'
 
         buf.setChar(letter)
@@ -142,7 +142,7 @@ class MutableByteBufferTest {
 
     @Test
     fun writeShort() {
-        val buf = mutableByteBufferWith(size)
+        val buf = mutableNativeByteBufferWith(size)
         buf.setShort(refShort)
         assertEquals(buf.position, Short.SIZE_BYTES)
         assertEquals(buf.getShort(), refShort)
@@ -157,7 +157,7 @@ class MutableByteBufferTest {
 
     @Test
     fun writeUShort() {
-        val buf = mutableByteBufferWith(size)
+        val buf = mutableNativeByteBufferWith(size)
         buf.setUShort(refUShort)
         assertEquals(buf.position, UShort.SIZE_BYTES)
         assertEquals(refUShort, buf.getUShort())
@@ -172,7 +172,7 @@ class MutableByteBufferTest {
 
     @Test
     fun writeInt() {
-        val buf = mutableByteBufferWith(size)
+        val buf = mutableNativeByteBufferWith(size)
         buf.setInt(-refInt)
         assertEquals(buf.position, Int.SIZE_BYTES)
         assertEquals(buf.getInt(), -refInt)
@@ -187,7 +187,7 @@ class MutableByteBufferTest {
 
     @Test
     fun writeUInt() {
-        val buf = mutableByteBufferWith(size)
+        val buf = mutableNativeByteBufferWith(size)
         buf.setUInt(refUInt)
         assertEquals(buf.position, UInt.SIZE_BYTES)
         assertEquals(buf.getUInt(), refUInt)
@@ -202,7 +202,7 @@ class MutableByteBufferTest {
 
     @Test
     fun writeLong() {
-        val buf = mutableByteBufferWith(size)
+        val buf = mutableNativeByteBufferWith(size)
         buf.setLong(refLong)
         assertEquals(buf.position, Long.SIZE_BYTES)
         assertEquals(buf.getLong(), refLong)
@@ -217,7 +217,7 @@ class MutableByteBufferTest {
 
     @Test
     fun writeULong() {
-        val buf = mutableByteBufferWith(size)
+        val buf = mutableNativeByteBufferWith(size)
         buf.setULong(refULong)
         assertEquals(buf.position, ULong.SIZE_BYTES)
         assertEquals(buf.getULong(), refULong)
@@ -232,7 +232,7 @@ class MutableByteBufferTest {
 
     @Test
     fun writeFloat() {
-        val buf = mutableByteBufferWith(size)
+        val buf = mutableNativeByteBufferWith(size)
         val value: Float = -123.565F
         buf.setFloat(value)
         assertEquals(buf.position, Float.SIZE_BYTES)
@@ -248,7 +248,7 @@ class MutableByteBufferTest {
 
     @Test
     fun writeDouble() {
-        val buf = mutableByteBufferWith(size)
+        val buf = mutableNativeByteBufferWith(size)
         val value: Double = (-234958739.324893498573495834753947535234571209347F).toDouble()
         buf.setDouble(value)
         assertEquals(buf.position, Double.SIZE_BYTES)
@@ -263,24 +263,19 @@ class MutableByteBufferTest {
     }
 
     @Test
-    fun mutableByteBufferWith() {
-        assertNotNull(mutableByteBufferWith(4096))
+    fun mutableNativeByteBufferWith() {
+        assertNotNull(mutableNativeByteBufferWith(4096))
     }
 
     @Test
-    fun mutableByteBufferFrom() {
-        assertContentEquals(mutableByteBufferFrom(refRead.copyOf()).getArray(), refRead)
-    }
-
-    @Test
-    fun testToMutableNativeByteBuffer() {
-        assertContentEquals(mutableByteBufferFrom(refRead.copyOf()).toMutableNativeByteBuffer().toMutableByteBuffer().getArray(), refRead)
+    fun testToMutableByteBuffer() {
+        assertContentEquals(byteBufferFrom(refRead.copyOf()).toMutableNativeByteBuffer().toMutableByteBuffer().getArray(), refRead)
     }
 
     @Test
     fun copyInto() {
         val buf = mutableByteBufferWith(128)
-        mutableByteBufferFrom(refRead.copyOf()).copyInto(buf, 0..128)
+        byteBufferFrom(refRead.copyOf()).toMutableNativeByteBuffer().copyInto(buf, 0..128)
         assertContentEquals(buf.getArray(), refRead)
     }
 }

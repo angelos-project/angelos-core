@@ -1,17 +1,11 @@
 package angelos.io
 
 import kotlin.test.Test
-import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class EndiannessTest {
-
-    @Test
-    fun isUnknown() {
-        val endianness = Endianness.UNKNOWN_ENDIAN
-        assertTrue(endianness.isUnknown())
-    }
 
     @Test
     fun isBig() {
@@ -28,7 +22,7 @@ class EndiannessTest {
     @Test
     fun nativeOrder() {
         val endianness = Endianness.nativeOrder()
-        assertFalse(endianness.isUnknown())
+        assertNotNull(endianness)
     }
 
     @Test

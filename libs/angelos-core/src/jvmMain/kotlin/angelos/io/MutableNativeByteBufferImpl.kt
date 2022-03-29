@@ -41,6 +41,13 @@ actual class MutableNativeByteBufferImpl internal actual constructor(
 
     private fun calculateAddress(cursor: Int): Long = _array + cursor
 
+
+    override fun readByte(): Byte = theUnsafe.getByte(calculateAddress(_mark))
+    override fun writeByte(value: Byte) = theUnsafe.putByte(calculateAddress(_position), value)
+
+    override fun readUByte(): UByte = theUnsafe.getByte(calculateAddress(_mark)).toUByte()
+    override fun writeUByte(value: UByte) = theUnsafe.putByte(calculateAddress(_position), value.toByte())
+
     override fun readChar(): Char = when (_reverse) {
         true -> reverseShort(theUnsafe.getShort(calculateAddress(_mark))).toInt().toChar()
         false -> Buffer.getChar(calculateAddress(_mark))
@@ -133,6 +140,11 @@ actual class MutableNativeByteBufferImpl internal actual constructor(
 
     protected fun finalize() {
         theUnsafe.freeMemory(_array)
+    }
+
+    override fun copyInto(buffer: MutableByteBuffer, range: IntRange) = when (buffer) {
+        is NativeBuffer -> {}
+        else -> {}
     }
 
     actual override fun getArray(): ByteArray { TODO("Do not implement") }
