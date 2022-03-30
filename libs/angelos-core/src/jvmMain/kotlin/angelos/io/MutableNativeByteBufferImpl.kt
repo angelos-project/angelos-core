@@ -41,7 +41,6 @@ actual class MutableNativeByteBufferImpl internal actual constructor(
 
     private fun calculateAddress(cursor: Int): Long = _array + cursor
 
-
     override fun readByte(): Byte = theUnsafe.getByte(calculateAddress(_mark))
     override fun writeByte(value: Byte) = theUnsafe.putByte(calculateAddress(_position), value)
 
@@ -142,9 +141,23 @@ actual class MutableNativeByteBufferImpl internal actual constructor(
         theUnsafe.freeMemory(_array)
     }
 
-    override fun copyInto(buffer: MutableByteBuffer, range: IntRange) = when (buffer) {
-        is NativeBuffer -> {}
-        else -> {}
+    override fun copyInto(buffer: MutableByteBuffer, range: IntRange) {
+        if (0 <= range.first && range.first <= range.last && range.last <= _capacity && range.last - range.first <= buffer.capacity - buffer.position) when (buffer) {
+            is MutableNativeByteBufferImpl -> {
+                theUnsafe.copyMemory(
+                    _array + range.first,
+                    buffer._array + buffer.position,
+                    (range.last - range.first).toLong()
+                )
+            }
+            else -> {
+                val array = buffer.getArray()
+                for (index in range.first until range.last)
+                    array[buffer.position + index - range.first] = theUnsafe.getByte(_array + index.toLong())
+            }
+        } else {
+            throw IndexOutOfBoundsException()
+        }
     }
 
     actual override fun getArray(): ByteArray { TODO("Do not implement") }

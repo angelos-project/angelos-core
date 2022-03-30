@@ -93,7 +93,22 @@ actual class NativeByteBufferImpl internal actual constructor(
     }
 
     override fun copyInto(buffer: MutableByteBuffer, range: IntRange) {
-        TODO("Not yet implemented")
+        if (0 <= range.first && range.first <= range.last && range.last <= _capacity && range.last - range.first <= buffer.capacity - buffer.position) when (buffer) {
+            is MutableNativeByteBufferImpl -> {
+                theUnsafe.copyMemory(
+                    _array + range.first,
+                    buffer._array + buffer.position,
+                    (range.last - range.first).toLong()
+                )
+            }
+            else -> {
+                val array = buffer.getArray()
+                for (index in range.first until range.last)
+                    array[buffer.position + index - range.first] = theUnsafe.getByte(_array + index.toLong())
+            }
+        } else {
+            throw IndexOutOfBoundsException()
+        }
     }
 
     actual override fun getArray(): ByteArray { TODO("Do not implement") }

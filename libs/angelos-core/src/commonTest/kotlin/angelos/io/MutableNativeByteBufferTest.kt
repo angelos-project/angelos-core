@@ -249,7 +249,7 @@ class MutableNativeByteBufferTest {
     @Test
     fun writeDouble() {
         val buf = mutableNativeByteBufferWith(size)
-        val value: Double = (-234958739.324893498573495834753947535234571209347F).toDouble()
+        val value: Double = (-2.34958736E8F).toDouble()
         buf.setDouble(value)
         assertEquals(buf.position, Double.SIZE_BYTES)
         assertEquals(buf.getDouble(), value, 0.0)
