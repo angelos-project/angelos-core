@@ -14,7 +14,6 @@
  */
 package angelos.io
 
-import angelos.interop.Buffer
 import angelos.interop.NativeBuffer
 import sun.misc.Unsafe
 import java.lang.reflect.Field
@@ -49,7 +48,7 @@ actual class MutableNativeByteBufferImpl internal actual constructor(
 
     override fun readChar(): Char = when (_reverse) {
         true -> reverseShort(theUnsafe.getShort(calculateAddress(_mark))).toInt().toChar()
-        false -> Buffer.getChar(calculateAddress(_mark))
+        false -> theUnsafe.getChar(calculateAddress(_mark))
     }
 
     override fun writeChar(value: Char) = when (_reverse) {
@@ -170,4 +169,6 @@ actual class MutableNativeByteBufferImpl internal actual constructor(
             buffer[index] = theUnsafe.getByte(_array + index)
         return mutableByteBufferFrom(buffer, endian)
     }
+
+    override fun operation(block: (it: Long) -> Long) = block(_array)
 }

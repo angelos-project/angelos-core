@@ -62,6 +62,10 @@ abstract class ByteBuffer internal constructor(
         getArray().copyInto(buffer.getArray(), buffer.position, range.first, range.last)
     }
 
+    fun allowance(): Int = _capacity - _limit
+
+    open fun remaining(): Int = _capacity - _mark
+
     open fun rewind() {
         _mark = 0
     }

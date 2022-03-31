@@ -14,22 +14,19 @@
  */
 package angelos.interop
 
-import angelos.io.FileNotFoundException
-import angelos.io.FileSystem
-import angelos.io.IOException
+import angelos.io.*
 import angelos.io.net.Socket
-import angelos.nio.Buffer
 import kotlinx.cinterop.*
 import platform.posix.*
 
 internal actual class IO {
     actual companion object {
 
-        actual inline fun readFile(number: Int, dst: Buffer, index: Int, count: Long): Long = dst.toArray().usePinned {
+        actual inline fun readFile(number: Int, dst: NativeByteBufferImpl, index: Int, count: Long): Long = dst.operation {
             read(number, it.addressOf(index), count.toULong())
         }
 
-        actual inline fun writeFile(number: Int, src: Buffer, index: Int, count: Long): Long = src.toArray().usePinned {
+        actual inline fun writeFile(number: Int, src: MutableNativeByteBufferImpl, index: Int, count: Long): Long = src.operation {
             write(number, it.addressOf(index), count.toULong())
         }
 

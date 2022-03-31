@@ -14,9 +14,9 @@
  */
 package angelos.io.channel
 
-import angelos.nio.Buffer
+import angelos.io.MutableByteBuffer
 
-interface GatheringByteChannel: WritableByteChannel {
-    suspend fun write(srcs: List<Buffer>): Long
-    suspend fun write(srcs: List<Buffer>, offset: Int, length: Int): Long
+interface GatheringByteChannel<W: MutableByteBuffer>: WritableByteChannel<W> {
+    suspend fun write(srcs: List<W>): Long
+    suspend fun write(srcs: List<W>, offset: Int, length: Int): Long
 }

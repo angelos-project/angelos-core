@@ -26,5 +26,15 @@ int stream_attach(int fd) {
 }
 
 
+int stream_is_open(int fd) {
+    return fcntl(fd, F_GETFD) != -1 || errno != EBADF;
+}
+
+
+int stream_close(int fd) {
+    return close(fd);
+}
+
+
 #endif
 

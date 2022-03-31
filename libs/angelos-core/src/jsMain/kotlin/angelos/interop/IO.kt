@@ -14,17 +14,18 @@
  */
 package angelos.interop
 
+import angelos.io.ByteBuffer
+import angelos.io.MutableByteBuffer
 import angelos.io.net.Socket
-import angelos.nio.Buffer
 import angelos.io.FileSystem as RealFS
 
 internal actual class IO {
     actual companion object {
         @ExperimentalUnsignedTypes
-        actual inline fun readFile(number: Int, dst: Buffer, index: Int, count: Long): Long {TODO("Not yet implemented")}
+        actual inline fun readFile(number: Int, dst: MutableByteBuffer, index: Int, count: Long): Long {TODO("Not yet implemented")}
 
         @ExperimentalUnsignedTypes
-        actual inline fun writeFile(number: Int, src: Buffer, index: Int, count: Long): Long {TODO("Not yet implemented")}
+        actual inline fun writeFile(number: Int, src: ByteBuffer, index: Int, count: Long): Long {TODO("Not yet implemented")}
         actual inline fun tellFile(number: Int): Long {TODO("Not yet implemented")}
         actual inline fun seekFile(number: Int, position: Long, whence: RealFS.Seek): Long {TODO("Not yet implemented")}
         actual inline fun closeFile(number: Int): Boolean {TODO("Not yet implemented")}
@@ -47,6 +48,17 @@ internal actual class IO {
         actual inline fun serverClose() {TODO("Not yet implemented")}
         actual inline fun clientOpen(host: String, port: Short, domain: Socket.Family, type: Socket.Type, protocol: Int): Int {TODO("Not yet implemented")}
         actual inline fun clientClose() {TODO("Not yet implemented")}
+        actual inline fun pollAction(): PollAction {
+            TODO("Not yet implemented")
+        }
+
+        actual inline fun streamOpen(stream: Int): Int {
+            TODO("Not yet implemented")
+        }
+
+        actual inline fun streamClose(stream: Int) {
+            TODO("Not yet implemented")
+        }
 
     }
 }

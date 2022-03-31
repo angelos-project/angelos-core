@@ -15,7 +15,7 @@
 package angelos.interop
 
 actual interface NativeBuffer {
+    fun operation(block: (it: Long) -> Long): Long
     actual companion object {
-
     }
 }

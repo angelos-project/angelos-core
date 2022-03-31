@@ -15,42 +15,43 @@
 package angelos.interop
 
 import angelos.io.FileSystem
+import angelos.io.MutableNativeByteBufferImpl
+import angelos.io.NativeByteBufferImpl
 import angelos.io.net.Socket
-import angelos.nio.Buffer
 
 data class PollAction(val descriptor: Int, val action: Int)
 
 internal expect class IO {
     companion object {
-        inline fun readFile(number: Int, dst: Buffer, index: Int, count: Long): Long
-        inline fun writeFile(number: Int, src: Buffer, index: Int, count: Long): Long
-        inline fun tellFile(number: Int): Long
-        inline fun seekFile(number: Int, position: Long, whence: FileSystem.Seek): Long
-        inline fun closeFile(number: Int): Boolean
+        fun readFile(number: Int, dst: NativeByteBufferImpl, index: Int, count: Long): Long
+        fun writeFile(number: Int, src: MutableNativeByteBufferImpl, index: Int, count: Long): Long
+        fun tellFile(number: Int): Long
+        fun seekFile(number: Int, position: Long, whence: FileSystem.Seek): Long
+        fun closeFile(number: Int): Boolean
 
-        inline fun checkReadable(path: String): Boolean
-        inline fun checkWritable(path: String): Boolean
-        inline fun checkExecutable(path: String): Boolean
-        inline fun checkExists(path: String): Boolean
-        inline fun getFileType(path: String): Int
-        inline fun getFileInfo(path: String): FileSystem.Info
-        inline fun getLinkTarget(path: String): String
-        inline fun openDir(path: String): Long
-        inline fun readDir(dir: Long): FileSystem.FileEntry
-        inline fun closeDir(dir: Long): Boolean
-        inline fun openFile(path: String, option: Int): Int
+        fun checkReadable(path: String): Boolean
+        fun checkWritable(path: String): Boolean
+        fun checkExecutable(path: String): Boolean
+        fun checkExists(path: String): Boolean
+        fun getFileType(path: String): Int
+        fun getFileInfo(path: String): FileSystem.Info
+        fun getLinkTarget(path: String): String
+        fun openDir(path: String): Long
+        fun readDir(dir: Long): FileSystem.FileEntry
+        fun closeDir(dir: Long): Boolean
+        fun openFile(path: String, option: Int): Int
 
-        inline fun serverOpen(domain: Socket.Family, type: Socket.Type, protocol: Int): Int
-        inline fun serverListen(sock: Int, host: String, port: Short, domain: Socket.Family, conn: Int): Int
-        inline fun serverHandle()
-        inline fun serverClose()
+        fun serverOpen(domain: Socket.Family, type: Socket.Type, protocol: Int): Int
+        fun serverListen(sock: Int, host: String, port: Short, domain: Socket.Family, conn: Int): Int
+        fun serverHandle()
+        fun serverClose()
 
-        inline fun pollAction(): PollAction
+        fun pollAction(): PollAction
 
         fun clientOpen(host: String, port: Short, domain: Socket.Family, type: Socket.Type, protocol: Int): Int
-        inline fun clientClose()
+        fun clientClose()
 
-        inline fun streamOpen(stream: Int): Int
-        inline fun streamClose(stream: Int)
+        fun streamOpen(stream: Int): Int
+        fun streamClose(stream: Int)
     }
 }

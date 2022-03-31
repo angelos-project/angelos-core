@@ -14,7 +14,6 @@
  */
 package angelos.io
 
-import angelos.interop.Buffer
 import angelos.interop.NativeBuffer
 import sun.misc.Unsafe
 import java.lang.reflect.Field
@@ -45,7 +44,7 @@ actual class NativeByteBufferImpl internal actual constructor(
 
     override fun readChar(): Char = when (_reverse) {
         true -> reverseShort(theUnsafe.getShort(calculateAddress(_mark))).toInt().toChar()
-        false -> Buffer.getChar(calculateAddress(_mark))
+        false -> theUnsafe.getChar(calculateAddress(_mark))
     }
 
     override fun readShort(): Short = when (_reverse) {
@@ -126,4 +125,6 @@ actual class NativeByteBufferImpl internal actual constructor(
         theUnsafe.copyMemory(_array, buffer._array, capacity.toLong())
         return buffer
     }
+
+    override fun operation(block: (it: Long) -> Long) = block(_array)
 }

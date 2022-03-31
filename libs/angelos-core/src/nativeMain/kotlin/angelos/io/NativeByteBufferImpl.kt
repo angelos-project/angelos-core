@@ -15,6 +15,9 @@
 package angelos.io
 
 import angelos.interop.NativeBuffer
+import kotlinx.cinterop.Pinned
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.usePinned
 
 @OptIn(ExperimentalUnsignedTypes::class)
 @Suppress("OVERRIDE_BY_INLINE")
@@ -40,4 +43,6 @@ actual class NativeByteBufferImpl internal actual constructor(
         _array.copyInto(mnbb.getArray(), 0)
         return mnbb
     }
+
+    override fun operation(block: (it: Pinned<ByteArray>) -> Long) = memScoped { _array.usePinned { block(it) } }
 }

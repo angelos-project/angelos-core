@@ -14,14 +14,14 @@
  */
 package angelos.io.stdio
 
+import angelos.io.MutableNativeByteBufferImpl
 import angelos.io.channel.WritableByteChannel
-import angelos.nio.Buffer
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-class Error : Stream(StdNum.STDERR.fileNum), WritableByteChannel {
+class Error : Stream(StdNum.STDERR.fileNum), WritableByteChannel<MutableNativeByteBufferImpl> {
     private val mutex = Mutex()
-    override suspend fun write(src: Buffer): Long  = mutex.withLock {
+    override suspend fun write(src: MutableNativeByteBufferImpl): Long  = mutex.withLock {
         TODO("Not yet implemented")
     }
 }

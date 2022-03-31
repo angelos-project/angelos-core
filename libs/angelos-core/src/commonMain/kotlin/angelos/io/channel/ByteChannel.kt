@@ -14,5 +14,8 @@
  */
 package angelos.io.channel
 
-interface ByteChannel: ReadableByteChannel, WritableByteChannel {
+import angelos.io.ByteBuffer
+import angelos.io.MutableByteBuffer
+
+interface ByteChannel<R: ByteBuffer, W: MutableByteBuffer>: ReadableByteChannel<R>, WritableByteChannel<W> {
 }

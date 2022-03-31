@@ -86,5 +86,10 @@ actual class Base {
             }
         }
 
+        actual fun isOpenStream(fd: Int): Boolean = when (stream_is_open(fd)) {
+            1 -> true
+            else -> false
+        }
+
     }
 }

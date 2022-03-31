@@ -14,15 +14,16 @@
  */
 package angelos.mvp
 
+import angelos.io.NativeByteBufferImpl
+import angelos.io.nativeByteBufferWith
 import angelos.io.stdio.Streams
-import angelos.nio.ByteDirectBuffer
 import kotlinx.coroutines.channels.Channel
 
-class ExtStreams(private val watcher: ExtWatcher, val bufSize: Long = 4096) : Extension, Streams {
+class ExtStreams(private val watcher: ExtWatcher, val bufSize: Int = 4096) : Extension, Streams {
     override val identifier: String
         get() = "stdio"
 
-    private var queue = Channel<ByteDirectBuffer>(32)
+    private var queue = Channel<NativeByteBufferImpl>(32)
 
     init {
         watchableReg()
@@ -30,7 +31,7 @@ class ExtStreams(private val watcher: ExtWatcher, val bufSize: Long = 4096) : Ex
 
     private fun watchableReg() {
         watcher.register(Streams.stdIn, {
-            val buffer = ByteDirectBuffer(bufSize, bufSize)
+            val buffer = nativeByteBufferWith(bufSize)
             Streams.stdIn.read(buffer)
             queue.send(buffer)
         })
@@ -39,5 +40,5 @@ class ExtStreams(private val watcher: ExtWatcher, val bufSize: Long = 4096) : Ex
     override fun setup() { }
     override fun cleanup() { }
 
-    suspend fun read(): ByteDirectBuffer = queue.receive()
+    suspend fun read(): NativeByteBufferImpl = queue.receive()
 }

@@ -93,5 +93,10 @@ actual class Base {
 
         @JvmStatic
         private external fun socket_attach(fd: Int): Int
+
+        actual fun isOpenStream(fd: Int): Boolean = stream_is_open(fd)
+
+        @JvmStatic
+        private external fun stream_is_open(fd: Int): Boolean
     }
 }

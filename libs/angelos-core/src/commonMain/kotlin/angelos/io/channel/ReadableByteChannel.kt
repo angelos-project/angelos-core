@@ -14,8 +14,8 @@
  */
 package angelos.io.channel
 
-import angelos.nio.Buffer
+import angelos.io.ByteBuffer
 
-interface ReadableByteChannel: Channel {
-    fun read(dst: Buffer): Long
+interface ReadableByteChannel<R: ByteBuffer>: Channel {
+    fun read(dst: R): Long
 }

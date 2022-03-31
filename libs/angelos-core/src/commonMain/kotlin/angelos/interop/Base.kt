@@ -42,5 +42,6 @@ expect class Base {
 
         fun attachStream(fd: Int)
         fun attachSocket(fd: Int)
+        fun isOpenStream(fd: Int): Boolean
     }
 }

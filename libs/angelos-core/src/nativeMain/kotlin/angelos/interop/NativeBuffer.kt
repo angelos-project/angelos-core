@@ -1,9 +1,10 @@
 package angelos.interop
 
-import kotlinx.cinterop.*
+import kotlinx.cinterop.Pinned
 
 actual interface NativeBuffer {
-    actual companion object {
+    fun operation(block: (it: Pinned<ByteArray>) -> Long): Long
 
+    actual companion object {
     }
 }

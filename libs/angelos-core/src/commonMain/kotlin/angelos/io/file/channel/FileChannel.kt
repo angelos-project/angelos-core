@@ -14,15 +14,12 @@
  */
 package angelos.io.file.channel
 
-import angelos.io.FileSystem
-import angelos.io.IOException
-import angelos.io.SyncFailedException
+import angelos.io.*
 import angelos.io.channel.GatheringByteChannel
 import angelos.io.channel.ScatteringByteChannel
 import angelos.io.channel.SeekableByteChannel
-import angelos.nio.Buffer
 
-abstract class FileChannel(val option: FileSystem.OpenOption): SeekableByteChannel, GatheringByteChannel, ScatteringByteChannel {
+abstract class FileChannel<R: ByteBuffer, W: MutableByteBuffer>(val option: FileSystem.OpenOption): SeekableByteChannel<R, W>, ScatteringByteChannel<R>, GatheringByteChannel<W> {
 
     private var _open: Boolean = true
     private var _size: ULong = 0u
@@ -36,8 +33,8 @@ abstract class FileChannel(val option: FileSystem.OpenOption): SeekableByteChann
                 _size = _pos
         }
 
-    protected abstract fun readFd(dst: Buffer, position: Int, count: Long): Long
-    protected abstract fun writeFd(src: Buffer, position: Int, count: Long): Long
+    protected abstract fun readFd(dst: R, position: Int, count: Long): Long
+    protected abstract fun writeFd(src: W, position: Int, count: Long): Long
     protected abstract fun tellFd(): Long
     protected abstract fun seekFd(newPosition: Long): Long
     protected abstract fun closeFd(): Boolean
@@ -68,39 +65,39 @@ abstract class FileChannel(val option: FileSystem.OpenOption): SeekableByteChann
 
     }*/
 
-    override fun read(dst: Buffer): Long {
+    override fun read(dst: R): Long {
         val length = dst.allowance()
-        if(readFd(dst, dst.position, length) != length)
+        if(readFd(dst, dst.mark, length.toLong()) != length.toLong())
             throw throw IOException("Couldn't read $length bytes from file.")
         pos += length
-        return length
+        return length.toLong()
     }
 
-    override fun read(dsts: List<Buffer>, offset: Int, length: Int): Long {
+    override fun read(dsts: List<R>, offset: Int, length: Int): Long {
         var count: Long = 0
         dsts.subList(offset, length).asSequence().forEach { count += read(it) }
         return count
     }
 
-    override fun read(dsts: List<Buffer>): Long = read(dsts, 0, dsts.size)
+    override fun read(dsts: List<R>): Long = read(dsts, 0, dsts.size)
 
-    override suspend fun write(src: Buffer): Long {
+    override suspend fun write(src: W): Long {
         val length = src.allowance()
-        if(writeFd(src, src.position, length) != length)
+        if(writeFd(src, src.position, length.toLong()) != length.toLong())
             throw IOException("Couldn't write $length bytes to file.")
         pos += length
-        return length
+        return length.toLong()
     }
 
-    override suspend fun write(srcs: List<Buffer>, offset: Int, length: Int): Long {
+    override suspend fun write(srcs: List<W>, offset: Int, length: Int): Long {
         var count: Long = 0
         srcs.subList(offset, length).asSequence().forEach { count += write(it) }
         return count
     }
 
-    override suspend fun write(srcs: List<Buffer>): Long = write(srcs, 0, srcs.size)
+    override suspend fun write(srcs: List<W>): Long = write(srcs, 0, srcs.size)
 
-    override fun truncate(size: Long): SeekableByteChannel {
+    override fun truncate(size: Long): SeekableByteChannel<R, W> {
         TODO("Not yet implemented")
     }
 

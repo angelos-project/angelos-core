@@ -14,9 +14,12 @@
  */
 package angelos.io.channel
 
-interface SeekableByteChannel: ByteChannel {
+import angelos.io.ByteBuffer
+import angelos.io.MutableByteBuffer
+
+interface SeekableByteChannel<R: ByteBuffer, W: MutableByteBuffer>: ByteChannel<R, W> {
     val size: Long
     var position: Long
 
-    fun truncate(size: Long): SeekableByteChannel
+    fun truncate(size: Long): SeekableByteChannel<R, W>
 }

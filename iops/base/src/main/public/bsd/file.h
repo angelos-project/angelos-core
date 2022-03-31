@@ -17,9 +17,16 @@
 #if defined (__FreeBSD__) || defined (__NetBSD__) || defined (__OpenBSD__) || defined (__APPLE__)
 
 #include "event.h"
+#include <fcntl.h>
 
 
 extern int stream_attach(int fd);
+
+
+extern int stream_is_open(int fd);
+
+
+extern int stream_close(int fd);
 
 
 #endif

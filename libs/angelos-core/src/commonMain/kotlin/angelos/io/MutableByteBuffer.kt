@@ -38,6 +38,8 @@ abstract class MutableByteBuffer internal constructor(
         _mark = 0
     }
 
+    override fun remaining(): Int = _capacity - _position
+
     private inline fun enoughSpace(size: Int) {
         if (_limit - _position < size)
             throw ByteBufferException("End of buffer.")

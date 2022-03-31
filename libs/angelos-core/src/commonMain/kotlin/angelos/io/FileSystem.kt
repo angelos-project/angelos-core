@@ -15,13 +15,12 @@
 package angelos.io
 
 import angelos.io.file.channel.FileChannel
-import angelos.nio.Buffer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-abstract class FileSystem(val drive: String) {
+abstract class FileSystem<R: ByteBuffer, W: MutableByteBuffer>(val drive: String) {
     private val mutex = Mutex()
 
     suspend fun getRoot(): Dir = getDirectory(getPath(VirtualPath(drive)))
@@ -44,8 +43,8 @@ abstract class FileSystem(val drive: String) {
         }
     }
 
-    protected abstract fun readFile(number: Int, dst: Buffer, index: Int, count: Long): Long
-    protected abstract fun writeFile(number: Int, src: Buffer, index: Int, count: Long): Long
+    protected abstract fun readFile(number: Int, dst: R, index: Int, count: Long): Long
+    protected abstract fun writeFile(number: Int, src: W, index: Int, count: Long): Long
     protected abstract fun tellFile(number: Int): Long
     protected abstract fun seekFile(number: Int, position: Long, whence: Seek): Long
     protected abstract fun closeFile(number: Int): Boolean
@@ -238,11 +237,11 @@ abstract class FileSystem(val drive: String) {
     inner class FileDescriptor internal constructor(
         val file: File,
         option: OpenOption
-    ) : FileChannel(option) {
+    ) : FileChannel<R, W>(option) {
         private var _number: Int = openFile(file.path.toString(), option.ordinal)
 
-        override fun readFd(dst: Buffer, position: Int, count: Long): Long = readFile(_number, dst, position, count)
-        override fun writeFd(src: Buffer, position: Int, count: Long): Long = readFile(_number, src, position, count)
+        override fun readFd(dst: R, position: Int, count: Long): Long = readFile(_number, dst, position, count)
+        override fun writeFd(src: W, position: Int, count: Long): Long = writeFile(_number, src, position, count)
         override fun tellFd(): Long = tellFile(_number)
         override fun seekFd(newPosition: Long): Long = seekFile(_number, newPosition, Seek.SET)
         override fun closeFd(): Boolean = closeFile(_number)

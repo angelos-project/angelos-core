@@ -14,33 +14,23 @@
  */
 package angelos.interop
 
-import java.lang.System
-import angelos.io.FileSystem
-import angelos.io.FileNotFoundException
-import angelos.io.IOException
-import angelos.io.NotLinkException
+import angelos.io.*
 import angelos.io.net.Socket
-import angelos.nio.Buffer
-import angelos.nio.ByteDirectBuffer
-import angelos.nio.ByteHeapBuffer
+import java.lang.System
 
 internal actual class IO {
     actual companion object {
-        actual inline fun readFile(number: Int, dst: Buffer, index: Int, count: Long): Long = when (dst) {
-            is ByteHeapBuffer -> fs_read(number, dst.toArray(), index, count)
-            is ByteDirectBuffer -> fs_pread(number, dst.toPtr(), index, count, dst.limit.toLong())
-            else -> throw IOException("Unsupported buffer subtype.")
+        actual fun readFile(number: Int, dst: NativeByteBufferImpl, index: Int, count: Long): Long = dst.operation {
+            fs_pread(number, it, index, count, dst.limit.toLong())
         }
 
-        actual inline fun writeFile(number: Int, src: Buffer, index: Int, count: Long): Long = when (src) {
-            is ByteHeapBuffer -> fs_write(number, src.toArray(), index, count)
-            is ByteDirectBuffer -> fs_pwrite(number, src.toPtr(), index, count, src.limit.toLong())
-            else -> throw IOException("Unsupported buffer subtype.")
+        actual fun writeFile(number: Int, src: MutableNativeByteBufferImpl, index: Int, count: Long): Long = src.operation {
+            fs_pwrite(number, it, index, count, src.limit.toLong())
         }
 
-        actual inline fun tellFile(number: Int): Long = fs_lseek(number, 0, SeekDirective.CUR.whence)
+        actual fun tellFile(number: Int): Long = fs_lseek(number, 0, SeekDirective.CUR.whence)
 
-        actual inline fun seekFile(number: Int, position: Long, whence: FileSystem.Seek): Long =
+        actual fun seekFile(number: Int, position: Long, whence: FileSystem.Seek): Long =
             fs_lseek(
                 number, position, when (whence) {
                     FileSystem.Seek.SET -> SeekDirective.SET.whence
@@ -49,41 +39,41 @@ internal actual class IO {
                 }
             )
 
-        actual inline fun closeFile(number: Int): Boolean = fs_close(number) == 0
+        actual fun closeFile(number: Int): Boolean = fs_close(number) == 0
 
-        actual inline fun checkReadable(path: String): Boolean = fs_access(path, AccessFlag.R_OK.flag) == 0
+        actual fun checkReadable(path: String): Boolean = fs_access(path, AccessFlag.R_OK.flag) == 0
 
-        actual inline fun checkWritable(path: String): Boolean = fs_access(path, AccessFlag.W_OK.flag) == 0
+        actual fun checkWritable(path: String): Boolean = fs_access(path, AccessFlag.W_OK.flag) == 0
 
-        actual inline fun checkExecutable(path: String): Boolean = fs_access(path, AccessFlag.X_OK.flag) == 0
+        actual fun checkExecutable(path: String): Boolean = fs_access(path, AccessFlag.X_OK.flag) == 0
 
-        actual inline fun checkExists(path: String): Boolean = fs_access(path, AccessFlag.F_OK.flag) == 0
+        actual fun checkExists(path: String): Boolean = fs_access(path, AccessFlag.F_OK.flag) == 0
 
-        actual inline fun getFileType(path: String): Int {
+        actual fun getFileType(path: String): Int {
             val type: Int = fs_filetype(path)
             if (type == -1)
                 throw FileNotFoundException("File not found.\n$path")
             return type
         }
 
-        actual inline fun getFileInfo(path: String): FileSystem.Info =
+        actual fun getFileInfo(path: String): FileSystem.Info =
             fs_fileinfo(path) ?: throw FileNotFoundException("File not found.\n$path")
 
-        actual inline fun getLinkTarget(path: String): String =
+        actual fun getLinkTarget(path: String): String =
             fs_readlink(path) ?: throw NotLinkException("Not a symbolic link.\n$path")
 
-        actual inline fun openDir(path: String): Long {
+        actual fun openDir(path: String): Long {
             val number = fs_opendir(path)
             if (number == 0L)
                 throw FileNotFoundException("Directory not found.\n$path")
             return number
         }
 
-        actual inline fun readDir(dir: Long): FileSystem.FileEntry = fs_readdir(dir)
+        actual fun readDir(dir: Long): FileSystem.FileEntry = fs_readdir(dir)
 
-        actual inline fun closeDir(dir: Long): Boolean = fs_closedir(dir) == 0
+        actual fun closeDir(dir: Long): Boolean = fs_closedir(dir) == 0
 
-        actual inline fun openFile(path: String, option: Int): Int {
+        actual fun openFile(path: String, option: Int): Int {
             val fd = fs_open(
                 path, when (option) {
                     1 -> AccessMode.READ_ONLY.mode
@@ -157,26 +147,26 @@ internal actual class IO {
         @JvmStatic
         private external fun fs_closedir(dir: Long): Int
 
-        actual inline fun pollAction(): PollAction = ep_pull()
+        actual fun pollAction(): PollAction = ep_pull()
 
         @JvmStatic
         private external fun ep_pull(): PollAction
 
-        actual inline fun serverOpen(domain: Socket.Family, type: Socket.Type, protocol: Int): Int = server_open(domain.family, type.type, protocol)
+        actual fun serverOpen(domain: Socket.Family, type: Socket.Type, protocol: Int): Int = server_open(domain.family, type.type, protocol)
 
-        actual inline fun serverListen(sock: Int, host: String, port: Short, domain: Socket.Family, conn: Int): Int = server_listen(sock, host, port, domain.family, conn)
+        actual fun serverListen(sock: Int, host: String, port: Short, domain: Socket.Family, conn: Int): Int = server_listen(sock, host, port, domain.family, conn)
 
-        actual inline fun serverHandle() {
+        actual fun serverHandle() {
             TODO("Not yet implemented")
         }
 
-        actual inline fun serverClose() {
+        actual fun serverClose() {
             TODO("Not yet implemented")
         }
 
-        actual inline fun clientOpen(host: String, port: Short, domain: Socket.Family, type: Socket.Type, protocol: Int): Int = client_connect(host, port, domain.family, type.type, protocol)
+        actual fun clientOpen(host: String, port: Short, domain: Socket.Family, type: Socket.Type, protocol: Int): Int = client_connect(host, port, domain.family, type.type, protocol)
 
-        actual inline fun clientClose() {
+        actual fun clientClose() {
             TODO("Not yet implemented")
         }
 
@@ -189,11 +179,11 @@ internal actual class IO {
         @JvmStatic
         private external fun client_connect(host: String, port: Short, domain: Int, type: Int, protocol: Int): Int
 
-        actual inline fun streamOpen(stream: Int): Int {
+        actual fun streamOpen(stream: Int): Int {
             TODO("Not yet implemented")
         }
 
-        actual inline fun streamClose(stream: Int) {
+        actual fun streamClose(stream: Int) {
             TODO("Not yet implemented")
         }
 
