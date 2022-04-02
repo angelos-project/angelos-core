@@ -88,7 +88,7 @@ static jobject get_event_poll(JNIEnv * env, jclass thisClass) {
         exit(1);
 
     jclass global_cls = (*env)->NewGlobalRef(env, local_cls);
-    jmethodID cls_init = (*env)->GetMethodID(env, global_cls, "<init>", "(I;I)V");
+    jmethodID cls_init = (*env)->GetMethodID(env, global_cls, "<init>", "(II)V");
     if (cls_init == NULL) // Quit program if Java class constructor can't be found
         exit(1);
 
@@ -113,6 +113,29 @@ static jint get_stream_attach(JNIEnv *env, jclass thisClass, jint fd) {
     return stream_attach(fd);
 }
 
+/*
+ * Class:     angelos_interop_Base
+ * Method:    get_stream_is_open
+ * Signature: (I)Z
+ */
+static jboolean get_stream_is_open(JNIEnv *env, jclass thisClass, jint fd) {
+    switch(stream_is_open(fd)){
+        case 1:
+            return JNI_TRUE;
+        default:
+            return JNI_FALSE;
+    }
+}
+
+/*
+ * Class:     angelos_interop_Base
+ * Method:    get_stream_close
+ * Signature: (I)I
+ */
+static jint get_stream_close(JNIEnv *env, jclass thisClass, jint fd) {
+    return stream_close(fd);
+}
+
 static JNINativeMethod funcs[] = {
         {"endian",   "()I", (void *) &get_endian},
         {"platform", "()I", (void *) &get_platform},
@@ -121,6 +144,8 @@ static JNINativeMethod funcs[] = {
         {"event_poll", "()Langelos/io/poll/PollAction;", (void *) &get_event_poll},
         {"socket_attach", "(I)I", (void *) &get_socket_attach},
         {"stream_attach", "(I)I", (void *) &get_stream_attach},
+        {"stream_is_open", "(I)Z", (void *) &get_stream_is_open},
+        {"stream_close", "(I)I", (void *) &get_stream_close},
 };
 
 #define CURRENT_JNI JNI_VERSION_1_6

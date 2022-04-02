@@ -35,36 +35,26 @@ int event_poll(int *descriptor, int *event)
 {
     int error = 0;
 
-    struct kevent events[1];
+    struct kevent eevent;
     struct timespec timeout = {0, 0}; // return immediately
-    int n = kevent(kq, NULL, 0, events, 1, &timeout);
-    if (n <= 0)
+    int n = kevent(kq, NULL, 0, &eevent, 1, &timeout);
+    if (n <= 0){
         return -1;
-
-    if (events[0].flags & EV_EOF) {
-        errno = events[0].fflags;
+    } else if (eevent.flags & EV_EOF) {
+        errno = eevent.fflags;
         error = -1;
-    }
-
-    // Sockets
-    if (events[0].filter == EVFILT_READ) {
-        *event = E_QUEUE_READ;
-        sock_context *so = events[0].udata;
-        *descriptor = so->fd;
-    }
-
-    // Sockets
-    if (events[0].filter == EVFILT_WRITE) {
-        *event = E_QUEUE_WRITE;
-        sock_context *so = events[0].udata;
-        *descriptor = so->fd;
-    }
-
-    // Streams and files
-    if (events[0].filter == EVFILT_AIO) {
-        struct aiocb *acb = (void*)events[0].ident;
+    } else if (eevent.filter == EVFILT_AIO) { // Streams and files
+        struct aiocb *acb = (void*)eevent.ident;
         *event = E_QUEUE_READ;
         *descriptor = acb->aio_fildes;
+    } else if (eevent.filter == EVFILT_READ) { // Sockets
+        *event = E_QUEUE_READ;
+        sock_context *so = eevent.udata;
+        *descriptor = so->fd;
+    } else if (eevent.filter == EVFILT_WRITE) { // Sockets
+        *event = E_QUEUE_WRITE;
+        sock_context *so = eevent.udata;
+        *descriptor = so->fd;
     }
 
     return error;

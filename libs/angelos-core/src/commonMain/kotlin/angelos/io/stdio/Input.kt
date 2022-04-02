@@ -14,10 +14,16 @@
  */
 package angelos.io.stdio
 
+import angelos.interop.Base
 import angelos.io.NativeByteBufferImpl
 import angelos.io.channel.ReadableByteChannel
 
 class Input : Stream(StdNum.STDIN.fileNum), ReadableByteChannel<NativeByteBufferImpl>{
+
+    init {
+        Base.attachStream(descriptor)
+    }
+
     override fun read(dst: NativeByteBufferImpl): Long {
         println("Hello, world!")
         TODO("Not yet implemented")

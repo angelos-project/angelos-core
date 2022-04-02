@@ -70,13 +70,15 @@ actual class Base {
             return PollAction(description.value, event.value)
         }
 
-        actual fun pollFinalize() = finalize_event_handler()
+        actual fun pollFinalize(): Unit = finalize_event_handler()
 
-        actual fun attachStream(fd: Int) {
-            if (stream_attach(fd) != 0) {
+        actual fun attachStream(fd: Int): Int {
+            val nfd = stream_attach(fd)
+            if (nfd == -1) {
                 Error.loadError()
                 throw WatcherException("Failed to attach stream due to cause: (${Error.errNum}) ${Error.errMsg}")
             }
+            return nfd
         }
 
         actual fun attachSocket(fd: Int) {
@@ -91,5 +93,6 @@ actual class Base {
             else -> false
         }
 
+        actual fun closeStream(fd: Int): Int = stream_close(fd)
     }
 }

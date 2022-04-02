@@ -39,3 +39,14 @@ interface Signal {
         private inline fun catchInterrupt(sigName: SigName) = signals[sigName]?.forEach { scope.launch { it(sigName) } }
     }
 }
+
+
+// http://www.qnx.com/developers/docs/qnx_4.25_docs/tcpip50/prog_guide/sock_ipc_tut.html
+// http://www.cs.tau.ac.il/~eddiea/samples/Signal-Driven/udp-signal-driven-server.c
+// https://www.softprayog.in/programming/network-socket-programming-using-tcp-in-c
+// https://gist.github.com/richiejp/1590344
+
+
+// https://www.freebsd.org/cgi/man.cgi?query=kqueue&sektion=2
+// https://habr.com/en/post/600123/
+// https://github.com/stsaz/kernel-queue-the-complete-guide

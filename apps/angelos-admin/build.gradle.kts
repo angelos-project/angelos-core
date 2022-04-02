@@ -18,14 +18,14 @@ kotlin {
     }
     sourceSets {
         val commonMain by getting {
-            dependencies{
+            dependencies {
                 implementation(Libs.coro)
                 implementation(project(":angelos-core"))
                 implementation(project(":angelos-mvp"))
             }
         }
         val jvmMain by getting {
-            dependencies{
+            dependencies {
                 implementation(Libs.coro)
             }
         }

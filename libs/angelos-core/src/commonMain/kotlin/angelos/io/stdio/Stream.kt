@@ -14,6 +14,7 @@
  */
 package angelos.io.stdio
 
+import angelos.interop.Base
 import angelos.io.channel.Channel
 import angelos.io.file.Watchable
 import angelos.io.file.WatchableTypes
@@ -21,11 +22,7 @@ import angelos.io.file.WatchableTypes
 abstract class Stream(override val descriptor: Int) : Channel, Watchable {
     override val type = WatchableTypes.STREAM
 
-    override fun isOpen(): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun isOpen(): Boolean = Base.isOpenStream(descriptor)
 
-    override fun close() {
-        TODO("Not yet implemented")
-    }
+    override fun close() { Base.closeStream(descriptor) }
 }

@@ -13,6 +13,7 @@
  *      Kristoffer Paulsson - port from python
  */
 import angelos.admin.AngelosAdmin
+import angelos.io.stdio.Streams
 import angelos.mvp.ExtQuit
 import angelos.mvp.ExtSignal
 import angelos.mvp.ExtStreams
@@ -28,6 +29,9 @@ suspend fun main(args: Array<String>) = AngelosAdmin {
     }
     run {
         println("Hello, world! ${current().pid()}")
+        println(Streams.stdIn.isOpen())
+        println(Streams.stdOut.isOpen())
+        println(Streams.stdErr.isOpen())
         val sigName = (this["quit"] as ExtQuit).await()
         println("Quitting on $sigName")
     }

@@ -15,14 +15,27 @@
 #if defined (__FreeBSD__) || defined (__NetBSD__) || defined (__OpenBSD__) || defined (__APPLE__)
 
 #include "file.h"
+#include <stdlib.h>
 
 
 int stream_attach(int fd) {
     sock_context obj = {fd};
 
-    struct kevent events[1];
-    EV_SET(&events[0], obj.fd, EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, &obj);
-    return kevent(kq, events, 1, NULL, 0, NULL);
+    struct kevent event; // EVFILT_READ
+    EV_SET(&event, obj.fd,  EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, &obj);
+    int nfd = kevent(kq, &event, 1, NULL, 0, NULL);
+    if(nfd > 0){
+        return -1;
+    }
+
+    if (fcntl(fd, F_SETOWN, getpid()) < 0) {
+        return -1;
+    }
+    if (fcntl(fd, F_SETFL, O_NONBLOCK|O_ASYNC) < 0) {
+        return -1;
+    }
+
+    return nfd;
 }
 
 

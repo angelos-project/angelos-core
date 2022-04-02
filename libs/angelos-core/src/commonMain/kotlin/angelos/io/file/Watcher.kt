@@ -23,18 +23,17 @@ import kotlin.coroutines.EmptyCoroutineContext
 interface Watcher {
 
     suspend fun poll(sigName: SigName) {
-        try {
-            val event = Base.pollAction()
-            when {
-                files.contains(event.descriptor) -> descriptors[event.descriptor]?.forEach {
-                    scope.launch { onFile(event.descriptor, it) } }
-                sockets.contains(event.descriptor) -> descriptors[event.descriptor]?.forEach {
-                    scope.launch { onSocket(event.descriptor, it) } }
-                streams.contains(event.descriptor) -> descriptors[event.descriptor]?.forEach {
-                    scope.launch { onStream(event.descriptor, it) } }
-                else -> throw WatcherException("Watcher ${event.descriptor} doesn't exist")
-            }
-        } catch (_: WatcherException) {}
+        val event = Base.pollAction()
+        println("${event.descriptor}, ${event.action}")
+        when {
+            files.contains(event.descriptor) -> descriptors[event.descriptor]?.forEach {
+                scope.launch { onFile(event.descriptor, it) } }
+            sockets.contains(event.descriptor) -> descriptors[event.descriptor]?.forEach {
+                scope.launch { onSocket(event.descriptor, it) } }
+            streams.contains(event.descriptor) -> descriptors[event.descriptor]?.forEach {
+                scope.launch { onStream(event.descriptor, it) } }
+            else -> throw WatcherException("Watcher ${event.descriptor} doesn't exist")
+        }
     }
 
     fun register(watchable: Watchable, vararg handlers: WatchableHandler) {

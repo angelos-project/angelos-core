@@ -72,13 +72,15 @@ actual class Base {
         @JvmStatic
         private external fun event_poll(): PollAction?
 
-        actual fun pollFinalize() {} // Leave empty for compatability
+        actual fun pollFinalize(): Unit {} // Leave empty for compatability
 
-        actual fun attachStream(fd: Int) {
-            if (stream_attach(fd) != 0) {
+        actual fun attachStream(fd: Int): Int {
+            val nfd = stream_attach(fd)
+            if (nfd == -1) {
                 Error.loadError()
                 throw WatcherException("Failed to attach stream due to cause: (${Error.errNum}) ${Error.errMsg}")
             }
+            return nfd
         }
 
         @JvmStatic
@@ -98,5 +100,10 @@ actual class Base {
 
         @JvmStatic
         private external fun stream_is_open(fd: Int): Boolean
+
+        actual fun closeStream(fd: Int): Int = stream_close(fd)
+
+        @JvmStatic
+        private external fun stream_close(fd: Int): Int
     }
 }
