@@ -24,25 +24,25 @@ abstract class ByteBuffer internal constructor(
     endianness: Endianness
 ) {
 
-    protected var _capacity: Int
+    internal var _capacity: Int
     val capacity: Int
         get() = _capacity
 
-    protected var _limit: Int
+    internal var _limit: Int
     val limit: Int
         get() = _limit
 
-    protected var _mark: Int
+    internal var _mark: Int
     val mark: Int
         get() = _mark
 
-    protected var _reverse: Boolean
+    internal var _reverse: Boolean
     val reverse: Boolean
         get() = _reverse
 
-    private var _endian: Endianness
+    internal var _endian: Endianness
     var endian: Endianness
-        get() = _endian
+    get() = _endian
         set(value) {
             _endian = value
             _reverse = _endian != nativeEndianness
@@ -62,9 +62,9 @@ abstract class ByteBuffer internal constructor(
         getArray().copyInto(buffer.getArray(), buffer.position, range.first, range.last)
     }
 
-    fun allowance(): Int = _capacity - _limit
+    inline fun allowance(): Int = capacity - limit
 
-    open fun remaining(): Int = _capacity - _mark
+    open fun remaining(): Int = capacity - mark
 
     open fun rewind() {
         _mark = 0

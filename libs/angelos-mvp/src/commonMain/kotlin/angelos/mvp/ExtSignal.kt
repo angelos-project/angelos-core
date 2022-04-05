@@ -14,13 +14,14 @@
  */
 package angelos.mvp
 
+import angelos.interop.Base
 import angelos.io.signal.Signal
 
 class ExtSignal : Extension, Signal {
     override val identifier: String
         get() = "signal"
 
-    override fun setup() { }
+    override fun setup() { Base.initializeSignalHandler() }
     override fun cleanup() { }
 
     //override val handlers: MutableList<SignalHandler> = mutableListOf()

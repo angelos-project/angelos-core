@@ -28,8 +28,8 @@ class ExtWatcher(private val signal: ExtSignal): Extension, Watcher {
         signalReg()
     }
 
-    override fun setup() {}
-    override fun cleanup() { Base.pollFinalize() }
+    override fun setup() { }
+    override fun cleanup() { Base.finalizePolling() }
 
     private fun signalReg() {
         val handler: SignalHandler = { poll(it) }

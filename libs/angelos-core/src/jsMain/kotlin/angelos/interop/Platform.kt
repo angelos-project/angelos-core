@@ -19,5 +19,9 @@ internal actual class Platform {
         actual inline fun isLittleEndian(): Boolean {
             TODO("Not yet implemented")
         }
+
+        actual inline fun getPlatform(): Int {
+            TODO("Not yet implemented")
+        }
     }
 }

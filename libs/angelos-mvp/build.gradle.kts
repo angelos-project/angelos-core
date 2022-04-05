@@ -39,7 +39,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies{
-                implementation(Libs.coro)
+                implementation(Libs.coro) {
+                    version { strictly("${Versions.coro}-native-mt") }
+                }
                 implementation(project(":angelos-core"))
             }
         }

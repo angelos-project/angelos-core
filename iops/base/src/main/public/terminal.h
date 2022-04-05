@@ -12,15 +12,27 @@
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
-package angelos.io.stdio
 
-import angelos.io.NativeByteBufferImpl
-import angelos.io.channel.ReadableByteChannel
+#ifndef BASE_TERMINAL_H
+#define BASE_TERMINAL_H
 
-class Input : Stream(StdNum.STDIN.fileNum), ReadableByteChannel<NativeByteBufferImpl>{
+#include <stdlib.h>
+#include <unistd.h>
+#include <termios.h>
 
-    override fun read(dst: NativeByteBufferImpl): Long {
-        println("Hello, world!")
-        TODO("Not yet implemented")
-    }
-}
+
+/**
+ * Start terminal raw mode using termios.
+ * @return 0 on success
+ */
+extern int init_terminal_mode();
+
+
+/**
+ * Turn off terminal raw mode.
+ * @return 0 on success
+ */
+extern int finalize_terminal_mode();
+
+
+#endif //BASE_TERMINAL_H

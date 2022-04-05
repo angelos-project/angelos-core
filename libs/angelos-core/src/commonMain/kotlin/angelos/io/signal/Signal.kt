@@ -36,7 +36,7 @@ interface Signal {
         private val scope = CoroutineScope(EmptyCoroutineContext)
         private val signals = mutableMapOf<SigName, MutableList<SignalHandler>>()
 
-        private inline fun catchInterrupt(sigName: SigName) = signals[sigName]?.forEach { scope.launch { it(sigName) } }
+        private inline fun catchInterrupt(sigName: SigName) = signals[sigName]?.forEach { it -> scope.launch { it(sigName) } }
     }
 }
 
@@ -50,3 +50,7 @@ interface Signal {
 // https://www.freebsd.org/cgi/man.cgi?query=kqueue&sektion=2
 // https://habr.com/en/post/600123/
 // https://github.com/stsaz/kernel-queue-the-complete-guide
+
+
+// https://stackoverflow.com/questions/29451133/whats-the-proper-way-to-safely-discard-stdin-characters-of-variable-length-in-c
+// https://viewsourcecode.org/snaptoken/kilo/index.html

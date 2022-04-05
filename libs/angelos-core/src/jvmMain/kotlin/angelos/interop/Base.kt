@@ -14,18 +14,30 @@
  */
 package angelos.interop
 
-import angelos.io.file.WatcherException
 import angelos.io.poll.PollAction
 import angelos.io.signal.SigName
 import angelos.sys.Error
 import sun.misc.Signal
 import java.lang.System
 
-actual class Base {
+actual class Base: AbstractBase() {
     actual companion object {
         init {
             System.loadLibrary("jni-base") // Load underlying library via JNI.
         }
+
+        actual fun initializeSignalHandler(): Unit {
+        }
+
+        actual fun initializeTerminalMode(): Int = errorPredicate(init_terminal_mode(), "Failure in TERMIOS")
+
+        @JvmStatic
+        private external fun init_terminal_mode(): Int
+
+        actual fun finalizeTerminalMode(): Int = errorPredicate(finalize_terminal_mode(), "Failure in TERMIOS")
+
+        @JvmStatic
+        private external fun finalize_terminal_mode(): Int
 
         internal actual var interrupt: (sigNum: SigName) -> Unit = {}
 
@@ -72,26 +84,22 @@ actual class Base {
         @JvmStatic
         private external fun event_poll(): PollAction?
 
-        actual fun pollFinalize(): Unit {} // Leave empty for compatability
+        actual fun initializePolling(): Int = errorOnMinusOnePredicate(init_event_handler(), "Event queue initialization failure")
 
-        actual fun attachStream(fd: Int): Int {
-            val nfd = stream_attach(fd)
-            if (nfd == -1) {
-                Error.loadError()
-                throw WatcherException("Failed to attach stream due to cause: (${Error.errNum}) ${Error.errMsg}")
-            }
-            return nfd
-        }
+        @JvmStatic
+        private external fun init_event_handler(): Int
+
+        actual fun finalizePolling(): Unit = finalize_event_handler()
+
+        @JvmStatic
+        private external fun finalize_event_handler()
+
+        actual fun attachStream(fd: Int): Int = errorOnMinusOnePredicate(stream_attach(fd), "Failed to attach stream due to cause")
 
         @JvmStatic
         private external fun stream_attach(fd: Int): Int
 
-        actual fun attachSocket(fd: Int) {
-            if (socket_attach(fd) != 0) {
-                Error.loadError()
-                throw WatcherException("Failed to attach socket due to cause: (${Error.errNum}) ${Error.errMsg}")
-            }
-        }
+        actual fun attachSocket(fd: Int): Unit { errorPredicate(socket_attach(fd), "Failed to attach socket due to cause") }
 
         @JvmStatic
         private external fun socket_attach(fd: Int): Int

@@ -27,6 +27,43 @@ static const char *JNIT_CLASS = "angelos/interop/Base";
 
 /*
  * Class:     angelos_interop_Base
+ * Method:    do_init_event_handler
+ * Signature: ()I
+ */
+static jint do_init_event_handler(JNIEnv *env, jclass thisClass) {
+    return init_event_handler();
+}
+
+/*
+ * Class:     angelos_interop_Base
+ * Method:    do_init_event_handler
+ * Signature: ()V
+ */
+static void do_finalize_event_handler(JNIEnv *env, jclass thisClass) {
+    finalize_event_handler();
+}
+
+/*
+ * Class:     angelos_interop_Base
+ * Method:    do_init_terminal_mode
+ * Signature: ()I
+ */
+static jint do_init_terminal_mode(JNIEnv *env, jclass thisClass) {
+    printf("TERMIOS JNI\n");
+    return init_terminal_mode();
+}
+
+/*
+ * Class:     angelos_interop_Base
+ * Method:    do_finalize_terminal_mode
+ * Signature: ()I
+ */
+static jint do_finalize_terminal_mode(JNIEnv *env, jclass thisClass) {
+    return finalize_terminal_mode();
+}
+
+/*
+ * Class:     angelos_interop_Base
  * Method:    get_endian
  * Signature: ()I
  */
@@ -137,7 +174,11 @@ static jint get_stream_close(JNIEnv *env, jclass thisClass, jint fd) {
 }
 
 static JNINativeMethod funcs[] = {
-        {"endian",   "()I", (void *) &get_endian},
+        {"init_event_handler", "()I", (void *) &do_init_event_handler},
+        {"finalize_event_handler", "()V", (void *) &do_finalize_event_handler},
+        {"init_terminal_mode", "()I", (void *) &do_init_terminal_mode},
+        {"finalize_terminal_mode", "()I", (void *) &do_finalize_terminal_mode},
+        {"endian", "()I", (void *) &get_endian},
         {"platform", "()I", (void *) &get_platform},
         {"signal_abbreviation", "(I)Ljava/lang/String;", (void *) &get_signal_abbreviation},
         {"get_error", "()V", (void *) &get_error},
@@ -168,8 +209,6 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     if (res != 0)
         return -1;
 
-    init_event_handler();
-
     return CURRENT_JNI;
 }
 
@@ -185,8 +224,6 @@ JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void *reserved) {
     cls = (*env)->FindClass(env, JNIT_CLASS);
     if (cls == NULL)
         return;
-
-    finalize_event_handler();
 
     (*env)->UnregisterNatives(env, cls);
 }

@@ -17,11 +17,10 @@
 #include "event.h"
 
 
-void init_event_handler()
+int init_event_handler()
 {
     kq = kqueue();
-    if(kq == -1)
-        exit(1);
+    return kq;
 }
 
 

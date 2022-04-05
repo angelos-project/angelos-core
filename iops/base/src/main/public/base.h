@@ -15,6 +15,7 @@
 #ifndef BASE_BASE_H
 #define BASE_BASE_H
 
+#include "terminal.h"
 #include "event.h"
 #include "file.h"
 #include "sig.h"

@@ -7,6 +7,7 @@ source_group(src/main/c)
 include_directories(src/main/public)
 
 add_library(base
+        src/main/c/terminal.c
         src/main/c/base.c
         src/main/c/bsd/event.c
         src/main/c/bsd/file.c

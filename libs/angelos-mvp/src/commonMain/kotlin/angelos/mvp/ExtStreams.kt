@@ -14,12 +14,13 @@
  */
 package angelos.mvp
 
+import angelos.interop.Base
 import angelos.io.NativeByteBufferImpl
 import angelos.io.nativeByteBufferWith
 import angelos.io.stdio.Streams
 import kotlinx.coroutines.channels.Channel
 
-class ExtStreams(private val watcher: ExtWatcher, val bufSize: Int = 4096) : Extension, Streams {
+class ExtStreams(private val watcher: ExtWatcher, val bufSize: Int = 4096, val terminalMode: Boolean = false) : Extension, Streams {
     override val identifier: String
         get() = "stdio"
 
@@ -37,8 +38,8 @@ class ExtStreams(private val watcher: ExtWatcher, val bufSize: Int = 4096) : Ext
         })
     }
 
-    override fun setup() { }
-    override fun cleanup() { }
+    override fun setup() { if (terminalMode) Base.initializeTerminalMode() }
+    override fun cleanup() { if (terminalMode) Base.finalizeTerminalMode() }
 
     suspend fun read(): NativeByteBufferImpl = queue.receive()
 }

@@ -50,7 +50,7 @@ e_queue_t kq; // Event queue
 /**
  * Initializethe  event queue that is poll-able.
  */
-extern void init_event_handler();
+extern int init_event_handler();
 
 
 /**

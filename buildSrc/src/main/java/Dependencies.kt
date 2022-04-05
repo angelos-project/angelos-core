@@ -28,7 +28,7 @@ object Versions {
 object Libs {
     const val kotlin = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}"
     const val appcompat = "androidx.appcompat:appcompat:${Versions.appcompat}"
-    const val coro = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coro}"
+    const val coro = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coro}-native-mt"
 }
 
 object TestLibs {

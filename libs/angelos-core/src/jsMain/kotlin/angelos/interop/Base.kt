@@ -14,12 +14,76 @@
  */
 package angelos.interop
 
-actual class Base {
-    actual fun getEndian(): Int {
-        TODO("Not yet implemented")
-    }
+import angelos.io.poll.PollAction
+import angelos.io.signal.SigName
 
-    actual fun getPlatform(): Int {
-        TODO("Not yet implemented")
+actual class Base: AbstractBase() {
+
+    actual companion object {
+        actual fun initializeSignalHandler() {
+            TODO("Not yet implemented")
+        }
+
+        actual fun initializeTerminalMode(): Int {
+            TODO("Not yet implemented")
+        }
+
+        actual fun finalizeTerminalMode(): Int {
+            TODO("Not yet implemented")
+        }
+
+        actual fun getEndian(): Int {
+            TODO("Not yet implemented")
+        }
+
+        actual fun getPlatform(): Int {
+            TODO("Not yet implemented")
+        }
+
+        @Suppress("VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL")
+        internal actual var interrupt: (sigNum: SigName) -> Unit
+            get() = TODO("Not yet implemented")
+            set(value) {}
+
+        actual fun setInterrupt(sigName: SigName): Boolean {
+            TODO("Not yet implemented")
+        }
+
+        internal actual fun incomingSignal(sigName: SigName) {
+        }
+
+        actual fun sigAbbr(sigNum: Int): String {
+            TODO("Not yet implemented")
+        }
+
+        actual fun getError() {
+        }
+
+        actual fun pollAction(): PollAction {
+            TODO("Not yet implemented")
+        }
+
+        actual fun initializePolling(): Int {
+            TODO("Not yet implemented")
+        }
+
+        actual fun finalizePolling() {
+            TODO("Not yet implemented")
+        }
+
+        actual fun attachStream(fd: Int): Int {
+            TODO("Not yet implemented")
+        }
+
+        actual fun attachSocket(fd: Int) {
+        }
+
+        actual fun isOpenStream(fd: Int): Boolean {
+            TODO("Not yet implemented")
+        }
+
+        actual fun closeStream(fd: Int): Int {
+            TODO("Not yet implemented")
+        }
     }
 }

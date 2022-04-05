@@ -21,6 +21,8 @@ actual class Proc: AbstractProc() {
 
         actual fun getError(): SystemError { TODO("Not yet implemented") }
 
-        actual fun registerInterrupt(signum: Int) { TODO("Not yet implemented") }
+        actual fun registerInterrupt(signum: Int): Boolean {
+            TODO("Not yet implemented")
+        }
     }
 }

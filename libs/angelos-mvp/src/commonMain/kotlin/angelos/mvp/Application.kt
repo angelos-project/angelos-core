@@ -34,7 +34,9 @@ interface Application: Container<Extension, String> {
         super.add(module.identifier, module)
     }
 
-    suspend fun initialize() = identifiers.forEach { modules[it]!!.setup() }
+    suspend fun initialize() = identifiers.forEach {
+        println("SETUP $it")
+        modules[it]!!.setup() }
     suspend fun finalize() = identifiers.asReversed().forEach { modules[it]!!.cleanup() }
 
     suspend fun execute() {}

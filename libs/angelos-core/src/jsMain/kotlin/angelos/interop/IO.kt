@@ -14,18 +14,30 @@
  */
 package angelos.interop
 
-import angelos.io.ByteBuffer
-import angelos.io.MutableByteBuffer
+import angelos.io.MutableNativeByteBufferImpl
+import angelos.io.NativeByteBufferImpl
 import angelos.io.net.Socket
 import angelos.io.FileSystem as RealFS
 
 internal actual class IO {
     actual companion object {
-        @ExperimentalUnsignedTypes
-        actual inline fun readFile(number: Int, dst: MutableByteBuffer, index: Int, count: Long): Long {TODO("Not yet implemented")}
+        actual fun readFile(
+            number: Int,
+            dst: NativeByteBufferImpl,
+            index: Int,
+            count: Long,
+        ): Long {
+            TODO("Not yet implemented")
+        }
 
-        @ExperimentalUnsignedTypes
-        actual inline fun writeFile(number: Int, src: ByteBuffer, index: Int, count: Long): Long {TODO("Not yet implemented")}
+        actual fun writeFile(
+            number: Int,
+            src: MutableNativeByteBufferImpl,
+            index: Int,
+            count: Long,
+        ): Long {
+            TODO("Not yet implemented")
+        }
         actual inline fun tellFile(number: Int): Long {TODO("Not yet implemented")}
         actual inline fun seekFile(number: Int, position: Long, whence: RealFS.Seek): Long {TODO("Not yet implemented")}
         actual inline fun closeFile(number: Int): Boolean {TODO("Not yet implemented")}
@@ -59,6 +71,8 @@ internal actual class IO {
         actual inline fun streamClose(stream: Int) {
             TODO("Not yet implemented")
         }
+
+
 
     }
 }
