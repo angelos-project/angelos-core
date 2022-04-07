@@ -18,6 +18,7 @@ import angelos.mvp.ExtQuit
 import angelos.mvp.ExtSignal
 import angelos.mvp.ExtStreams
 import angelos.mvp.ExtWatcher
+import angelos.sys.Benchmark
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -30,8 +31,10 @@ class EntryPoint {
                 launch {
                     AngelosAdmin {
                         config {
-                            delay(1000)
-                            println("Test 1")
+                            println(Benchmark.measure {
+                                //delay(1000)
+                                println("Test 1")
+                            })
                             add(ExtSignal())
                             delay(1000)
                             println("Test 2")

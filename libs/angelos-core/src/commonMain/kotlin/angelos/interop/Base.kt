@@ -16,6 +16,7 @@ package angelos.interop
 
 import angelos.io.poll.PollAction
 import angelos.io.signal.SigName
+import angelos.sys.Benchmark
 import angelos.sys.Error
 
 abstract class AbstractBase {
@@ -54,6 +55,9 @@ abstract class AbstractBase {
 
 expect class Base: AbstractBase {
     companion object {
+
+        fun startUsage(): Long
+        fun endUsage(usage: Long): Benchmark
 
         fun initializeSignalHandler(): Unit
 

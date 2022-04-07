@@ -16,6 +16,7 @@ package angelos.interop
 
 import angelos.io.poll.PollAction
 import angelos.io.signal.SigName
+import angelos.sys.Benchmark
 
 actual class Base: AbstractBase() {
 
@@ -83,6 +84,14 @@ actual class Base: AbstractBase() {
         }
 
         actual fun closeStream(fd: Int): Int {
+            TODO("Not yet implemented")
+        }
+
+        actual fun startUsage(): Long {
+            TODO("Not yet implemented")
+        }
+
+        actual fun endUsage(usage: Long): Benchmark {
             TODO("Not yet implemented")
         }
     }

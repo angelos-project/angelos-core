@@ -13,8 +13,10 @@
  *      Kristoffer Paulsson - initial implementation
  */
 #include <jni.h>
+#include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/resource.h>
 #include "base.h"
 
 #ifndef _Included_angelos_interop_Base
@@ -24,6 +26,53 @@ extern "C" {
 #endif
 
 static const char *JNIT_CLASS = "angelos/interop/Base";
+
+/*
+ * Class:     angelos_interop_Base
+ * Method:    do_start_usage
+ * Signature: ()J
+ */
+static jlong do_start_usage(JNIEnv *env, jclass thisClass) {
+    struct rusage* usage = malloc(sizeof(struct rusage));
+    getrusage(RUSAGE_SELF, usage);
+    return (jlong) usage;
+}
+
+/*
+ * Class:     angelos_interop_Base
+ * Method:    do_end_usage
+ * Signature: (J)Langelos/sys/Benchmark;
+ */
+static jobject do_end_usage(JNIEnv *env, jclass thisClass, jlong start) {
+    struct rusage* end_usage = malloc(sizeof(struct rusage));
+    getrusage(RUSAGE_SELF, end_usage);
+
+    struct rusage* start_usage = (struct rusage*) start;
+
+    jclass local_cls = (*env)->FindClass(env, "angelos/sys/Benchmark");
+    if (local_cls == NULL) // Quit program if Java class can't be found
+        exit(1);
+
+    jclass global_cls = (*env)->NewGlobalRef(env, local_cls);
+    jmethodID cls_init = (*env)->GetMethodID(env, global_cls, "<init>", "(JJJJ)V");
+    if (cls_init == NULL) // Quit program if Java class constructor can't be found
+        exit(1);
+
+    jobject bm = (*env)->NewObject(env, global_cls, cls_init,
+        (((end_usage->ru_utime.tv_sec * 1000000 + end_usage->ru_utime.tv_usec) - (
+        start_usage->ru_utime.tv_sec * 1000000 + start_usage->ru_utime.tv_usec)) + (
+        (end_usage->ru_stime.tv_sec * 1000000 + end_usage->ru_stime.tv_usec) - (
+         start_usage->ru_stime.tv_sec * 1000000 + start_usage->ru_stime.tv_usec))),
+        end_usage->ru_maxrss - start_usage->ru_maxrss,
+        end_usage->ru_inblock - start_usage->ru_inblock,
+        end_usage->ru_oublock - start_usage->ru_oublock
+    );
+
+    free(start_usage);
+    free(end_usage);
+    return bm;
+}
+
 
 /*
  * Class:     angelos_interop_Base
@@ -174,6 +223,8 @@ static jint get_stream_close(JNIEnv *env, jclass thisClass, jint fd) {
 }
 
 static JNINativeMethod funcs[] = {
+        {"start_usage", "()J", (void *) &do_start_usage},
+        {"end_usage", "(J)Langelos/sys/Benchmark;", (void *) &do_end_usage},
         {"init_event_handler", "()I", (void *) &do_init_event_handler},
         {"finalize_event_handler", "()V", (void *) &do_finalize_event_handler},
         {"init_terminal_mode", "()I", (void *) &do_init_terminal_mode},

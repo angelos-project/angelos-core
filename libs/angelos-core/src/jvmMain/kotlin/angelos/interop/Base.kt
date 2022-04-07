@@ -16,6 +16,7 @@ package angelos.interop
 
 import angelos.io.poll.PollAction
 import angelos.io.signal.SigName
+import angelos.sys.Benchmark
 import angelos.sys.Error
 import sun.misc.Signal
 import java.lang.System
@@ -25,6 +26,16 @@ actual class Base: AbstractBase() {
         init {
             System.loadLibrary("jni-base") // Load underlying library via JNI.
         }
+
+        actual fun startUsage(): Long = start_usage()
+
+        @JvmStatic
+        private external fun start_usage(): Long
+
+        actual fun endUsage(usage: Long): Benchmark = end_usage(usage)
+
+        @JvmStatic
+        private external fun end_usage(start: Long): Benchmark
 
         actual fun initializeSignalHandler(): Unit {
         }

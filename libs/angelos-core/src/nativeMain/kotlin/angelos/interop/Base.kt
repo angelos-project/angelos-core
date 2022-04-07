@@ -16,15 +16,39 @@ package angelos.interop
 
 import angelos.io.poll.PollAction
 import angelos.io.signal.SigName
+import angelos.sys.Benchmark
 import angelos.sys.Error
 import base.*
 import kotlinx.cinterop.*
-import platform.posix.errno
-import platform.posix.strerror
+import platform.posix.*
 
 
-actual class Base: AbstractBase() {
+actual class Base : AbstractBase() {
     actual companion object {
+
+        actual fun startUsage(): Long {
+            val usage = nativeHeap.alloc<rusage>()
+            getrusage(RUSAGE_SELF, usage.ptr)
+            return usage.ptr.toLong()
+        }
+
+        actual fun endUsage(usage: Long): Benchmark {
+            val end = nativeHeap.alloc<rusage>()
+            getrusage(RUSAGE_SELF, end.ptr)
+            val start = usage.toCPointer<rusage>()!!.pointed
+            val bm = Benchmark(
+                (((end.ru_utime.tv_sec * 1000000 + end.ru_utime.tv_usec) - (
+                        start.ru_utime.tv_sec * 1000000 + start.ru_utime.tv_usec)) + ((
+                        end.ru_stime.tv_sec * 1000000 + end.ru_stime.tv_usec) - (
+                        start.ru_stime.tv_sec * 1000000 + start.ru_stime.tv_usec))),
+                (end.ru_maxrss - start.ru_maxrss),
+                end.ru_inblock - start.ru_inblock,
+                end.ru_oublock - start.ru_oublock
+            )
+            free(start.ptr)
+            free(end.ptr)
+            return bm
+        }
 
         actual fun initializeSignalHandler(): Unit = init_signal_handler(staticCFunction<Int, Unit> {
             incomingSignal(SigName.codeToName(it))
@@ -40,11 +64,15 @@ actual class Base: AbstractBase() {
 
         actual fun getPlatform(): Int = platform()
 
-        actual fun setInterrupt(sigName: SigName): Boolean = booleanPredicate(register_signal_handler(SigName.nameToCode(sigName)))
+        actual fun setInterrupt(sigName: SigName): Boolean =
+            booleanPredicate(register_signal_handler(SigName.nameToCode(sigName)))
 
-        internal actual inline fun incomingSignal(sigName: SigName) { interrupt(sigName) }
+        internal actual inline fun incomingSignal(sigName: SigName) {
+            interrupt(sigName)
+        }
 
-        actual fun sigAbbr(sigNum: Int): String = memScoped{ signal_abbreviation(sigNum)?.toKString().toString().uppercase() }
+        actual fun sigAbbr(sigNum: Int): String =
+            memScoped { signal_abbreviation(sigNum)?.toKString().toString().uppercase() }
 
         actual inline fun getError() {
             Error.errNum.usePinned { errno }
@@ -58,11 +86,13 @@ actual class Base: AbstractBase() {
             return PollAction(description.value, event.value)
         }
 
-        actual fun initializePolling(): Int = errorOnMinusOnePredicate(init_event_handler(), "Event queue initialization failure")
+        actual fun initializePolling(): Int =
+            errorOnMinusOnePredicate(init_event_handler(), "Event queue initialization failure")
 
         actual fun finalizePolling(): Unit = finalize_event_handler()
 
-        actual fun attachStream(fd: Int): Int = errorOnMinusOnePredicate(stream_attach(fd), "Failed to attach stream due to cause")
+        actual fun attachStream(fd: Int): Int =
+            errorOnMinusOnePredicate(stream_attach(fd), "Failed to attach stream due to cause")
 
         actual fun attachSocket(fd: Int): Unit {
             errorPredicate(socket_attach(fd), "Failed to attach socket due to cause")
