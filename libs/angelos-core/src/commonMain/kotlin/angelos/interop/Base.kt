@@ -18,6 +18,7 @@ import angelos.io.poll.PollAction
 import angelos.io.signal.SigName
 import angelos.sys.Benchmark
 import angelos.sys.Error
+import co.touchlab.stately.concurrency.AtomicReference
 
 abstract class AbstractBase {
     companion object {
@@ -72,7 +73,7 @@ expect class Base: AbstractBase {
 
         // Methods and properties relating to signal interrupts.
         @Suppress("VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL")
-        internal var interrupt: (sigNum: SigName) -> (Unit)
+        internal var interrupt: AtomicReference<(sigNum: SigName) -> (Unit)>
         fun setInterrupt(sigName: SigName): Boolean
         internal fun incomingSignal(sigName: SigName)
         fun sigAbbr(sigNum: Int): String

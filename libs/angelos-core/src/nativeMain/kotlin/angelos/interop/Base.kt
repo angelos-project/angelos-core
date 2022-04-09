@@ -19,6 +19,7 @@ import angelos.io.signal.SigName
 import angelos.sys.Benchmark
 import angelos.sys.Error
 import base.*
+import co.touchlab.stately.concurrency.AtomicReference
 import kotlinx.cinterop.*
 import platform.posix.*
 
@@ -26,22 +27,22 @@ import platform.posix.*
 actual class Base : AbstractBase() {
     actual companion object {
 
-        actual fun startUsage(): Long {
+        actual fun startUsage(): Long = memScoped {
             val usage = nativeHeap.alloc<rusage>()
             getrusage(RUSAGE_SELF, usage.ptr)
             return usage.ptr.toLong()
         }
 
-        actual fun endUsage(usage: Long): Benchmark {
+        actual fun endUsage(usage: Long): Benchmark = memScoped {
             val end = nativeHeap.alloc<rusage>()
             getrusage(RUSAGE_SELF, end.ptr)
             val start = usage.toCPointer<rusage>()!!.pointed
-            val bm = Benchmark(
-                (((end.ru_utime.tv_sec * 1000000 + end.ru_utime.tv_usec) - (
+            val bm = Benchmark((((
+                    end.ru_utime.tv_sec * 1000000 + end.ru_utime.tv_usec) - (
                         start.ru_utime.tv_sec * 1000000 + start.ru_utime.tv_usec)) + ((
                         end.ru_stime.tv_sec * 1000000 + end.ru_stime.tv_usec) - (
                         start.ru_stime.tv_sec * 1000000 + start.ru_stime.tv_usec))),
-                (end.ru_maxrss - start.ru_maxrss),
+                end.ru_maxrss - start.ru_maxrss,
                 end.ru_inblock - start.ru_inblock,
                 end.ru_oublock - start.ru_oublock
             )
@@ -58,7 +59,8 @@ actual class Base : AbstractBase() {
 
         actual fun finalizeTerminalMode(): Int = errorPredicate(finalize_terminal_mode(), "Failure in TERMIOS")
 
-        internal actual var interrupt: (sigNum: SigName) -> Unit = {}
+        @Suppress("VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL")
+        internal actual var interrupt = AtomicReference<(sigNum: SigName) -> Unit> {}
 
         actual fun getEndian(): Int = endian()
 
@@ -67,9 +69,7 @@ actual class Base : AbstractBase() {
         actual fun setInterrupt(sigName: SigName): Boolean =
             booleanPredicate(register_signal_handler(SigName.nameToCode(sigName)))
 
-        internal actual inline fun incomingSignal(sigName: SigName) {
-            interrupt(sigName)
-        }
+        internal actual inline fun incomingSignal(sigName: SigName) = interrupt.get()(sigName)
 
         actual fun sigAbbr(sigNum: Int): String =
             memScoped { signal_abbreviation(sigNum)?.toKString().toString().uppercase() }

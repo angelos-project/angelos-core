@@ -16,10 +16,14 @@ package angelos.admin
 
 import angelos.mvp.Application
 import angelos.mvp.Extension
+import co.touchlab.stately.collections.IsoMutableList
+import co.touchlab.stately.collections.IsoMutableMap
+import co.touchlab.stately.collections.sharedMutableListOf
+import co.touchlab.stately.collections.sharedMutableMapOf
 
 object AngelosAdmin : Application {
-    override val modules: MutableMap<String, Extension> = mutableMapOf()
-    override val identifiers: MutableList<String> = mutableListOf()
+    val modules: IsoMutableMap<String, Extension> = sharedMutableMapOf()
+    val identifiers: IsoMutableList<String> = sharedMutableListOf()
 
     init {
 

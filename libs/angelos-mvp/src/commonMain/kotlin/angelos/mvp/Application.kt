@@ -14,30 +14,20 @@
  */
 package angelos.mvp
 
+import angelos.ioc.Config
 import angelos.ioc.Container
 
-interface Application: Container<Extension, String> {
-    val identifiers: MutableList<String>
 
-    suspend operator fun invoke(i: suspend Application.() -> Unit) = i(this)
+abstract class Application(setup: Container<String, Service>.() -> Config<String, Service>) :
+    Container<String, Service>(setup) {
 
-    suspend fun config(c: suspend () -> Unit) {c()}
-    suspend fun run(e: suspend () -> Unit) {
+    suspend fun run() {
         initialize()
         execute()
-        e()
         finalize()
     }
 
-    fun add(module: Extension) {
-        identifiers.add(module.identifier)
-        super.add(module.identifier, module)
-    }
-
-    suspend fun initialize() = identifiers.forEach {
-        println("SETUP $it")
-        modules[it]!!.setup() }
-    suspend fun finalize() = identifiers.asReversed().forEach { modules[it]!!.cleanup() }
-
-    suspend fun execute() {}
+    abstract suspend fun execute()
+    abstract suspend fun initialize()
+    abstract suspend fun finalize()
 }

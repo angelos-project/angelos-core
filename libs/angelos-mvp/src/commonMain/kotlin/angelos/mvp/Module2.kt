@@ -10,8 +10,9 @@
  * SPDX-License-Identifier: MIT
  *
  * Contributors:
- *      Kristoffer Paulsson - initial implementation
+ *      Kristoffer Paulsson - port from python
  */
-package angelos.interop
+package angelos.mvp
 
-class BaseError(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause)
+interface Module2 {
+}

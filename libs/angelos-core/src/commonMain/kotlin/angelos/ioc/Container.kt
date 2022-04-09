@@ -14,19 +14,29 @@
  */
 package angelos.ioc
 
+import co.touchlab.stately.collections.sharedMutableMapOf
 
-interface Container<M: Module, I> {
-    val modules: MutableMap<I, M>
+open class Container<N, M: Module> internal constructor() {
+    private lateinit var config: Config<N, M>
+    private val modules = sharedMutableMapOf<N, M>()
 
-    operator fun get(identifier: I): M {
-        if (!modules.containsKey(identifier))
-            throw ContainerException("Module for \"$identifier\" not found")
-        return modules[identifier]!!
+    constructor(config: Config<N, M>): this() {
+        this.config = config
     }
 
-    fun add(identifier: I, module: M){
-        if (modules.containsKey(identifier))
-            throw ContainerException("Module with \"$identifier\" already exists")
-        modules[identifier] = module
+    constructor(setup: Container<N, M>.() -> Config<N, M>): this() {
+        this.config = setup()
     }
+
+    fun reg(key: N, module: M): M {
+        modules[key] = module
+        return module
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    operator fun <M: Module>get(key: N): M = when(key) {
+        in modules -> modules[key]!!
+        in config -> config[key]!!(key)
+        else -> throw ContainerException("$key is not configured!")
+    } as M
 }

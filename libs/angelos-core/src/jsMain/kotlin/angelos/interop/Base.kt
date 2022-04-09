@@ -17,6 +17,7 @@ package angelos.interop
 import angelos.io.poll.PollAction
 import angelos.io.signal.SigName
 import angelos.sys.Benchmark
+import co.touchlab.stately.concurrency.AtomicReference
 
 actual class Base: AbstractBase() {
 
@@ -42,7 +43,7 @@ actual class Base: AbstractBase() {
         }
 
         @Suppress("VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL")
-        internal actual var interrupt: (sigNum: SigName) -> Unit
+        internal actual var interrupt: AtomicReference<(sigNum: SigName) -> Unit>
             get() = TODO("Not yet implemented")
             set(value) {}
 

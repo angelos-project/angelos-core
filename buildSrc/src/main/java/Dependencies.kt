@@ -21,6 +21,7 @@ object Versions {
     const val kotlin = "1.6.10"
     const val appcompat = "1.1.0"
     const val coro = "1.6.0"
+    const val stately = "1.2.0"
 
     const val junit = "4.13.1"
 }
@@ -28,7 +29,11 @@ object Versions {
 object Libs {
     const val kotlin = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}"
     const val appcompat = "androidx.appcompat:appcompat:${Versions.appcompat}"
+
     const val coro = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coro}-native-mt"
+    const val stately = "co.touchlab:stately-common:${Versions.stately}"
+    const val concurrency = "co.touchlab:stately-concurrency:${Versions.stately}"
+    const val collections = "co.touchlab:stately-iso-collections:${Versions.stately}"
 }
 
 object TestLibs {

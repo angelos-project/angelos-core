@@ -16,7 +16,6 @@ package angelos.mvp
 
 import angelos.interop.Base
 import angelos.io.NativeByteBufferImpl
-import angelos.io.nativeByteBufferWith
 import angelos.io.stdio.Streams
 import kotlinx.coroutines.channels.Channel
 
@@ -31,11 +30,11 @@ class ExtStreams(private val watcher: ExtWatcher, val bufSize: Int = 4096, val t
     }
 
     private fun watchableReg() {
-        watcher.register(Streams.stdIn, {
+        /*watcher.register(Streams.stdIn, {
             val buffer = nativeByteBufferWith(bufSize)
             Streams.stdIn.read(buffer)
             queue.send(buffer)
-        })
+        })*/
     }
 
     override fun setup() { if (terminalMode) Base.initializeTerminalMode() }

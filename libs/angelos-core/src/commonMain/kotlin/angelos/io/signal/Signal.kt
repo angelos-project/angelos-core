@@ -15,6 +15,9 @@
 package angelos.io.signal
 
 import angelos.interop.Base
+import co.touchlab.stately.collections.IsoMutableList
+import co.touchlab.stately.collections.sharedMutableListOf
+import co.touchlab.stately.collections.sharedMutableMapOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.coroutines.EmptyCoroutineContext
@@ -24,17 +27,17 @@ interface Signal {
         if (signals.contains(sig))
             signals[sig]!!.add(action)
         else
-            signals[sig] = mutableListOf(action)
+            signals[sig] = sharedMutableListOf(action)
             Base.setInterrupt(sig)
     }
 
     companion object {
         init {
-            Base.interrupt = { catchInterrupt(it) }
+            Base.interrupt.set{ catchInterrupt(it) }
         }
 
         private val scope = CoroutineScope(EmptyCoroutineContext)
-        private val signals = mutableMapOf<SigName, MutableList<SignalHandler>>()
+        private val signals = sharedMutableMapOf<SigName, IsoMutableList<SignalHandler>>()
 
         private inline fun catchInterrupt(sigName: SigName) = signals[sigName]?.forEach { it -> scope.launch { it(sigName) } }
     }

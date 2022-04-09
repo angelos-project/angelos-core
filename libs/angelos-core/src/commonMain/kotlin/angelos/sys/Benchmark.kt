@@ -27,7 +27,7 @@ class Benchmark(val seconds: Long, val memory: Long, val writes: Long, val reads
             return Base.endUsage(start)
         }
 
-        suspend fun measureSuspendable(block: suspend () -> Unit): Benchmark {
+        suspend fun measureCoro(block: suspend () -> Unit): Benchmark {
             val start = Base.startUsage()
             block()
             return Base.endUsage(start)

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+ * Copyright (c) 2021-2022 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
  *
  * This software is available under the terms of the MIT license. Parts are licensed
  * under different terms if stated. The legal terms are attached to the LICENSE file
@@ -10,8 +10,11 @@
  * SPDX-License-Identifier: MIT
  *
  * Contributors:
- *      Kristoffer Paulsson - initial implementation
+ *      Kristoffer Paulsson - port from python
  */
-package angelos.interop
+package angelos.mvp
 
-class BaseError(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause)
+import angelos.ioc.Module
+
+class Service: Module {
+}

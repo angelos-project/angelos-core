@@ -10,8 +10,8 @@
  * SPDX-License-Identifier: MIT
  *
  * Contributors:
- *      Kristoffer Paulsson - initial implementation
+ *      Kristoffer Paulsson - port from python
  */
-package angelos.interop
+package angelos.ioc
 
-class BaseError(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause)
+typealias Config<N, M> = Map<N, (key: N) -> M>
