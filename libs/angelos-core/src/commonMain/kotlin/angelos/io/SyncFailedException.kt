@@ -14,5 +14,4 @@
  */
 package angelos.io
 
-class SyncFailedException(message: String? = null, cause: Throwable? = null) : IOException(message, cause) {
-}
+class SyncFailedException(message: String? = null, cause: Throwable? = null) : IOException(message, cause)

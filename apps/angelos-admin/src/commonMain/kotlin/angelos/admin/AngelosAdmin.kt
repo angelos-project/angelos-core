@@ -15,21 +15,23 @@
 package angelos.admin
 
 import angelos.mvp.Application
-import angelos.mvp.Extension
-import co.touchlab.stately.collections.IsoMutableList
-import co.touchlab.stately.collections.IsoMutableMap
-import co.touchlab.stately.collections.sharedMutableListOf
-import co.touchlab.stately.collections.sharedMutableMapOf
+import angelos.mvp.services.SignalService
 
-object AngelosAdmin : Application {
-    val modules: IsoMutableMap<String, Extension> = sharedMutableMapOf()
-    val identifiers: IsoMutableList<String> = sharedMutableListOf()
+object AngelosAdmin : Application() {
+    val signal by lazyService { SignalService() }
 
-    init {
-
-    }
+    operator fun invoke(block: AngelosAdmin.() -> Unit) = run(block)
 
     override suspend fun execute() {
-        println("Main loop")
+        println("To be implemented")
     }
+
+    override suspend fun initialize() {
+        println("To be implemented")
+    }
+
+    override suspend fun finalize() {
+        runCleanUp()
+    }
+
 }

@@ -12,14 +12,12 @@
  * Contributors:
  *      Kristoffer Paulsson - port from python
  */
-package angelos.mvp
+package angelos.mvp.services
 
-abstract class Service {
+import angelos.interop.Base
+import angelos.io.signal.Signal
+import angelos.mvp.Service
 
-    init {
-        setup()
-    }
-
-    open fun setup() {}
-    open fun cleanup() {}
+class SignalService : Service(), Signal {
+    override fun setup() = Base.initializeSignalHandler()
 }

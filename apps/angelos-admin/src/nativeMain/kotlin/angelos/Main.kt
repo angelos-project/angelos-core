@@ -14,6 +14,8 @@
  */
 package angelos
 
-import angelos.admin.EntryPoint
+import angelos.admin.AngelosAdmin
 
-fun main() = EntryPoint.start()
+fun main() = AngelosAdmin {
+    signal
+}

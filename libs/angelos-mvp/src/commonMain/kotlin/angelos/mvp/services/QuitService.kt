@@ -12,24 +12,21 @@
  * Contributors:
  *      Kristoffer Paulsson - port from python
  */
-package angelos.mvp
+package angelos.mvp.services
 
 import angelos.io.signal.SigName
 import angelos.io.signal.SignalHandler
+import angelos.mvp.Service
 import kotlinx.coroutines.channels.Channel
 
-class ExtQuit(private val signal: ExtSignal) : Extension {
-    override val identifier: String
-        get() = "quit"
-
-    private var queue = Channel<SigName>()
+class QuitService(private val signal: SignalService): Service() {
+    private val queue = Channel<SigName>()
 
     init {
-        signalReg()
+        setup()
     }
 
-    override fun setup() { }
-    override fun cleanup() { }
+    override fun setup() { signalReg() }
 
     private fun signalReg() {
         val handler: SignalHandler = { queue.send(it) }

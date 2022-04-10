@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+ * Copyright (c) 2022 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
  *
  * This software is available under the terms of the MIT license. Parts are licensed
  * under different terms if stated. The legal terms are attached to the LICENSE file
@@ -14,20 +14,31 @@
  */
 package angelos.mvp
 
-import angelos.ioc.Config
-import angelos.ioc.Container
+import co.touchlab.stately.collections.sharedMutableListOf
+import co.touchlab.stately.collections.sharedMutableMapOf
+import co.touchlab.stately.concurrency.AtomicReference
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
+abstract class Application {
+    internal val serviceInitiators = sharedMutableMapOf<String, () -> Service>()
+    internal val serviceInstances = sharedMutableMapOf<String, AtomicReference<Service>>()
+    internal val serviceUseOrder = sharedMutableListOf<AtomicReference<Service>>()
 
-abstract class Application(setup: Container<String, Service>.() -> Config<String, Service>) :
-    Container<String, Service>(setup) {
+    fun <S: Service>lazyService(initiator: () -> S) = ServiceInitializer(initiator)
+    protected fun runCleanUp() = serviceUseOrder.asReversed().forEach { it.get().cleanup() }
 
-    suspend fun run() {
-        initialize()
-        execute()
-        finalize()
+    fun run(action: suspend () -> Unit) = runBlocking {
+        launch {
+            initialize()
+            execute()
+            action()
+            finalize()
+        }
     }
 
     abstract suspend fun execute()
     abstract suspend fun initialize()
     abstract suspend fun finalize()
 }
+
