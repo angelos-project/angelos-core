@@ -131,6 +131,15 @@ static jint get_platform(JNIEnv *env, jclass thisClass) {
 
 /*
  * Class:     angelos_interop_Base
+ * Method:    get_pid
+ * Signature: ()I
+ */
+static jint get_pid(JNIEnv *env, jclass thisClass) {
+    return pid();
+}
+
+/*
+ * Class:     angelos_interop_Base
  * Method:    get_signal_abbreviation
  * Signature: (I)Ljava/lang/String;
  */
@@ -231,6 +240,7 @@ static JNINativeMethod funcs[] = {
         {"finalize_terminal_mode", "()I", (void *) &do_finalize_terminal_mode},
         {"endian", "()I", (void *) &get_endian},
         {"platform", "()I", (void *) &get_platform},
+        {"pid", "()I", (void *) &get_pid},
         {"signal_abbreviation", "(I)Ljava/lang/String;", (void *) &get_signal_abbreviation},
         {"get_error", "()V", (void *) &get_error},
         {"event_poll", "()Langelos/io/poll/PollAction;", (void *) &get_event_poll},

@@ -54,3 +54,8 @@ int platform() {
     return kUnknown;
 #endif
 }
+
+
+int pid() {
+    return getpid();
+}

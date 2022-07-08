@@ -16,10 +16,6 @@ package angelos.mvp
 
 abstract class Service {
 
-    init {
-        setup()
-    }
-
-    open fun setup() {}
-    open fun cleanup() {}
+    open fun setup(thisRef: Application) {}
+    open fun cleanup(thisRef: Application) {}
 }

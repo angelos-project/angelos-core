@@ -39,10 +39,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies{
+                implementation("org.angproj.io.buf:angelos-project-buffer:1.0.0-beta.2")
+                implementation("org.angproj.io.sig:angelos-project-sig:1.0.0-beta.1")
                 implementation(Libs.coro) { version { strictly("${Versions.coro}-native-mt") } }
-                implementation(Libs.stately)
-                implementation(Libs.concurrency)
-                implementation(Libs.collections)
                 implementation(project(":angelos-core"))
             }
         }

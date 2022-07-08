@@ -20,8 +20,15 @@ import angelos.interop.Base
 class Error {
     @Suppress("VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL")
     companion object {
-        var errNum: Int = 0
-        var errMsg: String = ""
+        private var _errNum = 0
+        var errNum: Int
+            get() = _errNum
+            set(value) { _errNum = value }
+
+        private var _errMsg = ""
+        var errMsg: String
+            get() = _errMsg
+            set(value) { _errMsg = value }
 
         inline fun loadError() = Base.getError()
     }

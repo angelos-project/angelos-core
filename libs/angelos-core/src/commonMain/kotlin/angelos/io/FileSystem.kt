@@ -19,8 +19,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.angproj.io.buf.Buffer
+import org.angproj.io.buf.MutableBuffer
 
-abstract class FileSystem<R: ByteBuffer, W: MutableByteBuffer>(val drive: String) {
+abstract class FileSystem<R: Buffer, W: MutableBuffer>(val drive: String) {
     private val mutex = Mutex()
 
     suspend fun getRoot(): Dir = getDirectory(getPath(VirtualPath(drive)))
@@ -196,7 +198,7 @@ abstract class FileSystem<R: ByteBuffer, W: MutableByteBuffer>(val drive: String
             override fun next(): FileObject {
                 val current = _hierarchy.last().next()
 
-                if (current is Dir && current.readable && !current!!.skip && _hierarchy.size < maxDepth)
+                if (current is Dir && current.readable && !current.skip && _hierarchy.size < maxDepth)
                     _hierarchy.add(current.iterator())
 
                 return current

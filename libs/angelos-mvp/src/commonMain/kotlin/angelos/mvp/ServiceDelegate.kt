@@ -14,21 +14,19 @@
  */
 package angelos.mvp
 
-import co.touchlab.stately.concurrency.AtomicReference
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 class ServiceDelegate<S: Service> : ReadOnlyProperty<Application, S> {
     @Suppress("UNCHECKED_CAST")
     override fun getValue(thisRef: Application, property: KProperty<*>): S = when(val name = property.name) {
-        in thisRef.serviceInstances -> thisRef.serviceInstances[name]!!.get()
-        in thisRef.serviceInitiators -> AtomicReference(thisRef.serviceInitiators[name]!!() as S).also {
-            it as AtomicReference<Service>
-            thisRef.serviceUseOrder.add(it)
+        in thisRef.serviceInstances -> thisRef.serviceInstances[name]!!
+        in thisRef.serviceInitiators -> (thisRef.serviceInitiators[name]!!() as S).also {
             thisRef.serviceInstances[name] = it
             thisRef.serviceInitiators.remove(name)
-            it.get().setup()
-        }.get()
+            thisRef.serviceUseOrder.add(it)
+            it.setup(thisRef)
+        }
         else -> throw ApplicationException("Error due to misconfiguration of service '$name'")
     } as S
 }

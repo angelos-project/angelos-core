@@ -14,12 +14,16 @@
  */
 package angelos.io.file.channel
 
-import angelos.io.*
+import angelos.io.FileSystem
+import angelos.io.IOException
+import angelos.io.SyncFailedException
 import angelos.io.channel.GatheringByteChannel
 import angelos.io.channel.ScatteringByteChannel
 import angelos.io.channel.SeekableByteChannel
+import org.angproj.io.buf.Buffer
+import org.angproj.io.buf.MutableBuffer
 
-abstract class FileChannel<R: ByteBuffer, W: MutableByteBuffer>(val option: FileSystem.OpenOption): SeekableByteChannel<R, W>, ScatteringByteChannel<R>, GatheringByteChannel<W> {
+abstract class FileChannel<R: Buffer, W: MutableBuffer>(val option: FileSystem.OpenOption): SeekableByteChannel<R, W>, ScatteringByteChannel<R>, GatheringByteChannel<W> {
 
     private var _open: Boolean = true
     private var _size: ULong = 0u
@@ -66,8 +70,8 @@ abstract class FileChannel<R: ByteBuffer, W: MutableByteBuffer>(val option: File
     }*/
 
     override fun read(dst: R): Long {
-        val length = dst.allowance()
-        if(readFd(dst, dst.mark, length.toLong()) != length.toLong())
+        val length = dst.remaining()
+        if(readFd(dst, dst.position, length.toLong()) != length.toLong())
             throw throw IOException("Couldn't read $length bytes from file.")
         pos += length
         return length.toLong()
@@ -82,7 +86,7 @@ abstract class FileChannel<R: ByteBuffer, W: MutableByteBuffer>(val option: File
     override fun read(dsts: List<R>): Long = read(dsts, 0, dsts.size)
 
     override suspend fun write(src: W): Long {
-        val length = src.allowance()
+        val length = src.remaining()
         if(writeFd(src, src.position, length.toLong()) != length.toLong())
             throw IOException("Couldn't write $length bytes to file.")
         pos += length
@@ -114,5 +118,4 @@ abstract class FileChannel<R: ByteBuffer, W: MutableByteBuffer>(val option: File
     protected fun finalize() {
         close()
     }
-
 }

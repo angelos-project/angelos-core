@@ -36,4 +36,11 @@ extern int endian();
 extern int platform();
 
 
+/**
+ * Gives the current process id
+ * @return Integer representation of process id.
+ */
+extern int pid();
+
+
 #endif //BASE_BASE_H

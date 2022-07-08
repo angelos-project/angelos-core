@@ -15,11 +15,8 @@
 package angelos.interop
 
 import angelos.io.poll.PollAction
-import angelos.io.signal.SigName
 import angelos.sys.Benchmark
 import angelos.sys.Error
-import co.touchlab.stately.concurrency.AtomicReference
-import sun.misc.Signal
 import java.lang.System
 
 
@@ -52,12 +49,11 @@ actual class Base: AbstractBase() {
         @JvmStatic
         private external fun finalize_terminal_mode(): Int
 
-        @Suppress("VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL")
-        internal actual var interrupt = AtomicReference<(sigNum: SigName) -> Unit> {}
-
         actual fun getEndian(): Int = endian()
 
         actual fun getPlatform(): Int = platform()
+
+        actual fun getPid(): Int = pid()
 
         @JvmStatic
         private external fun endian(): Int
@@ -65,16 +61,8 @@ actual class Base: AbstractBase() {
         @JvmStatic
         private external fun platform(): Int
 
-        actual fun setInterrupt(sigName: SigName): Boolean {
-            Signal.handle(Signal(sigName.sigName)) {
-                incomingSignal(SigName.codeToName(it.number))
-            }
-            return true
-        }
-
-        internal actual fun incomingSignal(sigName: SigName) = interrupt.get()(sigName)
-
-        actual fun sigAbbr(sigNum: Int): String = signal_abbreviation(sigNum).uppercase()
+        @JvmStatic
+        private external fun pid(): Int
 
         @JvmStatic
         private external fun signal_abbreviation(sigNum: Int): String

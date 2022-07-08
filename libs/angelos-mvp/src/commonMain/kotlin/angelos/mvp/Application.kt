@@ -14,31 +14,38 @@
  */
 package angelos.mvp
 
-import co.touchlab.stately.collections.sharedMutableListOf
-import co.touchlab.stately.collections.sharedMutableMapOf
-import co.touchlab.stately.concurrency.AtomicReference
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
-abstract class Application {
-    internal val serviceInitiators = sharedMutableMapOf<String, () -> Service>()
-    internal val serviceInstances = sharedMutableMapOf<String, AtomicReference<Service>>()
-    internal val serviceUseOrder = sharedMutableListOf<AtomicReference<Service>>()
 
-    fun <S: Service>lazyService(initiator: () -> S) = ServiceInitializer(initiator)
-    protected fun runCleanUp() = serviceUseOrder.asReversed().forEach { it.get().cleanup() }
+abstract class Application: CoroutineScope {
+    internal val serviceInitiators = mutableMapOf<String, () -> Service>()
+    internal val serviceInstances = mutableMapOf<String, Service>()
+    internal val serviceUseOrder = mutableListOf<Service>()
 
-    fun run(action: suspend () -> Unit) = runBlocking {
-        launch {
-            initialize()
-            execute()
+    override val coroutineContext: CoroutineContext
+        get() = CoroutineScope(EmptyCoroutineContext).coroutineContext
+
+    protected abstract suspend fun initialize()
+    protected abstract suspend fun finalize()
+
+    fun execute(action: suspend () -> Unit) {
+        Internals.launch{
+            begin()
             action()
-            finalize()
+            end()
         }
     }
 
-    abstract suspend fun execute()
-    abstract suspend fun initialize()
-    abstract suspend fun finalize()
-}
+    private suspend fun begin() {
+        initialize()
+    }
 
+    private suspend fun end() {
+        finalize()
+        runCleanUp()
+    }
+
+    private fun runCleanUp() = serviceUseOrder.asReversed().forEach { it.cleanup(this) }
+}

@@ -20,9 +20,5 @@ actual class Proc: AbstractProc() {
         actual var errMsg: String = ""
 
         actual fun getError(): SystemError { TODO("Not yet implemented") }
-
-        actual fun registerInterrupt(signum: Int): Boolean {
-            TODO("Not yet implemented")
-        }
     }
 }

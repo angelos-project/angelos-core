@@ -15,23 +15,25 @@
 package angelos.admin
 
 import angelos.mvp.Application
+import angelos.mvp.lazyService
+import angelos.mvp.services.ExitService
 import angelos.mvp.services.SignalService
+import angelos.mvp.services.StreamsService
+import angelos.mvp.services.WatcherService
 
 object AngelosAdmin : Application() {
     val signal by lazyService { SignalService() }
+    val exit by lazyService { ExitService(signal) }
+    val watcher by lazyService { WatcherService(signal) }
+    val streams by lazyService { StreamsService(watcher, true) }
 
-    operator fun invoke(block: AngelosAdmin.() -> Unit) = run(block)
-
-    override suspend fun execute() {
-        println("To be implemented")
-    }
+    operator fun invoke(action: suspend AngelosAdmin.() -> Unit) { execute { this@AngelosAdmin.action() } }
 
     override suspend fun initialize() {
-        println("To be implemented")
+        println("Runs initialize")
     }
 
     override suspend fun finalize() {
-        runCleanUp()
+        println("Runs finalize")
     }
-
 }

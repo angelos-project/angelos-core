@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+ * Copyright (c) 2022 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
  *
  * This software is available under the terms of the MIT license. Parts are licensed
  * under different terms if stated. The legal terms are attached to the LICENSE file
@@ -14,11 +14,13 @@
  */
 package angelos.mvp
 
-import angelos.ioc.Module
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
 
-interface Extension : Module {
-    val identifier: String
-
-    fun setup()
-    fun cleanup()
+internal actual class Internals {
+    actual companion object {
+        actual fun launch(block: suspend CoroutineScope.() -> Unit) {
+            runBlocking { launch (block = block) }
+        }
+    }
 }

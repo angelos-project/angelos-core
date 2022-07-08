@@ -46,6 +46,7 @@ void handler(int signum, siginfo_t *info, void *context)
 
 
 void init_signal_handler(outbound_signal_ptr outbound) {
+    printf("init_signal_handler(%ld)", (long) outbound);
     outbound_action_cb = outbound;
 
 	signal_action_cb.sa_flags = SA_SIGINFO | SA_RESTART | SA_NODEFER;
@@ -64,6 +65,7 @@ int register_signal_handler(int signum) {
     if (outbound_action_cb == NULL)
         return -1;
 
+    printf("register_signal_handler(%d)", signum);
     return sigaction(signum, &signal_action_cb, NULL);
 }
 

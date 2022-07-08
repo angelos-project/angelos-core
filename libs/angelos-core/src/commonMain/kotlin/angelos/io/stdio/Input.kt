@@ -14,12 +14,12 @@
  */
 package angelos.io.stdio
 
-import angelos.io.NativeByteBufferImpl
 import angelos.io.channel.ReadableByteChannel
+import org.angproj.io.buf.ImmutableNativeBuffer
 
-class Input : Stream(StdNum.STDIN.fileNum), ReadableByteChannel<NativeByteBufferImpl>{
+class Input : Stream(StdNum.STDIN.fileNum), ReadableByteChannel<ImmutableNativeBuffer>{
 
-    override fun read(dst: NativeByteBufferImpl): Long {
+    override fun read(dst: ImmutableNativeBuffer): Long {
         println("Hello, world!")
         TODO("Not yet implemented")
     }

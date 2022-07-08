@@ -39,7 +39,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(Libs.coro) { version { strictly("${Versions.coro}-native-mt") } }
-                implementation(Libs.collections)
                 implementation(project(":angelos-core"))
                 implementation(project(":angelos-mvp"))
             }

@@ -14,14 +14,11 @@
  */
 package angelos.ioc
 
-import co.touchlab.stately.collections.sharedMutableMapOf
-import co.touchlab.stately.concurrency.AtomicReference
-
 abstract class Container<N, M: Module> {
-    private val config = AtomicReference<Config<N, M>>(mapOf())
-    private val modules = sharedMutableMapOf<N, M>()
+    private var config: Config<N, M> = mapOf()
+    private val modules = mutableMapOf<N, M>()
 
-    fun config(block: () -> Config<N, M>) { config.set(block()) }
+    fun config(block: () -> Config<N, M>) { config = block() }
 
     fun reg(key: N, module: M): M {
         modules[key] = module
@@ -31,7 +28,7 @@ abstract class Container<N, M: Module> {
     @Suppress("UNCHECKED_CAST")
     open operator fun <M2: M>get(key: N): M2 = when(key) {
         in modules -> modules[key]!!
-        in config.get() -> config.get()[key]!!(key)
+        in config -> config[key]!!(key)
         else -> throw ContainerException("$key is not configured!")
     } as M2
 }

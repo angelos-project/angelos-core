@@ -14,16 +14,16 @@
  */
 package angelos.interop
 
-import angelos.io.MutableNativeByteBufferImpl
-import angelos.io.NativeByteBufferImpl
 import angelos.io.net.Socket
+import org.angproj.io.buf.ImmutableNativeBuffer
+import org.angproj.io.buf.MutableNativeBuffer
 import angelos.io.FileSystem as RealFS
 
 internal actual class IO {
     actual companion object {
         actual fun readFile(
             number: Int,
-            dst: NativeByteBufferImpl,
+            dst: ImmutableNativeBuffer,
             index: Int,
             count: Long,
         ): Long {
@@ -32,7 +32,7 @@ internal actual class IO {
 
         actual fun writeFile(
             number: Int,
-            src: MutableNativeByteBufferImpl,
+            src: MutableNativeBuffer,
             index: Int,
             count: Long,
         ): Long {

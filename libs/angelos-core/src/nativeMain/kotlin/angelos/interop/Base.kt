@@ -15,11 +15,9 @@
 package angelos.interop
 
 import angelos.io.poll.PollAction
-import angelos.io.signal.SigName
 import angelos.sys.Benchmark
 import angelos.sys.Error
 import base.*
-import co.touchlab.stately.concurrency.AtomicReference
 import kotlinx.cinterop.*
 import platform.posix.*
 
@@ -51,30 +49,17 @@ actual class Base : AbstractBase() {
             return bm
         }
 
-        actual fun initializeSignalHandler(): Unit = init_signal_handler(staticCFunction<Int, Unit> {
-            incomingSignal(SigName.codeToName(it))
-        })
-
         actual fun initializeTerminalMode(): Int = errorPredicate(init_terminal_mode(), "Failure in TERMIOS")
 
         actual fun finalizeTerminalMode(): Int = errorPredicate(finalize_terminal_mode(), "Failure in TERMIOS")
-
-        @Suppress("VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL")
-        internal actual var interrupt = AtomicReference<(sigNum: SigName) -> Unit> {}
 
         actual fun getEndian(): Int = endian()
 
         actual fun getPlatform(): Int = platform()
 
-        actual fun setInterrupt(sigName: SigName): Boolean =
-            booleanPredicate(register_signal_handler(SigName.nameToCode(sigName)))
+        actual fun getPid(): Int = pid()
 
-        internal actual inline fun incomingSignal(sigName: SigName) = interrupt.get()(sigName)
-
-        actual fun sigAbbr(sigNum: Int): String =
-            memScoped { signal_abbreviation(sigNum)?.toKString().toString().uppercase() }
-
-        actual inline fun getError() {
+        actual fun getError() {
             Error.errNum.usePinned { errno }
             Error.errMsg.usePinned { strerror(errno)?.toKString().toString() }
         }
@@ -101,6 +86,7 @@ actual class Base : AbstractBase() {
         actual fun isOpenStream(fd: Int): Boolean = booleanOnOnePredicate(stream_is_open(fd))
 
         actual fun closeStream(fd: Int): Int = stream_close(fd)
-
+        actual fun initializeSignalHandler() {
+        }
     }
 }

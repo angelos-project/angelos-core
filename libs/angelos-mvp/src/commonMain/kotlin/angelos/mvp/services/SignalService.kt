@@ -15,9 +15,13 @@
 package angelos.mvp.services
 
 import angelos.interop.Base
-import angelos.io.signal.Signal
+import angelos.mvp.Application
 import angelos.mvp.Service
+import org.angproj.io.sig.Signal
 
 class SignalService : Service(), Signal {
-    override fun setup() = Base.initializeSignalHandler()
+    override fun setup(thisRef: Application) {
+        Base.initializeSignalHandler()
+        println("SignalService.setup($thisRef)")
+    }
 }

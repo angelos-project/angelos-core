@@ -17,7 +17,7 @@ package angelos.io.file
 interface WatchableContainer {
     val descriptors: MutableMap<Int, Watchable>
 
-    suspend fun add(w: Watchable) { descriptors[w.descriptor] = w }
+    fun add(w: Watchable) { descriptors[w.descriptor] = w }
     fun remove(d: Int) = descriptors.remove(d)
     fun contains(d: Int) = descriptors.containsKey(d)
     fun get(d: Int) = descriptors[d]

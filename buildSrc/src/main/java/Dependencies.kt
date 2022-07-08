@@ -18,9 +18,9 @@ object AndroidVersion {
 object Versions {
     const val gradle = "7.3.3"
     const val android = "7.0.2"
-    const val kotlin = "1.6.10"
+    const val kotlin = "1.7.0"
     const val appcompat = "1.1.0"
-    const val coro = "1.6.0"
+    const val coro = "1.6.3"
     const val stately = "1.2.0"
 
     const val junit = "4.13.1"
@@ -31,9 +31,10 @@ object Libs {
     const val appcompat = "androidx.appcompat:appcompat:${Versions.appcompat}"
 
     const val coro = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coro}-native-mt"
-    const val stately = "co.touchlab:stately-common:${Versions.stately}"
-    const val concurrency = "co.touchlab:stately-concurrency:${Versions.stately}"
-    const val collections = "co.touchlab:stately-iso-collections:${Versions.stately}"
+    // const val stately = "co.touchlab:stately-common:${Versions.stately}"
+    // const val isolate = "co.touchlab:stately-isolate:${Versions.stately}"
+    // const val concurrency = "co.touchlab:stately-concurrency:${Versions.stately}"
+    // const val collections = "co.touchlab:stately-iso-collections:${Versions.stately}"
 }
 
 object TestLibs {

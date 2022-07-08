@@ -10,12 +10,8 @@
  * SPDX-License-Identifier: MIT
  *
  * Contributors:
- *      Kristoffer Paulsson - initial implementation
+ *      Kristoffer Paulsson - port from python
  */
-package angelos.interop
+package angelos.mvp
 
-actual interface NativeBuffer {
-    actual companion object {
-
-    }
-}
+inline fun <S: Service> Application.lazyService(noinline initiator: () -> S) = ServiceInitializer(initiator)

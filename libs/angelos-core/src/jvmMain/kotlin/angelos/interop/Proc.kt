@@ -33,13 +33,6 @@ actual class Proc: AbstractProc() {
              return err
          }
 
-         actual fun registerInterrupt(signum: Int): Boolean {
-             return pr_signal(signum)
-         }
-
-         @JvmStatic
-         external fun pr_signal(signum: Int): Boolean
-
          init {
              System.loadLibrary("jni-proc")
          }

@@ -10,12 +10,14 @@
  * SPDX-License-Identifier: MIT
  *
  * Contributors:
- *      Kristoffer Paulsson - initial implementation
+ *      Kristoffer Paulsson - port from python
  */
-package angelos.interop
+package angelos.mvp
 
-actual interface NativeBuffer {
-    fun operation(block: (it: Long) -> Long): Long
-    actual companion object {
+import kotlinx.coroutines.CoroutineScope
+
+internal expect class Internals {
+    companion object {
+        fun launch (block: suspend CoroutineScope.() -> Unit)
     }
 }

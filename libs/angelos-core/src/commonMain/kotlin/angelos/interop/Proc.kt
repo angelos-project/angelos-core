@@ -14,8 +14,6 @@
  */
 package angelos.interop
 
-import angelos.io.signal.Signal
-
 /**
  * How to call Kotlin from outside.
  * https://www.iitk.ac.in/esc101/05Aug/tutorial/native1.1/implementing/method.html
@@ -27,12 +25,6 @@ typealias SystemError = Pair<Int, String>
 abstract class AbstractProc{
     @Suppress("VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL")
     companion object{
-        internal lateinit var sigHandler: Signal
-
-        fun interrupt(signum: Int) {
-            //sigHandler.handler(signum)
-        }
-
     }
 }
 
@@ -44,6 +36,5 @@ expect class Proc: AbstractProc {
         var errMsg: String
 
         fun getError(): SystemError
-        fun registerInterrupt(signum: Int): Boolean
     }
 }

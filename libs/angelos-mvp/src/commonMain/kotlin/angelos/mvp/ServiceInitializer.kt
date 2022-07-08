@@ -17,7 +17,7 @@ package angelos.mvp
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-class ServiceInitializer<S: Service>(val initiator: () -> S) {
+class ServiceInitializer<S: Service>(private val initiator: () -> S) {
     operator fun provideDelegate(thisRef: Application, prop: KProperty<*>): ReadOnlyProperty<Application, S> {
         thisRef.serviceInitiators[prop.name] = initiator
         return ServiceDelegate()

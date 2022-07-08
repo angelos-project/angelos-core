@@ -15,9 +15,7 @@
 package angelos.interop
 
 import angelos.io.poll.PollAction
-import angelos.io.signal.SigName
 import angelos.sys.Benchmark
-import co.touchlab.stately.concurrency.AtomicReference
 
 actual class Base: AbstractBase() {
 
@@ -39,22 +37,6 @@ actual class Base: AbstractBase() {
         }
 
         actual fun getPlatform(): Int {
-            TODO("Not yet implemented")
-        }
-
-        @Suppress("VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL")
-        internal actual var interrupt: AtomicReference<(sigNum: SigName) -> Unit>
-            get() = TODO("Not yet implemented")
-            set(value) {}
-
-        actual fun setInterrupt(sigName: SigName): Boolean {
-            TODO("Not yet implemented")
-        }
-
-        internal actual fun incomingSignal(sigName: SigName) {
-        }
-
-        actual fun sigAbbr(sigNum: Int): String {
             TODO("Not yet implemented")
         }
 
@@ -93,6 +75,10 @@ actual class Base: AbstractBase() {
         }
 
         actual fun endUsage(usage: Long): Benchmark {
+            TODO("Not yet implemented")
+        }
+
+        actual fun getPid(): Int {
             TODO("Not yet implemented")
         }
     }

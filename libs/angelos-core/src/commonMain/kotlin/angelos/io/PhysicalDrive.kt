@@ -16,14 +16,16 @@
 package angelos.io
 
 import angelos.interop.IO
+import org.angproj.io.buf.ImmutableNativeBuffer
+import org.angproj.io.buf.MutableNativeBuffer
 import kotlin.jvm.JvmStatic
 
 @Suppress("OVERRIDE_BY_INLINE")
-class PhysicalDrive(drive: String) : FileSystem<NativeByteBufferImpl, MutableNativeByteBufferImpl>(drive) {
-    override fun readFile(number: Int, dst: NativeByteBufferImpl, index: Int, count: Long): Long =
+class PhysicalDrive(drive: String) : FileSystem<ImmutableNativeBuffer, MutableNativeBuffer>(drive) {
+    override fun readFile(number: Int, dst: ImmutableNativeBuffer, index: Int, count: Long): Long =
         IO.readFile(number, dst, index, count)
 
-    override fun writeFile(number: Int, src: MutableNativeByteBufferImpl, index: Int, count: Long): Long =
+    override fun writeFile(number: Int, src: MutableNativeBuffer, index: Int, count: Long): Long =
         IO.writeFile(number, src, index, count)
 
     override fun tellFile(number: Int): Long = IO.tellFile(number)

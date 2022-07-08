@@ -14,8 +14,8 @@
  */
 package angelos.io.channel
 
-import angelos.io.ByteBuffer
-import angelos.io.MutableByteBuffer
+import org.angproj.io.buf.Buffer
+import org.angproj.io.buf.MutableBuffer
 
-interface ByteChannel<R: ByteBuffer, W: MutableByteBuffer>: ReadableByteChannel<R>, WritableByteChannel<W> {
+interface ByteChannel<R: Buffer, W: MutableBuffer>: ReadableByteChannel<R>, WritableByteChannel<W> {
 }

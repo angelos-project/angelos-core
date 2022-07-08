@@ -15,16 +15,16 @@
 package angelos.interop
 
 import angelos.io.FileSystem
-import angelos.io.MutableNativeByteBufferImpl
-import angelos.io.NativeByteBufferImpl
 import angelos.io.net.Socket
+import org.angproj.io.buf.ImmutableNativeBuffer
+import org.angproj.io.buf.MutableNativeBuffer
 
 data class PollAction(val descriptor: Int, val action: Int)
 
 internal expect class IO {
     companion object {
-        fun readFile(number: Int, dst: NativeByteBufferImpl, index: Int, count: Long): Long
-        fun writeFile(number: Int, src: MutableNativeByteBufferImpl, index: Int, count: Long): Long
+        fun readFile(number: Int, dst: ImmutableNativeBuffer, index: Int, count: Long): Long
+        fun writeFile(number: Int, src: MutableNativeBuffer, index: Int, count: Long): Long
         fun tellFile(number: Int): Long
         fun seekFile(number: Int, position: Long, whence: FileSystem.Seek): Long
         fun closeFile(number: Int): Boolean

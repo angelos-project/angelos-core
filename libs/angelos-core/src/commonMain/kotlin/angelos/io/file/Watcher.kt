@@ -15,11 +15,7 @@
 package angelos.io.file
 
 import angelos.interop.Base
-import angelos.io.signal.SigName
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import org.angproj.io.sig.SigName
 
 interface Watcher {
 
@@ -28,16 +24,16 @@ interface Watcher {
         println("${event.descriptor}, ${event.action}")
         when {
             files.contains(event.descriptor) -> descriptors[event.descriptor]?.forEach {
-                GlobalScope.launch { onFile(event.descriptor, it) } }
+                onFile(event.descriptor, it) }
             sockets.contains(event.descriptor) -> descriptors[event.descriptor]?.forEach {
-                GlobalScope.launch { onSocket(event.descriptor, it) } }
+                onSocket(event.descriptor, it) }
             streams.contains(event.descriptor) -> descriptors[event.descriptor]?.forEach {
-                GlobalScope.launch { onStream(event.descriptor, it) } }
+                onStream(event.descriptor, it) }
             else -> throw WatcherException("Watcher ${event.descriptor} doesn't exist")
         }
     }
 
-    suspend fun register(watchable: Watchable, vararg handlers: WatchableHandler) {
+    fun register(watchable: Watchable, vararg handlers: WatchableHandler) {
         if(descriptors.containsKey(watchable.descriptor))
             throw WatcherException("Watcher ${watchable.descriptor} already registered")
 
@@ -74,14 +70,12 @@ interface Watcher {
     }
 
     companion object {
-        private val mutex = Mutex()
         private val descriptors = mutableMapOf<Int, List<WatchableHandler>>()
 
         protected val streams = object: WatchableContainer {
             override val descriptors: MutableMap<Int, Watchable> = mutableMapOf()
 
-            override suspend fun add(w: Watchable): Unit = mutex.withLock {
-                println("Descriptor ${w.descriptor}")
+            override fun add(w: Watchable): Unit {
                 Base.attachStream(w.descriptor)
                 super.add(w)
             }
@@ -90,7 +84,7 @@ interface Watcher {
         protected val files = object: WatchableContainer {
             override val descriptors: MutableMap<Int, Watchable> = mutableMapOf()
 
-            override suspend fun add(w: Watchable): Unit = mutex.withLock {
+            override fun add(w: Watchable): Unit {
                 // Attach to event queue in Base
                 super.add(w)
             }
@@ -99,7 +93,7 @@ interface Watcher {
         protected val sockets = object: WatchableContainer {
             override val descriptors: MutableMap<Int, Watchable> = mutableMapOf()
 
-            override suspend fun add(w: Watchable): Unit = mutex.withLock {
+            override fun add(w: Watchable): Unit {
                 Base.attachSocket(w.descriptor)
                 super.add(w)
             }

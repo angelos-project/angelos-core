@@ -15,7 +15,11 @@
 package angelos
 
 import angelos.admin.AngelosAdmin
+import angelos.interop.Base
+
 
 fun main() = AngelosAdmin {
-    signal
+    println("PID ${Base.getPid()}")
+    exit.await()
+    println("EXIT")
 }

@@ -14,9 +14,9 @@
  */
 package angelos.io.channel
 
-import angelos.io.ByteBuffer
+import org.angproj.io.buf.Buffer
 
-interface ScatteringByteChannel<R: ByteBuffer>: ReadableByteChannel<R> {
+interface ScatteringByteChannel<R: Buffer>: ReadableByteChannel<R> {
     fun read(dsts: List<R>): Long
     fun read(dsts: List<R>, offset: Int, length: Int): Long
 }

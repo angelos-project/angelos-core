@@ -14,10 +14,10 @@
  */
 package angelos.io.channel
 
-import angelos.io.ByteBuffer
-import angelos.io.MutableByteBuffer
+import org.angproj.io.buf.Buffer
+import org.angproj.io.buf.MutableBuffer
 
-interface SeekableByteChannel<R: ByteBuffer, W: MutableByteBuffer>: ByteChannel<R, W> {
+interface SeekableByteChannel<R: Buffer, W: MutableBuffer>: ByteChannel<R, W> {
     val size: Long
     var position: Long
 

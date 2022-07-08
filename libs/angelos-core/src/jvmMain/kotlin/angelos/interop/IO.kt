@@ -14,18 +14,22 @@
  */
 package angelos.interop
 
-import angelos.io.*
+import angelos.io.FileNotFoundException
+import angelos.io.FileSystem
+import angelos.io.NotLinkException
 import angelos.io.net.Socket
+import org.angproj.io.buf.ImmutableNativeBuffer
+import org.angproj.io.buf.MutableNativeBuffer
 import java.lang.System
 
 internal actual class IO {
     actual companion object {
-        actual fun readFile(number: Int, dst: NativeByteBufferImpl, index: Int, count: Long): Long = dst.operation {
-            fs_pread(number, it, index, count, dst.limit.toLong())
+        actual fun readFile(number: Int, dst: ImmutableNativeBuffer, index: Int, count: Long): Long {
+            return fs_pread(number, dst.getPointer(), index, count, dst.limit.toLong())
         }
 
-        actual fun writeFile(number: Int, src: MutableNativeByteBufferImpl, index: Int, count: Long): Long = src.operation {
-            fs_pwrite(number, it, index, count, src.limit.toLong())
+        actual fun writeFile(number: Int, src: MutableNativeBuffer, index: Int, count: Long): Long {
+            return fs_pwrite(number, src.getPointer(), index, count, src.limit.toLong())
         }
 
         actual fun tellFile(number: Int): Long = fs_lseek(number, 0, SeekDirective.CUR.whence)

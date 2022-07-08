@@ -10,8 +10,17 @@
  * SPDX-License-Identifier: MIT
  *
  * Contributors:
- *      Kristoffer Paulsson - initial implementation
+ *      Kristoffer Paulsson - port from python
  */
-package angelos.io.signal
+package angelos.mvp
 
-typealias SignalHandler = suspend (it: SigName) -> (Unit)
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
+
+internal actual class Internals {
+    actual companion object {
+        actual fun launch(block: suspend CoroutineScope.() -> Unit) {
+            runBlocking { launch (block = block) }
+        }
+    }
+}

@@ -71,10 +71,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation("org.angproj.io.buf:angelos-project-buffer:1.0.0-beta.2")
+                implementation("org.angproj.io.sig:angelos-project-sig:1.0.0-beta.1")
                 implementation(Libs.coro) { version { strictly("${Versions.coro}-native-mt") } }
-                implementation(Libs.stately)
-                implementation(Libs.concurrency)
-                implementation(Libs.collections)
             }
         }
         val commonTest by getting {
@@ -98,3 +97,19 @@ kotlin {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.CInteropProcess::class) {
     dependsOn(":base:assemble")
 }
+
+// https://en.wikipedia.org/wiki/Signal_(IPC)
+
+// http://www.qnx.com/developers/docs/qnx_4.25_docs/tcpip50/prog_guide/sock_ipc_tut.html
+// http://www.cs.tau.ac.il/~eddiea/samples/Signal-Driven/udp-signal-driven-server.c
+// https://www.softprayog.in/programming/network-socket-programming-using-tcp-in-c
+// https://gist.github.com/richiejp/1590344
+
+
+// https://www.freebsd.org/cgi/man.cgi?query=kqueue&sektion=2
+// https://habr.com/en/post/600123/
+// https://github.com/stsaz/kernel-queue-the-complete-guide
+
+
+// https://stackoverflow.com/questions/29451133/whats-the-proper-way-to-safely-discard-stdin-characters-of-variable-length-in-c
+// https://viewsourcecode.org/snaptoken/kilo/index.html

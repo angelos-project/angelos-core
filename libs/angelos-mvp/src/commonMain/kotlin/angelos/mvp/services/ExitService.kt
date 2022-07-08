@@ -14,26 +14,25 @@
  */
 package angelos.mvp.services
 
-import angelos.io.signal.SigName
-import angelos.io.signal.SignalHandler
+import angelos.mvp.Application
 import angelos.mvp.Service
 import kotlinx.coroutines.channels.Channel
+import org.angproj.io.sig.SigName
+import org.angproj.io.sig.SignalHandler
 
-class QuitService(private val signal: SignalService): Service() {
+class ExitService(private val signal: SignalService): Service() {
     private val queue = Channel<SigName>()
 
-    init {
-        setup()
-    }
-
-    override fun setup() { signalReg() }
+    override fun setup(thisRef: Application) { signalReg() }
 
     private fun signalReg() {
-        val handler: SignalHandler = { queue.send(it) }
+        val handler: SignalHandler = {
+            println("SignalHandler($it)")
+            queue.send(it) }
         signal.registerHandler(SigName.SIGINT, handler)
         signal.registerHandler(SigName.SIGABRT, handler)
     }
 
     suspend fun await(): SigName = queue.receive()
-    suspend fun quit() = queue.send(SigName.UNKNOWN)
+    suspend fun stop() = queue.send(SigName.UNKNOWN)
 }

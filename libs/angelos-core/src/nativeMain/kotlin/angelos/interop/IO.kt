@@ -14,20 +14,24 @@
  */
 package angelos.interop
 
-import angelos.io.*
+import angelos.io.FileNotFoundException
+import angelos.io.FileSystem
+import angelos.io.IOException
 import angelos.io.net.Socket
 import kotlinx.cinterop.*
+import org.angproj.io.buf.ImmutableNativeBuffer
+import org.angproj.io.buf.MutableNativeBuffer
 import platform.posix.*
 
 internal actual class IO {
     actual companion object {
 
-        actual inline fun readFile(number: Int, dst: NativeByteBufferImpl, index: Int, count: Long): Long = dst.operation {
-            read(number, it.addressOf(index), count.toULong())
+        actual inline fun readFile(number: Int, dst: ImmutableNativeBuffer, index: Int, count: Long): Long {
+            return read(number, (dst.getPointer() + index).toCPointer<LongVar>(), count.toULong())
         }
 
-        actual inline fun writeFile(number: Int, src: MutableNativeByteBufferImpl, index: Int, count: Long): Long = src.operation {
-            write(number, it.addressOf(index), count.toULong())
+        actual inline fun writeFile(number: Int, src: MutableNativeBuffer, index: Int, count: Long): Long {
+            return read(number, (src.getPointer() + index).toCPointer<LongVar>(), count.toULong())
         }
 
         actual inline fun tellFile(number: Int): Long = lseek(number, 0, SEEK_CUR)
